@@ -4,7 +4,9 @@ import '../../../core/format.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
-import '../../../data/mock/mock_categories.dart';
+import 'package:provider/provider.dart';
+
+import '../../../data/repositories/reference_repository.dart';
 import '../../../data/models/listing.dart';
 import '../../../shared/widgets/ot_button.dart';
 import '../search_controller.dart';
@@ -82,6 +84,7 @@ Widget _option(
 
 /// Kategoriya tanlash. null qaytsa — "Barcha kategoriyalar".
 Future<String?> showCategoryFilter(BuildContext context, String? current) {
+  final categories = context.read<ReferenceRepository>().cachedCategories;
   return _sheet<String?>(
     context,
     'Kategoriya',
@@ -94,7 +97,7 @@ Future<String?> showCategoryFilter(BuildContext context, String? current) {
           selected: current == null,
           onTap: () => Navigator.of(context).pop(null),
         ),
-        for (final c in mockCategories)
+        for (final c in categories)
           _option(
             context,
             label: c.label,

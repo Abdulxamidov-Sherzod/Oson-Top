@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../data/mock/mock_categories.dart';
-import '../../data/mock/mock_districts.dart';
+import '../../data/repositories/reference_repository.dart';
 import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/district_sheet.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/listing_grid.dart';
 import '../../shared/widgets/ot_chip.dart';
 import '../../shared/widgets/ot_segmented.dart';
+import '../../state/favorites_controller.dart';
 import '../listing_detail/listing_detail_screen.dart';
 import 'search_controller.dart';
 import 'widgets/filter_sheets.dart';
@@ -25,9 +25,10 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) =>
-          SearchScreenController(ctx.read<ListingRepository>())
-            ..setQuery(initialQuery),
+      create: (ctx) => SearchScreenController(
+        ctx.read<ListingRepository>(),
+        ctx.read<FavoritesController>(),
+      )..setQuery(initialQuery),
       child: _SearchView(initialQuery: initialQuery),
     );
   }
@@ -180,7 +181,7 @@ class _SearchViewState extends State<_SearchView> {
           OtChip(
             label: c.categoryId == null
                 ? 'Kategoriya'
-                : categoryLabel(c.categoryId!),
+                : context.read<ReferenceRepository>().labelOf(c.categoryId!),
             selected: c.categoryId != null,
             trailing: c.categoryId != null ? Icons.close : Icons.expand_more,
             onTap: () async {
@@ -192,16 +193,20 @@ class _SearchViewState extends State<_SearchView> {
           ),
           const SizedBox(width: 8),
           OtChip(
-            label: c.district == allDistricts ? 'Tuman' : c.district,
-            selected: c.district != allDistricts,
-            trailing: c.district != allDistricts
+            label: c.district == allDistrictsLabel ? 'Tuman' : c.district,
+            selected: c.district != allDistrictsLabel,
+            trailing: c.district != allDistrictsLabel
                 ? Icons.close
                 : Icons.expand_more,
             onTap: () async {
-              if (c.district != allDistricts) {
-                return c.setDistrict(allDistricts);
+              if (c.district != allDistrictsLabel) {
+                return c.setDistrict(allDistrictsLabel);
               }
-              final picked = await showDistrictSheet(context, c.district);
+              final picked = await showDistrictSheet(
+                context,
+                c.district,
+                context.read<ReferenceRepository>().cachedDistricts,
+              );
               if (!mounted || picked == null) return;
               c.setDistrict(picked);
             },
@@ -256,56 +261,68 @@ class _SearchViewState extends State<_SearchView> {
   }
 
   Widget _results(SearchScreenController c) {
-    final items = c.results;
-
-    if (items.isEmpty) {
-      return EmptyState(
-        icon: Icons.search_off,
-        title: 'Hech narsa topilmadi',
-        body: 'Boshqa soʻz bilan qidirib koʻring yoki filtrlarni tozalang.',
-        actionLabel: c.hasFilters ? 'Filtrlarni tozalash' : null,
-        onAction: c.hasFilters ? c.resetFilters : null,
-      );
-    }
-
-    return Container(
-      color: OtColors.ground,
-      child: CustomScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  OtSize.screenPad, OtSize.x16, OtSize.screenPad, OtSize.x12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${items.length} natija · ${c.district}',
-                    style: OtText.section,
-                  ),
-                  const SizedBox(height: OtSize.x12),
-                  OtSegmented<SortOrder>(
-                    options: {
-                      for (final s in SortOrder.values) s: s.label,
-                    },
-                    value: c.sort,
-                    onChanged: c.setSort,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          ListingGrid(
-            listings: items,
-            onTap: (l) => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ListingDetailScreen(listing: l),
-              ),
-            ),
-          ),
-        ],
+    return c.results.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: OtColors.accent),
       ),
+      error: (message) => EmptyState(
+        icon: Icons.cloud_off,
+        title: 'Yuklab boʻlmadi',
+        body: message,
+        actionLabel: 'Qaytadan',
+        onAction: c.search,
+      ),
+      data: (items) {
+        if (items.isEmpty) {
+          return EmptyState(
+            icon: Icons.search_off,
+            title: 'Hech narsa topilmadi',
+            body: 'Boshqa soʻz bilan qidirib koʻring yoki filtrlarni tozalang.',
+            actionLabel: c.hasFilters ? 'Filtrlarni tozalash' : null,
+            onAction: c.hasFilters ? c.resetFilters : null,
+          );
+        }
+
+        return Container(
+          color: OtColors.ground,
+          child: CustomScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(OtSize.screenPad,
+                      OtSize.x16, OtSize.screenPad, OtSize.x12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${c.total} natija · ${c.district}',
+                        style: OtText.section,
+                      ),
+                      const SizedBox(height: OtSize.x12),
+                      OtSegmented<SortOrder>(
+                        options: {
+                          for (final s in SortOrder.values) s: s.label,
+                        },
+                        value: c.sort,
+                        onChanged: c.setSort,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ListingGrid(
+                listings: items,
+                onTap: (l) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ListingDetailScreen(listingId: l.id),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

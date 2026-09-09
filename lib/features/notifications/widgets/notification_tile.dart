@@ -18,6 +18,8 @@ class NotificationTile extends StatelessWidget {
           (Icons.search, OtColors.accentPressed, OtColors.accentTint),
         NotificationKind.approved =>
           (Icons.check_rounded, OtColors.accentPressed, OtColors.accentTint),
+        NotificationKind.rejected =>
+          (Icons.error_outline, OtColors.danger, Color(0xFFFDECEC)),
         NotificationKind.priceDrop =>
           (Icons.trending_down, OtColors.warnIcon, OtColors.warnBg),
         NotificationKind.call =>

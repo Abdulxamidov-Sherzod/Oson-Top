@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../data/mock/mock_districts.dart';
 
 /// Joylashuv tanlash oynasi. Farg'ona viloyatining shahar va tumanlari.
-Future<String?> showDistrictSheet(BuildContext context, String current) {
+/// Barcha tumanlar varianti — filtrni bekor qilish uchun
+const allDistrictsLabel = 'Fargʻona viloyati';
+
+Future<String?> showDistrictSheet(
+  BuildContext context,
+  String current,
+  List<String> districts,
+) {
   return showModalBottomSheet<String>(
     context: context,
     backgroundColor: OtColors.surface,
@@ -13,18 +19,19 @@ Future<String?> showDistrictSheet(BuildContext context, String current) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(OtSize.rSheet)),
     ),
-    builder: (_) => _DistrictSheet(current: current),
+    builder: (_) => _DistrictSheet(current: current, districts: districts),
   );
 }
 
 class _DistrictSheet extends StatelessWidget {
-  const _DistrictSheet({required this.current});
+  const _DistrictSheet({required this.current, required this.districts});
 
   final String current;
+  final List<String> districts;
 
   @override
   Widget build(BuildContext context) {
-    final options = [allDistricts, ...mockDistricts];
+    final options = [allDistrictsLabel, ...districts];
 
     return SafeArea(
       top: false,

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
-import '../../data/mock/mock_districts.dart';
+import '../../shared/widgets/district_sheet.dart';
 import '../../data/models/listing.dart';
 import '../../data/recent_searches_store.dart';
+import '../../core/async_value.dart';
 import '../../data/repositories/listing_repository.dart';
+import '../../state/favorites_controller.dart';
 
 enum SortOrder {
   newest('Eng yangi'),
@@ -31,7 +35,7 @@ class PriceRange {
 }
 
 class SearchScreenController extends ChangeNotifier {
-  SearchScreenController(this._repo) {
+  SearchScreenController(this._repo, this._favorites) {
     _store.load().then((v) {
       _recent = v;
       notifyListeners();
@@ -39,11 +43,12 @@ class SearchScreenController extends ChangeNotifier {
   }
 
   final ListingRepository _repo;
+  final FavoritesController _favorites;
   final _store = RecentSearchesStore();
 
   String _query = '';
   String? _categoryId;
-  String _district = allDistricts;
+  String _district = allDistrictsLabel;
   PriceRange _price = const PriceRange();
   ListingCondition? _condition;
   SortOrder _sort = SortOrder.newest;
@@ -59,7 +64,7 @@ class SearchScreenController extends ChangeNotifier {
 
   bool get hasFilters =>
       _categoryId != null ||
-      _district != allDistricts ||
+      _district != allDistrictsLabel ||
       !_price.isEmpty ||
       _condition != null;
 
@@ -68,7 +73,7 @@ class SearchScreenController extends ChangeNotifier {
 
   int get activeFilterCount => [
         _categoryId != null,
-        _district != allDistricts,
+        _district != allDistrictsLabel,
         !_price.isEmpty,
         _condition != null,
       ].where((e) => e).length;
@@ -77,6 +82,7 @@ class SearchScreenController extends ChangeNotifier {
     if (_query == value) return;
     _query = value;
     notifyListeners();
+    _scheduleSearch();
   }
 
   void clearQuery() => setQuery('');
@@ -84,34 +90,40 @@ class SearchScreenController extends ChangeNotifier {
   void setCategory(String? id) {
     _categoryId = id;
     notifyListeners();
+    search();
   }
 
   void setDistrict(String value) {
     _district = value;
     notifyListeners();
+    search();
   }
 
   void setPrice(PriceRange value) {
     _price = value;
     notifyListeners();
+    search();
   }
 
   void setCondition(ListingCondition? value) {
     _condition = value;
     notifyListeners();
+    search();
   }
 
   void setSort(SortOrder value) {
     _sort = value;
     notifyListeners();
+    search();
   }
 
   void resetFilters() {
     _categoryId = null;
-    _district = allDistricts;
+    _district = allDistrictsLabel;
     _price = const PriceRange();
     _condition = null;
     notifyListeners();
+    search();
   }
 
   Future<void> saveQuery() async {
@@ -129,31 +141,61 @@ class SearchScreenController extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Listing> get results {
-    final q = _query.trim().toLowerCase();
-    var items = _repo.all().where((l) {
-      if (_categoryId != null && l.categoryId != _categoryId) return false;
-      if (_district != allDistricts && l.district != _district) return false;
-      if (!_price.contains(l.price)) return false;
-      if (_condition != null && l.condition != _condition) return false;
-      if (q.isEmpty) return true;
-      return '${l.title} ${l.district} ${l.description}'
-          .toLowerCase()
-          .contains(q);
-    }).toList();
+  Async<List<Listing>> results = const Async.data(<Listing>[]);
+  int total = 0;
 
-    switch (_sort) {
-      case SortOrder.newest:
-        items.sort((a, b) => b.postedAt.compareTo(a.postedAt));
-      case SortOrder.cheapest:
-        // "Kelishiladi" (0) narxi noma'lum — oxiriga tushadi
-        items.sort((a, b) => _priceKey(a).compareTo(_priceKey(b)));
-      case SortOrder.priciest:
-        items.sort((a, b) => _priceKey(b).compareTo(_priceKey(a)));
-    }
-    return items;
+  Timer? _debounce;
+
+  /// Har harfda so'rov ketmasin — 350 ms kutamiz
+  void _scheduleSearch() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 350), search);
   }
 
-  int _priceKey(Listing l) =>
-      l.price == 0 ? (_sort == SortOrder.cheapest ? 1 << 40 : -1) : l.price;
+  Future<void> search() async {
+    if (showSuggestions) {
+      results = const Async.data(<Listing>[]);
+      total = 0;
+      notifyListeners();
+      return;
+    }
+
+    results = const Async.loading();
+    notifyListeners();
+
+    try {
+      final page = await _repo.search(
+        query: _query,
+        categoryId: _categoryId,
+        district: _district == allDistrictsLabel ? null : _district,
+        priceMin: _price.min,
+        priceMax: _price.max,
+        condition: switch (_condition) {
+          ListingCondition.fresh => 'fresh',
+          ListingCondition.used => 'used',
+          _ => null,
+        },
+        sort: switch (_sort) {
+          SortOrder.newest => 'new',
+          SortOrder.cheapest => 'cheap',
+          SortOrder.priciest => 'expensive',
+        },
+        limit: 40,
+      );
+      total = page.total;
+      results = Async.data(page.items);
+      _favorites.syncFrom({
+        for (final item in page.items) item.id: _favorites.isFavorite(item.id),
+      });
+    } catch (e) {
+      results = Async.error('$e');
+    }
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
 }

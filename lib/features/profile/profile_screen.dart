@@ -5,10 +5,13 @@ import '../../core/format.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../data/mock/mock_user.dart';
+import '../../data/models/app_user.dart';
+import '../../state/auth_controller.dart';
 import '../../state/favorites_controller.dart';
 import '../../state/notifications_controller.dart';
-import '../dev/component_gallery_screen.dart';
+import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/ot_button.dart';
+import '../auth/login_screen.dart';
 import 'favorites_screen.dart';
 import 'my_listings_screen.dart';
 
@@ -17,10 +20,14 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthController>();
     final favorites = context.watch<FavoritesController>();
     final unread = context.select<NotificationsController, int>(
       (n) => n.unreadCount,
     );
+
+    final user = auth.user;
+    if (user == null) return const _SignedOutProfile();
 
     return Material(
       color: OtColors.ground,
@@ -32,15 +39,15 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Text('Profil', style: OtText.display),
             const SizedBox(height: OtSize.x20),
-            _identity(),
+            _identity(user),
             const SizedBox(height: OtSize.x16),
-            _stats(favorites.count),
+            _stats(user, favorites.count),
             const SizedBox(height: OtSize.x20),
-            _menu(context, favorites.count, unread),
+            _menu(context, user, favorites.count, unread),
             const SizedBox(height: OtSize.x20),
             Center(
               child: TextButton(
-                onPressed: () {},
+                onPressed: () => _signOut(context),
                 child: Text(
                   'Chiqish',
                   style: OtText.bodyStrong.copyWith(color: OtColors.inkMuted),
@@ -53,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _identity() {
+  Widget _identity(AppUser user) {
     return Row(
       children: [
         Container(
@@ -65,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            mockUser.initials,
+            user.initials,
             style: const TextStyle(
               fontSize: 21,
               fontWeight: FontWeight.w700,
@@ -78,14 +85,14 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(mockUser.name,
+              Text(user.name,
                   style: OtText.titleSm.copyWith(fontSize: 18)),
               const SizedBox(height: 3),
-              Text(mockUser.phone, style: OtText.metaMd),
+              Text(user.phone, style: OtText.metaMd),
               const SizedBox(height: 2),
               Text(
-                '${mockUser.district} · '
-                '${OtFormat.memberSince(mockUser.memberSince)}',
+                '${user.district} · '
+                '${OtFormat.memberSince(user.memberSince)}',
                 style: OtText.metaSm,
               ),
             ],
@@ -106,7 +113,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _stats(int saved) {
+  Widget _stats(AppUser user, int saved) {
     Widget tile(String value, String label) => Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -127,16 +134,16 @@ class ProfileScreen extends StatelessWidget {
 
     return Row(
       children: [
-        tile('${mockUser.activeListings}', 'Aktiv eʼlon'),
+        tile('${user.activeListings}', 'Aktiv eʼlon'),
         const SizedBox(width: 10),
-        tile(OtFormat.number(mockUser.totalViews), 'Koʻrishlar'),
+        tile(OtFormat.number(user.totalViews), 'Koʻrishlar'),
         const SizedBox(width: 10),
         tile('$saved', 'Saqlanganlar'),
       ],
     );
   }
 
-  Widget _menu(BuildContext context, int saved, int unread) {
+  Widget _menu(BuildContext context, AppUser user, int saved, int unread) {
     return Container(
       decoration: BoxDecoration(
         color: OtColors.surface,
@@ -148,7 +155,7 @@ class ProfileScreen extends StatelessWidget {
           _MenuTile(
             icon: Icons.inventory_2_outlined,
             label: 'Mening eʼlonlarim',
-            trailing: '${mockUser.activeListings}',
+            trailing: '${user.activeListings}',
             onTap: () => _push(context, const MyListingsScreen()),
           ),
           _MenuTile(
@@ -166,15 +173,10 @@ class ProfileScreen extends StatelessWidget {
           _MenuTile(
             icon: Icons.tune,
             label: 'Sozlamalar',
+            last: true,
             onTap: () {},
           ),
-          // 0-qismdan qolgan: poydevor tugagach olib tashlanadi
-          _MenuTile(
-            icon: Icons.widgets_outlined,
-            label: 'Komponentlar',
-            last: true,
-            onTap: () => _push(context, const ComponentGalleryScreen()),
-          ),
+
         ],
       ),
     );
@@ -182,6 +184,60 @@ class ProfileScreen extends StatelessWidget {
 
   void _push(BuildContext context, Widget screen) => Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => screen));
+
+  Future<void> _signOut(BuildContext context) async {
+    final auth = context.read<AuthController>();
+    final favorites = context.read<FavoritesController>();
+    final notifications = context.read<NotificationsController>();
+
+    await auth.signOut();
+    favorites.clear();
+    notifications.clear();
+  }
+}
+
+/// Kirmagan foydalanuvchi uchun — lentani ko'rish mumkin, profil yo'q
+class _SignedOutProfile extends StatelessWidget {
+  const _SignedOutProfile();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: OtColors.ground,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.all(OtSize.screenPad),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Profil', style: OtText.display),
+              const Spacer(),
+              const EmptyState(
+                icon: Icons.person_outline,
+                title: 'Hali kirmadingiz',
+                body: 'Eʼlon berish, saqlash va xabarlar uchun '
+                    'Telegram orqali kiring.',
+              ),
+              const SizedBox(height: OtSize.x16),
+              SizedBox(
+                width: double.infinity,
+                child: OtButton(
+                  label: 'Telegram orqali kirish',
+                  icon: Icons.send_outlined,
+                  large: true,
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  ),
+                ),
+              ),
+              const Spacer(flex: 2),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _MenuTile extends StatelessWidget {

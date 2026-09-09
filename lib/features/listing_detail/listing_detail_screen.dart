@@ -5,9 +5,10 @@ import '../../core/format.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../data/mock/mock_categories.dart';
 import '../../data/models/listing.dart';
 import '../../data/repositories/listing_repository.dart';
+import '../../data/repositories/reference_repository.dart';
+import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/listing_card.dart';
 import '../../shared/widgets/static_map_card.dart';
 import '../../state/favorites_controller.dart';
@@ -16,92 +17,146 @@ import 'widgets/photo_gallery.dart';
 import 'widgets/safety_note.dart';
 import 'widgets/seller_card.dart';
 
-class ListingDetailScreen extends StatelessWidget {
-  const ListingDetailScreen({
-    super.key,
-    required this.listing,
-    this.debugScrollTo,
-  });
+class ListingDetailScreen extends StatefulWidget {
+  const ListingDetailScreen({super.key, required this.listingId});
 
-  final Listing listing;
+  final String listingId;
 
-  /// Faqat ishlab chiqish uchun: ekranni shu joygacha aylantirib ochadi
-  /// (`--dart-define=start=detail_bottom`). Ilovada ishlatilmaydi.
-  final double? debugScrollTo;
+  @override
+  State<ListingDetailScreen> createState() => _ListingDetailScreenState();
+}
+
+class _ListingDetailScreenState extends State<ListingDetailScreen> {
+  ListingDetail? _detail;
+  List<Listing> _similar = const [];
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _error = null);
+    try {
+      final repo = context.read<ListingRepository>();
+      final detail = await repo.byId(widget.listingId);
+      if (!mounted) return;
+      setState(() => _detail = detail);
+
+      final similar = await repo.similarTo(detail.listing);
+      if (!mounted) return;
+      setState(() => _similar = similar);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = '$e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final repo = context.read<ListingRepository>();
-    final seller = repo.sellerOf(listing);
-    final similar = repo.similarTo(listing);
+    final detail = _detail;
 
     return Scaffold(
       backgroundColor: OtColors.surface,
-      body: Stack(
-        children: [
-          CustomScrollView(
-            controller: debugScrollTo == null
-                ? null
-                : ScrollController(initialScrollOffset: debugScrollTo!),
-            slivers: [
-              _appBar(context),
-              SliverToBoxAdapter(child: _head()),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: OtSize.screenPad),
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SellerCard(seller: seller),
-                      const SizedBox(height: OtSize.x12),
-                      const SafetyNote(),
-                      const SizedBox(height: OtSize.x24),
-                      Text('Tavsif', style: OtText.section),
-                      const SizedBox(height: OtSize.x8),
-                      Text(listing.description, style: OtText.body),
-                      if (listing.specs.isNotEmpty) ...[
-                        const SizedBox(height: OtSize.x24),
-                        Text('Maʼlumotlar', style: OtText.section),
-                        const SizedBox(height: OtSize.x4),
-                        _specs(),
-                      ],
-                      if (listing.hasLocation) ...[
-                        const SizedBox(height: OtSize.x24),
-                        Text('Joylashuv', style: OtText.section),
-                        const SizedBox(height: OtSize.x12),
-                        StaticMapCard(
-                          lat: listing.lat!,
-                          lng: listing.lng!,
-                          district: listing.district,
-                          address: listing.address,
-                        ),
-                        const SizedBox(height: OtSize.x8),
-                        const Text(
-                          'Xaritada taxminiy hudud koʻrsatilgan.',
-                          style: OtText.metaSm,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              if (similar.isNotEmpty)
-                SliverToBoxAdapter(child: _similar(context, similar)),
-              const SliverToBoxAdapter(child: SizedBox(height: OtSize.x24)),
-            ],
+      body: switch ((detail, _error)) {
+        (_, final String message) => _errorView(message),
+        (null, _) => const Center(
+            child: CircularProgressIndicator(color: OtColors.accent),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ContactBar(phone: seller.phone),
+        (final ListingDetail d, _) => _content(d),
+      },
+    );
+  }
+
+  Widget _errorView(String message) {
+    return SafeArea(
+      child: Stack(
+        children: [
+          EmptyState(
+            icon: Icons.cloud_off,
+            title: 'Eʼlon ochilmadi',
+            body: message,
+            actionLabel: 'Qaytadan',
+            onAction: _load,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Galereya app bar sifatida: scroll qilinganda yig'ilib, oq panelga aylanadi.
-  Widget _appBar(BuildContext context) {
+  Widget _content(ListingDetail detail) {
+    final listing = detail.listing;
+
+    return Stack(
+      children: [
+        CustomScrollView(
+          slivers: [
+            _appBar(listing),
+            SliverToBoxAdapter(child: _head(listing)),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: OtSize.screenPad),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SellerCard(seller: detail.seller),
+                    const SizedBox(height: OtSize.x12),
+                    const SafetyNote(),
+                    if (listing.description.isNotEmpty) ...[
+                      const SizedBox(height: OtSize.x24),
+                      Text('Tavsif', style: OtText.section),
+                      const SizedBox(height: OtSize.x8),
+                      Text(listing.description, style: OtText.body),
+                    ],
+                    if (listing.specs.isNotEmpty) ...[
+                      const SizedBox(height: OtSize.x24),
+                      Text('Maʼlumotlar', style: OtText.section),
+                      const SizedBox(height: OtSize.x4),
+                      _specs(listing),
+                    ],
+                    if (listing.hasLocation) ...[
+                      const SizedBox(height: OtSize.x24),
+                      Text('Joylashuv', style: OtText.section),
+                      const SizedBox(height: OtSize.x12),
+                      StaticMapCard(
+                        lat: listing.lat!,
+                        lng: listing.lng!,
+                        district: listing.district,
+                        address: listing.address,
+                      ),
+                      const SizedBox(height: OtSize.x8),
+                      const Text(
+                        'Xaritada taxminiy hudud koʻrsatilgan.',
+                        style: OtText.metaSm,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            if (_similar.isNotEmpty)
+              SliverToBoxAdapter(child: _similarSection()),
+            const SliverToBoxAdapter(child: SizedBox(height: 110)),
+          ],
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: ContactBar(listingId: listing.id),
+        ),
+      ],
+    );
+  }
+
+  Widget _appBar(Listing listing) {
     final favorites = context.watch<FavoritesController>();
     final fav = favorites.isFavorite(listing.id);
 
@@ -122,7 +177,7 @@ class ListingDetailScreen extends StatelessWidget {
         _round(
           fav ? Icons.favorite : Icons.favorite_border,
           color: fav ? OtColors.accent : OtColors.ink,
-          onTap: () => favorites.toggle(listing.id),
+          onTap: () => _toggleFavorite(listing.id),
         ),
         const SizedBox(width: 8),
         _round(Icons.ios_share, onTap: () {}),
@@ -130,14 +185,27 @@ class ListingDetailScreen extends StatelessWidget {
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: PhotoGallery(
-          count: listing.photoCount,
+          urls: listing.photoUrls,
           label: listing.photoLabel,
         ),
       ),
     );
   }
 
-  Widget _head() {
+  Future<void> _toggleFavorite(String id) async {
+    try {
+      await context.read<FavoritesController>().toggle(id);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Saqlash uchun avval kiring')),
+      );
+    }
+  }
+
+  Widget _head(Listing listing) {
+    final reference = context.read<ReferenceRepository>();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           OtSize.screenPad, 18, OtSize.screenPad, OtSize.x12),
@@ -152,19 +220,20 @@ class ListingDetailScreen extends StatelessWidget {
             spacing: 7,
             runSpacing: 7,
             children: [
-              _tag(categoryLabel(listing.categoryId), accent: true),
+              _tag(reference.labelOf(listing.categoryId), accent: true),
               if (listing.condition != ListingCondition.none)
                 _tag(listing.condition.label),
             ],
           ),
           const SizedBox(height: OtSize.x12),
-          _metaRow(),
+          _metaRow(listing),
         ],
       ),
     );
   }
 
   Widget _tag(String label, {bool accent = false}) {
+    if (label.isEmpty) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -185,7 +254,7 @@ class ListingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _metaRow() {
+  Widget _metaRow(Listing listing) {
     final place = listing.address == null
         ? listing.district
         : '${listing.district}, ${listing.address}';
@@ -209,7 +278,7 @@ class ListingDetailScreen extends StatelessWidget {
         ],
       );
 
-  Widget _specs() {
+  Widget _specs(Listing listing) {
     return Column(
       children: [
         for (var i = 0; i < listing.specs.length; i++)
@@ -241,7 +310,7 @@ class ListingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _similar(BuildContext context, List<Listing> items) {
+  Widget _similarSection() {
     final favorites = context.watch<FavoritesController>();
 
     return Column(
@@ -258,25 +327,24 @@ class ListingDetailScreen extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: OtSize.screenPad),
-            itemCount: items.length,
+            itemCount: _similar.length,
             separatorBuilder: (_, _) => const SizedBox(width: 14),
             itemBuilder: (_, i) => SizedBox(
               width: 150,
               child: ListingCard(
-                listing: items[i],
-                isFavorite: favorites.isFavorite(items[i].id),
-                onFavoriteTap: () => favorites.toggle(items[i].id),
+                listing: _similar[i],
+                isFavorite: favorites.isFavorite(_similar[i].id),
+                onFavoriteTap: () => _toggleFavorite(_similar[i].id),
                 onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (_) => ListingDetailScreen(listing: items[i]),
+                    builder: (_) =>
+                        ListingDetailScreen(listingId: _similar[i].id),
                   ),
                 ),
               ),
             ),
           ),
         ),
-        // Pastdagi bogʻlanish paneli ostida qolib ketmasin
-        const SizedBox(height: 96),
       ],
     );
   }

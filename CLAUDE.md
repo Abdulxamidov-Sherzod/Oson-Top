@@ -8,11 +8,12 @@ Farg'ona viloyati uchun e'lonlar ilovasi (OLX'ga o'xshash, soddaroq). Flutter, m
 
 ## Hozirgi holat
 
-**Frontend tayyor.** Bosh sahifa, qidiruv, e'lon sahifasi, e'lon berish (2 qadam),
-bildirishnomalar, profil, saqlanganlar — hammasi ishlaydi.
+**Frontend va backend tayyor va bir-biriga ulangan.** Mock ma'lumot yo'q —
+hamma narsa serverdan keladi.
 
-Backend YO'Q. Hamma ma'lumot `lib/data/mock/` ichidan keladi. Ro'yxatdan o'tish ham
-yo'q — foydalanuvchi mock (`mock_user.dart`).
+Backend: `backend/` (FastAPI + PostgreSQL). O'z README'si bor.
+Kirish **Telegram bot orqali** — SMS yo'q. Bot foydalanuvchidan tasdiqlangan
+telefon raqamini so'raydi, shuning uchun "✓ Raqam tasdiqlangan" haqiqiy.
 
 **Tugallanmagan bitta joy:** haqiqiy Yandex MapKit ulanmagan. E'lon sahifasidagi
 xarita — `StaticMapCard`, ya'ni chizma. E'lon berish formasidagi "Xaritada belgilash"
@@ -74,6 +75,11 @@ lib/
 ## Kelishuvlar
 
 - **State:** `provider` + `ChangeNotifier`. Boshqa kutubxona qo'shmang.
+- **Server bilan aloqa** faqat `lib/data/repositories/` orqali. Ekranlar
+  `dio` ni to'g'ridan-to'g'ri ishlatmaydi.
+- **Yuklanadigan ma'lumot** `Async<T>` bilan uzatiladi (`lib/core/async_value.dart`) —
+  uchala holat ham (yuklanmoqda / xato / tayyor) ekranda ko'rsatilishi shart.
+- **Token** `flutter_secure_storage` da. Eskirganda `ApiClient` o'zi yangilaydi.
 - **Nom berish:** fayllar `snake_case.dart`, klasslar `PascalCase`.
   Umumiy widgetlar `Ot` prefiksi bilan: `OtButton`, `OtChip`, `OtTextField`.
   Ekranga xos widgetlar prefiksiz: `HomeHeader`, `SellerCard`.
@@ -98,6 +104,21 @@ flutter test                     # testlar
 open -a Simulator                # iOS simulyatorini ochish
 ```
 
+### Server manzili
+
+Standart: `http://127.0.0.1:8000` (iOS simulyatori uchun). Boshqasi kerak bo'lsa:
+
+```bash
+flutter run --dart-define=api=http://192.168.1.50:8000   # haqiqiy telefon
+flutter run --dart-define=api=http://10.0.2.2:8000       # Android emulyatori
+```
+
+Ilova ishlashi uchun backend ishlab turishi shart:
+
+```bash
+cd backend && ./.venv/bin/uvicorn app.main:app --reload
+```
+
 ### To'g'ridan-to'g'ri kerakli ekranni ochish
 
 Simulyatorda bosib yurmaslik uchun `lib/app.dart` da debug kirish nuqtasi bor:
@@ -116,7 +137,8 @@ relizga chiqishdan oldin olib tashlanadi.
 
 ## Testlar
 
-`test/` ichida 20 ta test. Widget testlarda ekran o'lchamini shunday bering:
+`test/` ichida 13 ta test (formatlash va server javobini o'qish).
+Backend testlari: `cd backend && ./.venv/bin/pytest` — 25 ta. Widget testlarda ekran o'lchamini shunday bering:
 
 ```dart
 tester.view.physicalSize = const Size(390, 844);
@@ -127,7 +149,12 @@ addTearDown(tester.view.reset);
 `setSurfaceSize` ishlatmang — u fizik o'lchamni qo'yadi va logik ekran 3 barobar
 kichrayib ketadi.
 
-## Ish rejasi
+## Qolgan ish
 
-To'liq reja: `docs/ish-rejasi.html`. Frontend qismlari (0–4, 6, 7) bajarilgan.
-Qolgani: 5-qism (Yandex MapKit) va backend.
+1. **Yandex MapKit** — hozir xarita chizma (`static_map_card.dart`), e'lon berishda
+   nuqta qo'lda qo'yiladi. API kalit kerak.
+2. **Serverga chiqarish** — backend hozir faqat shu Mac'da ishlaydi.
+3. **Moderatsiya paneli** — API tayyor, veb-interfeys yo'q.
+4. **Push bildirishnoma** — hozir ilova ochilganda so'rab oladi.
+
+To'liq reja: `docs/ish-rejasi.html`.

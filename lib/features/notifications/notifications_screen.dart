@@ -9,8 +9,21 @@ import '../../state/notifications_controller.dart';
 import 'widgets/notification_tile.dart';
 
 /// Bosh sahifadagi qo'ng'iroqchadan ochiladi — tab emas.
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<NotificationsController>().load(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +38,19 @@ class NotificationsScreen extends StatelessWidget {
           children: [
             _header(context, controller),
             Expanded(
-              child: items.isEmpty
+              child: controller.isLoading && items.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(color: OtColors.accent),
+                    )
+                  : controller.error != null && items.isEmpty
+                  ? EmptyState(
+                      icon: Icons.cloud_off,
+                      title: 'Yuklab boʻlmadi',
+                      body: controller.error!,
+                      actionLabel: 'Qaytadan',
+                      onAction: controller.load,
+                    )
+                  : items.isEmpty
                   ? const EmptyState(
                       icon: Icons.notifications_none,
                       title: 'Bildirishnomalar yoʻq',

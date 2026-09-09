@@ -8,14 +8,17 @@ import '../../../shared/widgets/ot_photo_placeholder.dart';
 class PhotoGallery extends StatefulWidget {
   const PhotoGallery({
     super.key,
-    required this.count,
+    required this.urls,
     required this.label,
     this.height = 330,
   });
 
-  final int count;
+  /// Bo'sh bo'lsa placeholder chiziladi
+  final List<String> urls;
   final String label;
   final double height;
+
+  int get _count => urls.isEmpty ? 1 : urls.length;
 
   @override
   State<PhotoGallery> createState() => _PhotoGalleryState();
@@ -39,15 +42,29 @@ class _PhotoGalleryState extends State<PhotoGallery> {
         children: [
           PageView.builder(
             controller: _pager,
-            itemCount: widget.count,
+            itemCount: widget._count,
             onPageChanged: (i) => setState(() => _index = i),
-            itemBuilder: (_, i) => OtPhotoPlaceholder(
-              large: true,
-              label: '${i + 1} / ${widget.count} · ${widget.label}',
-              labelAlignment: Alignment.center,
-            ),
+            itemBuilder: (_, i) => widget.urls.isEmpty
+                ? OtPhotoPlaceholder(
+                    large: true,
+                    label: widget.label,
+                    labelAlignment: Alignment.center,
+                  )
+                : Image.network(
+                    widget.urls[i],
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) =>
+                        progress == null
+                            ? child
+                            : const ColoredBox(color: OtColors.galleryStripeA),
+                    errorBuilder: (_, _, _) => OtPhotoPlaceholder(
+                      large: true,
+                      label: widget.label,
+                      labelAlignment: Alignment.center,
+                    ),
+                  ),
           ),
-          if (widget.count > 1)
+          if (widget._count > 1)
             Positioned(
               left: 0,
               right: 0,
@@ -55,7 +72,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 0; i < widget.count; i++) _dot(i == _index),
+                  for (var i = 0; i < widget._count; i++) _dot(i == _index),
                 ],
               ),
             ),

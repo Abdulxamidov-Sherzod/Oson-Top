@@ -1,3 +1,5 @@
+import '../../core/env.dart';
+
 /// E'lon holati — Yangi / Ishlatilgan. Ba'zi kategoriyalarda (ish, xizmat)
 /// mos kelmaydi, shuning uchun `none` bor.
 enum ListingCondition {
@@ -13,6 +15,7 @@ enum ListingCondition {
 enum ListingStatus {
   active('Aktiv'),
   moderation('Moderatsiyada'),
+  rejected('Qaytarilgan'),
   expired('Muddati tugagan');
 
   const ListingStatus(this.label);
@@ -42,6 +45,8 @@ class Listing {
     this.specs = const [],
     this.photoCount = 1,
     this.photoLabel = 'rasm',
+    this.photoUrls = const [],
+    this.thumbUrl,
     this.address,
     this.lat,
     this.lng,
@@ -78,11 +83,80 @@ class Listing {
   final ListingCondition condition;
   final ListingStatus status;
 
-  /// Rasmlar soni. Hozircha haqiqiy rasm yo'q — placeholder chiziladi.
+  /// Rasmlar soni. Serverdan kelganda `photoUrls.length` ga teng.
   final int photoCount;
 
-  /// Placeholder ustidagi yozuv, masalan "telefon rasmi"
+  /// Rasm hali yo'q bo'lganda placeholder ustidagi yozuv
   final String photoLabel;
 
+  /// To'liq o'lchamdagi rasmlar — galereya uchun
+  final List<String> photoUrls;
+
+  /// Lentadagi karta uchun kichik rasm
+  final String? thumbUrl;
+
+  bool get hasPhotos => photoUrls.isNotEmpty || thumbUrl != null;
+
   bool get isNegotiable => price == 0;
+
+  /// Lentadagi karta uchun — serverdan kam maydon keladi
+  factory Listing.fromCardJson(Map<String, dynamic> json) => Listing(
+        id: '${json['id']}',
+        title: json['title'] as String,
+        price: json['price'] as int,
+        priceUnit: json['price_unit'] as String?,
+        categoryId: json['category_id'] as String,
+        district: json['district'] as String,
+        description: '',
+        sellerId: '',
+        postedAt: DateTime.parse(json['created_at'] as String).toLocal(),
+        views: 0,
+        thumbUrl: _media(json['photo'] as String?),
+        photoCount: json['photo'] == null ? 0 : 1,
+      );
+
+  factory Listing.fromDetailJson(Map<String, dynamic> json) {
+    final photos = (json['photos'] as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>();
+    return Listing(
+      id: '${json['id']}',
+      title: json['title'] as String,
+      price: json['price'] as int,
+      priceUnit: json['price_unit'] as String?,
+      categoryId: json['category_id'] as String,
+      district: json['district'] as String,
+      address: json['address'] as String?,
+      lat: (json['lat'] as num?)?.toDouble(),
+      lng: (json['lng'] as num?)?.toDouble(),
+      description: json['description'] as String? ?? '',
+      sellerId: '${(json['seller'] as Map<String, dynamic>)['id']}',
+      postedAt: DateTime.parse(json['created_at'] as String).toLocal(),
+      views: json['views'] as int? ?? 0,
+      condition: _condition(json['condition'] as String?),
+      status: _status(json['status'] as String?),
+      specs: (json['specs'] as List<dynamic>? ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map((s) => ListingSpec(s['label'] as String, s['value'] as String))
+          .toList(),
+      photoUrls: photos.map((p) => _media(p['url'] as String)!).toList(),
+      thumbUrl: photos.isEmpty ? null : _media(photos.first['thumb_url'] as String),
+      photoCount: photos.length,
+    );
+  }
+
+  static String? _media(String? path) =>
+      path == null ? null : Env.media(path);
+
+  static ListingCondition _condition(String? raw) => switch (raw) {
+        'fresh' => ListingCondition.fresh,
+        'used' => ListingCondition.used,
+        _ => ListingCondition.none,
+      };
+
+  static ListingStatus _status(String? raw) => switch (raw) {
+        'active' => ListingStatus.active,
+        'moderation' => ListingStatus.moderation,
+        'rejected' => ListingStatus.rejected,
+        _ => ListingStatus.expired,
+      };
 }

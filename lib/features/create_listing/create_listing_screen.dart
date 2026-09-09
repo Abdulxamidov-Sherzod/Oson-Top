@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../data/mock/mock_categories.dart';
+import '../../data/repositories/create_listing_repository.dart';
+import '../../data/repositories/reference_repository.dart';
 import '../../data/models/listing.dart';
-import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/district_sheet.dart';
 import '../../shared/widgets/ot_button.dart';
 import '../../shared/widgets/ot_segmented.dart';
@@ -27,7 +27,10 @@ class CreateListingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) => CreateListingForm(ctx.read<ListingRepository>()),
+      create: (ctx) => CreateListingForm(
+        ctx.read<CreateListingRepository>(),
+        districts: ctx.read<ReferenceRepository>().cachedDistricts,
+      ),
       child: _FormView(onClose: onClose),
     );
   }
@@ -44,13 +47,11 @@ class _FormView extends StatefulWidget {
 class _FormViewState extends State<_FormView> {
   final _title = TextEditingController();
   final _description = TextEditingController();
-  final _phone = TextEditingController(text: '+998 ');
 
   @override
   void dispose() {
     _title.dispose();
     _description.dispose();
-    _phone.dispose();
     super.dispose();
   }
 
@@ -74,8 +75,9 @@ class _FormViewState extends State<_FormView> {
                     photos: form.photos,
                     maxPhotos: CreateListingForm.maxPhotos,
                     error: form.photosError,
-                    onAdd: form.addPhoto,
+                    onAdd: form.addPhotos,
                     onRemove: form.removePhoto,
+                    onRetry: form.retryPhoto,
                   ),
                   const SizedBox(height: 18),
                   OtTextField(
@@ -93,7 +95,9 @@ class _FormViewState extends State<_FormView> {
                       Expanded(
                         child: PickerField(
                           label: 'Kategoriya',
-                          value: categoryLabel(form.categoryId),
+                          value: context
+                              .read<ReferenceRepository>()
+                              .labelOf(form.categoryId),
                           onTap: () async {
                             final picked = await showCategoryFilter(
                                 context, form.categoryId);
@@ -130,16 +134,19 @@ class _FormViewState extends State<_FormView> {
                   LocationField(
                     district: form.district,
                     address: form.address,
-                    lat: form.address == null ? null : 40.3894,
-                    lng: form.address == null ? null : 71.7864,
+                    lat: form.lat,
+                    lng: form.lng,
                     onDistrictTap: () async {
-                      final picked =
-                          await showDistrictSheet(context, form.district);
+                      final picked = await showDistrictSheet(
+                        context,
+                        form.district,
+                        context.read<ReferenceRepository>().cachedDistricts,
+                      );
                       if (!mounted || picked == null) return;
                       form.setDistrict(picked);
                     },
                     onMapTap: () => _openMapPicker(form),
-                    onClear: () => form.setAddress(null),
+                    onClear: () => form.setPoint(),
                   ),
                   const SizedBox(height: 18),
                   OtTextField(
@@ -153,21 +160,39 @@ class _FormViewState extends State<_FormView> {
                     onChanged: form.setDescription,
                   ),
                   const SizedBox(height: 18),
-                  OtTextField(
-                    label: 'Aloqa uchun telefon',
-                    controller: _phone,
-                    keyboardType: TextInputType.phone,
-                    helper: 'Raqam eʼlonda yopiq turadi — xaridor '
-                        '«Raqamni koʻrsatish» ni bosgandan keyin ochiladi.',
-                    error: form.phoneError,
-                    onChanged: form.setPhone,
-                  ),
+                  _phoneNote(),
                 ],
               ),
             ),
             _footer(form),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Raqam Telegram orqali tasdiqlangan — qayta so'ramaymiz
+  Widget _phoneNote() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+      decoration: BoxDecoration(
+        color: OtColors.fieldSoft,
+        borderRadius: BorderRadius.circular(OtSize.rMd),
+        border: Border.all(color: OtColors.line),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.verified_outlined,
+              size: 17, color: OtColors.accent),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Aloqa uchun Telegramda tasdiqlagan raqamingiz ishlatiladi. '
+              'U eʼlonda yopiq turadi.',
+              style: OtText.metaSm.copyWith(height: 1.45),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -257,13 +282,21 @@ class _FormViewState extends State<_FormView> {
     );
   }
 
-  /// 5-qismda haqiqiy Yandex xaritasi ulanadi. Hozircha nuqtani belgilangan
-  /// deb hisoblaymiz — forma oqimi to'liq sinalsin.
+  /// Haqiqiy Yandex xaritasi keyingi bosqichda ulanadi. Hozircha tuman
+  /// markazini nuqta sifatida qo'yamiz — oqim to'liq ishlab tursin.
   void _openMapPicker(CreateListingForm form) {
-    form.setAddress(form.address == null ? 'Toshloq koʻchasi 12' : null);
+    if (form.lat != null) {
+      form.setPoint();
+      return;
+    }
+    form.setPoint(
+      address: 'Markaz',
+      lat: 40.3894,
+      lng: 71.7864,
+    );
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Xarita 5-qismda ulanadi'),
+        content: Text('Xarita tanlash keyingi bosqichda ulanadi'),
         duration: Duration(seconds: 2),
       ),
     );

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../data/mock/mock_categories.dart';
+import '../../data/repositories/reference_repository.dart';
 import '../../shared/widgets/listing_card.dart';
 import '../../shared/widgets/ot_button.dart';
 import 'create_listing_form.dart';
@@ -22,6 +22,18 @@ class ReviewStep extends StatefulWidget {
 
 class _ReviewStepState extends State<ReviewStep> {
   bool _posted = false;
+
+  Future<void> _submit(CreateListingForm form) async {
+    final ok = await form.submit();
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _posted = true);
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(form.submitError ?? 'Joylab boʻlmadi')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +113,7 @@ class _ReviewStepState extends State<ReviewStep> {
 
   Widget _summary(CreateListingForm form) {
     final rows = <(String, String)>[
-      ('Kategoriya', categoryLabel(form.categoryId)),
+      ('Kategoriya', context.read<ReferenceRepository>().labelOf(form.categoryId)),
       ('Holati', form.condition.label),
       (
         'Joylashuv',
@@ -111,7 +123,7 @@ class _ReviewStepState extends State<ReviewStep> {
       ),
       if (form.description.trim().isNotEmpty)
         ('Tavsif', form.description.trim()),
-      ('Telefon', form.phone.trim()),
+
     ];
 
     return Container(
@@ -258,12 +270,9 @@ class _ReviewStepState extends State<ReviewStep> {
           Expanded(
             flex: 16,
             child: OtButton(
-              label: 'Tasdiqlab joylash',
+              label: form.submitting ? 'Joylanmoqda…' : 'Tasdiqlab joylash',
               large: true,
-              onPressed: () {
-                form.submit();
-                setState(() => _posted = true);
-              },
+              onPressed: form.submitting ? null : () => _submit(form),
             ),
           ),
         ],

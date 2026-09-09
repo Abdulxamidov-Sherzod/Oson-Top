@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../create_listing_form.dart';
+
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
@@ -14,13 +16,15 @@ class PhotoPicker extends StatelessWidget {
     required this.photos,
     required this.onAdd,
     required this.onRemove,
+    required this.onRetry,
     required this.maxPhotos,
     this.error,
   });
 
-  final List<XFile> photos;
+  final List<PickedPhoto> photos;
   final ValueChanged<ImageSource> onAdd;
   final ValueChanged<int> onRemove;
+  final ValueChanged<int> onRetry;
   final int maxPhotos;
   final String? error;
 
@@ -113,6 +117,7 @@ class PhotoPicker extends StatelessWidget {
   }
 
   Widget _thumb(int i) {
+    final photo = photos[i];
     return SizedBox(
       width: 86,
       height: 86,
@@ -121,14 +126,51 @@ class PhotoPicker extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(OtSize.rCard),
             child: Image.file(
-              File(photos[i].path),
+              File(photo.file.path),
               width: 86,
               height: 86,
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => Container(color: OtColors.field),
             ),
           ),
-          if (i == 0)
+          // Yuklanmoqda — ustiga xira parda va aylana
+          if (photo.uploading)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: OtColors.ink.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(OtSize.rCard),
+                ),
+                child: const Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: OtColors.surface,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          // Yuklanmadi — bosib qayta urinish mumkin
+          else if (photo.error != null)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () => onRetry(i),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: OtColors.danger.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(OtSize.rCard),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.refresh,
+                        size: 22, color: OtColors.surface),
+                  ),
+                ),
+              ),
+            ),
+          if (i == 0 && !photo.uploading && photo.error == null)
             Positioned(
               left: 4,
               bottom: 4,

@@ -1,42 +1,92 @@
 import 'package:flutter/foundation.dart';
-import '../../data/mock/mock_districts.dart';
+
+import '../../core/async_value.dart';
 import '../../data/models/listing.dart';
 import '../../data/repositories/listing_repository.dart';
+import '../../state/favorites_controller.dart';
 
-/// Bosh sahifaning holati: tanlangan kategoriya va joylashuv.
+/// Barcha tumanlar — joylashuv tugmasining boshlang'ich qiymati
+const allDistricts = 'Fargʻona viloyati';
+
 class HomeController extends ChangeNotifier {
-  HomeController(this._repo);
+  HomeController(this._repo, this._favorites) {
+    load();
+  }
 
   final ListingRepository _repo;
+  final FavoritesController _favorites;
 
-  /// null — barcha kategoriyalar
-  String? _categoryId;
-  String _district = allDistricts;
+  static const _pageSize = 20;
 
-  String? get categoryId => _categoryId;
-  String get district => _district;
-  bool get isFiltered => _categoryId != null || _district != allDistricts;
+  Async<List<Listing>> state = const Async.loading();
+  String? categoryId;
+  String district = allDistricts;
+  int total = 0;
+
+  bool _loadingMore = false;
+  bool _hasMore = false;
+
+  bool get isLoadingMore => _loadingMore;
+  bool get hasMore => _hasMore;
+
+  Future<void> load() async {
+    state = const Async.loading();
+    notifyListeners();
+    await _fetch(reset: true);
+  }
+
+  Future<void> refresh() => _fetch(reset: true);
+
+  Future<void> loadMore() async {
+    if (_loadingMore || !_hasMore) return;
+    _loadingMore = true;
+    notifyListeners();
+    await _fetch(reset: false);
+  }
+
+  Future<void> _fetch({required bool reset}) async {
+    final current = state.valueOrNull ?? const <Listing>[];
+    try {
+      final page = await _repo.search(
+        categoryId: categoryId,
+        district: district == allDistricts ? null : district,
+        limit: _pageSize,
+        offset: reset ? 0 : current.length,
+      );
+
+      final items = reset ? page.items : [...current, ...page.items];
+      total = page.total;
+      _hasMore = page.hasMore;
+      state = Async.data(items);
+
+      // Serverdan kelgan "saqlangan" belgilarini umumiy holatga ko'chiramiz
+      _favorites.syncFrom({
+        for (final item in page.items) item.id: _favorites.isFavorite(item.id),
+      });
+    } catch (e) {
+      // Qo'shimcha sahifa yuklanmasa, borini saqlab qolamiz
+      if (reset) {
+        state = Async.error('$e');
+      }
+    }
+    _loadingMore = false;
+    notifyListeners();
+  }
 
   void selectCategory(String? id) {
-    // Tanlangan kategoriyani qayta bosish — filtrni bekor qiladi
-    _categoryId = _categoryId == id ? null : id;
-    notifyListeners();
+    categoryId = categoryId == id ? null : id;
+    load();
   }
 
   void selectDistrict(String value) {
-    if (_district == value) return;
-    _district = value;
-    notifyListeners();
+    if (district == value) return;
+    district = value;
+    load();
   }
 
-  List<Listing> get listings {
-    var items = _repo.all();
-    if (_categoryId != null) {
-      items = items.where((l) => l.categoryId == _categoryId).toList();
-    }
-    if (_district != allDistricts) {
-      items = items.where((l) => l.district == _district).toList();
-    }
-    return items;
+  void resetFilters() {
+    categoryId = null;
+    district = allDistricts;
+    load();
   }
 }

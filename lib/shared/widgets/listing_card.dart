@@ -74,7 +74,18 @@ class ListingCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          OtPhotoPlaceholder(label: listing.photoLabel),
+          if (listing.thumbUrl != null)
+            Image.network(
+              listing.thumbUrl!,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) => progress == null
+                  ? child
+                  : const ColoredBox(color: OtColors.field),
+              errorBuilder: (_, _, _) =>
+                  OtPhotoPlaceholder(label: listing.photoLabel),
+            )
+          else
+            OtPhotoPlaceholder(label: listing.photoLabel),
           if (onFavoriteTap != null)
             Positioned(top: 8, right: 8, child: _favButton()),
         ],

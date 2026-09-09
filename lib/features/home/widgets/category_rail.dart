@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
-import '../../../data/mock/mock_categories.dart';
 import '../../../data/models/category.dart';
 
 /// Gorizontal kategoriya ro'yxati. Tanlangan kategoriyani qayta bosish
@@ -9,10 +8,12 @@ import '../../../data/models/category.dart';
 class CategoryRail extends StatelessWidget {
   const CategoryRail({
     super.key,
+    required this.categories,
     required this.selectedId,
     required this.onSelect,
   });
 
+  final List<Category> categories;
   final String? selectedId;
   final ValueChanged<String> onSelect;
 
@@ -23,9 +24,9 @@ class CategoryRail extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: OtSize.screenPad),
-        itemCount: mockCategories.length,
+        itemCount: categories.length,
         separatorBuilder: (_, _) => const SizedBox(width: 14),
-        itemBuilder: (_, i) => _item(mockCategories[i]),
+        itemBuilder: (_, i) => _item(categories[i]),
       ),
     );
   }

@@ -1,70 +1,102 @@
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../data/mock/mock_districts.dart';
 import '../../data/models/listing.dart';
-import '../../data/repositories/listing_repository.dart';
+import '../../data/repositories/create_listing_repository.dart';
 
-/// E'lon berish formasining holati va tekshiruvi.
+/// Bitta tanlangan rasm: fayl + serverdagi id (yuklangandan keyin).
+class PickedPhoto {
+  PickedPhoto(this.file);
+
+  final XFile file;
+  int? remoteId;
+  bool uploading = true;
+  String? error;
+
+  bool get isReady => remoteId != null;
+}
+
+/// E'lon berish formasining holati, tekshiruvi va serverga yuborilishi.
 class CreateListingForm extends ChangeNotifier {
-  CreateListingForm(this._repo);
+  CreateListingForm(this._repo, {required this.districts});
 
-  final ListingRepository _repo;
+  final CreateListingRepository _repo;
+  final List<String> districts;
+
   static const maxPhotos = 8;
 
-  final photos = <XFile>[];
+  final photos = <PickedPhoto>[];
   String title = '';
   String categoryId = 'phones';
   ListingCondition condition = ListingCondition.used;
   int? price;
   bool negotiable = false;
-  String district = mockDistricts.first;
-
-  /// Xaritada belgilangan aniq nuqta. Ixtiyoriy — 5-qismda to'ldiriladi.
+  late String district = districts.isEmpty ? '' : districts.first;
   String? address;
-
+  double? lat;
+  double? lng;
   String description = '';
-  String phone = '+998 ';
+  String phone = '';
 
   bool _submitted = false;
+  bool submitting = false;
+  String? submitError;
 
   // ---- tekshiruv ----
-  // Xato matnlari faqat "Davom etish" bosilgandan keyin ko'rinadi —
-  // hali to'ldirmagan odamni qizil bilan qo'rqitmaymiz.
+  // Xato matnlari faqat "Davom etish" bosilgandan keyin ko'rinadi
 
-  String? get photosError =>
-      _submitted && photos.isEmpty ? 'Kamida bitta rasm qoʻshing' : null;
+  String? get photosError {
+    if (!_submitted) return null;
+    if (photos.isEmpty) return 'Kamida bitta rasm qoʻshing';
+    if (photos.any((p) => p.uploading)) return 'Rasmlar yuklanmoqda, kuting';
+    if (photos.every((p) => !p.isReady)) return 'Rasm yuklanmadi, qaytadan urining';
+    return null;
+  }
 
   String? get titleError =>
-      _submitted && title.trim().isEmpty ? 'Sarlavhani yozing' : null;
+      _submitted && title.trim().length < 3 ? 'Sarlavhani yozing' : null;
 
   String? get priceError => _submitted && !negotiable && (price ?? 0) <= 0
       ? 'Narxni kiriting yoki «kelishiladi» ni belgilang'
       : null;
 
-  String? get phoneError =>
-      _submitted && _phoneDigits.length < 12 ? 'Toʻliq raqam kiriting' : null;
-
-  String get _phoneDigits => phone.replaceAll(RegExp(r'\D'), '');
-
   bool get isValid =>
-      photos.isNotEmpty &&
-      title.trim().isNotEmpty &&
-      (negotiable || (price ?? 0) > 0) &&
-      _phoneDigits.length >= 12;
+      photos.any((p) => p.isReady) &&
+      !photos.any((p) => p.uploading) &&
+      title.trim().length >= 3 &&
+      (negotiable || (price ?? 0) > 0);
 
-  // ---- o'zgartirish ----
+  // ---- rasmlar ----
 
-  Future<void> addPhoto(ImageSource source) async {
-    if (photos.length >= maxPhotos) return;
+  Future<void> addPhotos(ImageSource source) async {
     final picker = ImagePicker();
+    final picked = <XFile>[];
+
     if (source == ImageSource.gallery) {
-      final picked = await picker.pickMultiImage(limit: maxPhotos - photos.length);
-      photos.addAll(picked);
+      picked.addAll(
+        await picker.pickMultiImage(limit: maxPhotos - photos.length),
+      );
     } else {
       final shot = await picker.pickImage(source: source);
-      if (shot != null) photos.add(shot);
+      if (shot != null) picked.add(shot);
     }
+
+    for (final file in picked.take(maxPhotos - photos.length)) {
+      final photo = PickedPhoto(file);
+      photos.add(photo);
+      notifyListeners();
+      _upload(photo);
+    }
+  }
+
+  Future<void> _upload(PickedPhoto photo) async {
+    try {
+      photo.remoteId = await _repo.uploadPhoto(photo.file);
+      photo.error = null;
+    } catch (e) {
+      photo.error = '$e';
+    }
+    photo.uploading = false;
     notifyListeners();
   }
 
@@ -72,6 +104,17 @@ class CreateListingForm extends ChangeNotifier {
     photos.removeAt(index);
     notifyListeners();
   }
+
+  void retryPhoto(int index) {
+    final photo = photos[index];
+    photo
+      ..uploading = true
+      ..error = null;
+    notifyListeners();
+    _upload(photo);
+  }
+
+  // ---- maydonlar ----
 
   void setTitle(String v) {
     title = v;
@@ -104,26 +147,22 @@ class CreateListingForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAddress(String? v) {
-    address = v;
+  void setPoint({String? address, double? lat, double? lng}) {
+    this.address = address;
+    this.lat = lat;
+    this.lng = lng;
     notifyListeners();
   }
 
   void setDescription(String v) => description = v;
 
-  void setPhone(String v) {
-    phone = v;
-    if (_submitted) notifyListeners();
-  }
-
-  /// "Davom etish" bosilganda chaqiriladi. Xatolar bo'lsa false qaytadi.
   bool validate() {
     _submitted = true;
     notifyListeners();
     return isValid;
   }
 
-  /// 2-qadamdagi ko'rinish uchun — hali saqlanmagan e'lon
+  /// 2-qadamdagi karta ko'rinishi uchun — hali saqlanmagan e'lon
   Listing preview() => Listing(
         id: 'draft',
         title: title.trim(),
@@ -131,34 +170,50 @@ class CreateListingForm extends ChangeNotifier {
         categoryId: categoryId,
         district: district,
         address: address,
+        lat: lat,
+        lng: lng,
         description: description.trim(),
-        sellerId: 's1',
+        sellerId: '',
         postedAt: DateTime.now(),
         views: 0,
         condition: condition,
         photoCount: photos.length,
-        photoLabel: 'rasm',
         status: ListingStatus.moderation,
       );
 
-  /// Tasdiqlab joylash. Backend yo'q — hozircha mock ro'yxatga qo'shiladi.
-  void submit() {
-    final draft = preview();
-    _repo.add(Listing(
-      id: 'new_${DateTime.now().millisecondsSinceEpoch}',
-      title: draft.title,
-      price: draft.price,
-      categoryId: draft.categoryId,
-      district: draft.district,
-      address: draft.address,
-      description: draft.description,
-      sellerId: draft.sellerId,
-      postedAt: draft.postedAt,
-      views: 0,
-      condition: draft.condition,
-      photoCount: draft.photoCount,
-      photoLabel: draft.photoLabel,
-      status: ListingStatus.moderation,
-    ));
+  Future<bool> submit() async {
+    submitting = true;
+    submitError = null;
+    notifyListeners();
+
+    try {
+      await _repo.create(
+        title: title.trim(),
+        description: description.trim(),
+        price: negotiable ? 0 : (price ?? 0),
+        categoryId: categoryId,
+        condition: switch (condition) {
+          ListingCondition.fresh => 'fresh',
+          ListingCondition.used => 'used',
+          ListingCondition.none => 'none',
+        },
+        district: district,
+        address: address,
+        lat: lat,
+        lng: lng,
+        photoIds: [
+          for (final p in photos)
+            if (p.remoteId != null) p.remoteId!,
+        ],
+      );
+      submitting = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      submitError = '$e';
+      submitting = false;
+      notifyListeners();
+      return false;
+    }
   }
 }

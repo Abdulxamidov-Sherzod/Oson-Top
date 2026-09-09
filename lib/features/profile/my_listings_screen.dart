@@ -5,6 +5,7 @@ import '../../core/format.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/async_value.dart';
 import '../../data/models/listing.dart';
 import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/empty_state.dart';
@@ -13,19 +14,36 @@ import '../listing_detail/listing_detail_screen.dart';
 
 /// Mening e'lonlarim. Foydalanuvchi mock — hozircha `s1` sotuvchining
 /// e'lonlari ko'rsatiladi. Backend qo'shilganda haqiqiy egasi bo'yicha filtrlanadi.
-class MyListingsScreen extends StatelessWidget {
+class MyListingsScreen extends StatefulWidget {
   const MyListingsScreen({super.key});
 
-  static const _mockOwnerId = 's1';
+  @override
+  State<MyListingsScreen> createState() => _MyListingsScreenState();
+}
+
+class _MyListingsScreenState extends State<MyListingsScreen> {
+  Async<List<Listing>> _state = const Async.loading();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _state = const Async.loading());
+    try {
+      final page = await context.read<ListingRepository>().myListings();
+      if (!mounted) return;
+      setState(() => _state = Async.data(page.items));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _state = Async.error('$e'));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final items = context
-        .read<ListingRepository>()
-        .all()
-        .where((l) => l.sellerId == _mockOwnerId)
-        .toList();
-
     return Scaffold(
       backgroundColor: OtColors.ground,
       body: SafeArea(
@@ -61,19 +79,32 @@ class MyListingsScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: items.isEmpty
-                  ? const EmptyState(
-                      icon: Icons.inventory_2_outlined,
-                      title: 'Eʼlonlaringiz yoʻq',
-                      body: 'Birinchi eʼloningizni joylang — 2 daqiqa vaqt oladi.',
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(OtSize.screenPad),
-                      itemCount: items.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: OtSize.x12),
-                      itemBuilder: (_, i) => _row(context, items[i]),
-                    ),
+              child: _state.when(
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: OtColors.accent),
+                ),
+                error: (message) => EmptyState(
+                  icon: Icons.cloud_off,
+                  title: 'Yuklab boʻlmadi',
+                  body: message,
+                  actionLabel: 'Qaytadan',
+                  onAction: _load,
+                ),
+                data: (items) => items.isEmpty
+                    ? const EmptyState(
+                        icon: Icons.inventory_2_outlined,
+                        title: 'Eʼlonlaringiz yoʻq',
+                        body: 'Birinchi eʼloningizni joylang — '
+                            '2 daqiqa vaqt oladi.',
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(OtSize.screenPad),
+                        itemCount: items.length,
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(height: OtSize.x12),
+                        itemBuilder: (_, i) => _row(context, items[i]),
+                      ),
+              ),
             ),
           ],
         ),
@@ -84,7 +115,7 @@ class MyListingsScreen extends StatelessWidget {
   Widget _row(BuildContext context, Listing l) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => ListingDetailScreen(listing: l)),
+        MaterialPageRoute(builder: (_) => ListingDetailScreen(listingId: l.id)),
       ),
       behavior: HitTestBehavior.opaque,
       child: Container(
@@ -101,7 +132,9 @@ class MyListingsScreen extends StatelessWidget {
               child: SizedBox(
                 width: 64,
                 height: 64,
-                child: OtPhotoPlaceholder(label: l.photoLabel),
+                child: l.thumbUrl == null
+                    ? OtPhotoPlaceholder(label: l.photoLabel)
+                    : Image.network(l.thumbUrl!, fit: BoxFit.cover),
               ),
             ),
             const SizedBox(width: 12),
@@ -138,6 +171,7 @@ class MyListingsScreen extends StatelessWidget {
     final (bg, fg) = switch (status) {
       ListingStatus.active => (OtColors.accentSoft, OtColors.accentPressed),
       ListingStatus.moderation => (OtColors.warnBg, OtColors.warnIcon),
+      ListingStatus.rejected => (Color(0xFFFDECEC), OtColors.danger),
       ListingStatus.expired => (OtColors.field, OtColors.inkMuted),
     };
     return Container(
