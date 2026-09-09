@@ -81,8 +81,9 @@ void main() {
     await tester.tap(find.text('Nima qidiryapsiz?'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Qidiruv'), findsOneWidget);
-    expect(find.text('2-qism da quriladi'), findsOneWidget);
+    // Qidiruv ekrani ochildi: taklif qilingan soʻrovlar koʻrinadi
+    expect(find.text('Koʻp qidiriladigan'), findsOneWidget);
+    expect(find.text('Nexia 3'), findsOneWidget);
   });
 
   testWidgets('qoʻngʻiroqcha bildirishnomalar ekranini ochadi',

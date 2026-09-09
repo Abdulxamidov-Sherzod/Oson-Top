@@ -43,6 +43,8 @@ class Listing {
     this.photoCount = 1,
     this.photoLabel = 'rasm',
     this.address,
+    this.lat,
+    this.lng,
     this.status = ListingStatus.active,
   });
 
@@ -58,8 +60,15 @@ class Listing {
   final String categoryId;
   final String district;
 
-  /// Xaritada belgilangan taxminiy manzil. Ixtiyoriy — 5-qismda to'ldiriladi.
+  /// Xaritada belgilangan taxminiy manzil. Ixtiyoriy.
   final String? address;
+
+  /// Xaritadagi nuqta. Ixtiyoriy — sotuvchi belgilamasa null bo'ladi va
+  /// e'lon sahifasida xarita ko'rsatilmaydi.
+  final double? lat;
+  final double? lng;
+
+  bool get hasLocation => lat != null && lng != null;
 
   final String description;
   final List<ListingSpec> specs;

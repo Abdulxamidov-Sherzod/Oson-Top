@@ -8,13 +8,14 @@ import '../../data/mock/mock_categories.dart';
 import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../state/notifications_controller.dart';
+import '../listing_detail/listing_detail_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../search/search_screen.dart';
 import 'home_controller.dart';
 import 'widgets/category_rail.dart';
-import 'widgets/district_sheet.dart';
+import '../../shared/widgets/district_sheet.dart';
 import 'widgets/home_header.dart';
-import 'widgets/listing_grid.dart';
+import '../../shared/widgets/listing_grid.dart';
 import 'widgets/search_bar_button.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -81,7 +82,13 @@ class _HomeView extends StatelessWidget {
                     : CustomScrollView(
                         slivers: [
                           SliverToBoxAdapter(child: _sectionHeader(home)),
-                          ListingGrid(listings: listings),
+                          ListingGrid(
+                            listings: listings,
+                            onTap: (l) => _open(
+                              context,
+                              ListingDetailScreen(listing: l),
+                            ),
+                          ),
                         ],
                       ),
               ),

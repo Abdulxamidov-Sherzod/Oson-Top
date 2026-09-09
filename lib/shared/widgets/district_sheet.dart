@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/ot_colors.dart';
-import '../../../core/theme/ot_sizes.dart';
-import '../../../core/theme/ot_text.dart';
-import '../../../data/mock/mock_districts.dart';
+import '../../core/theme/ot_colors.dart';
+import '../../core/theme/ot_sizes.dart';
+import '../../core/theme/ot_text.dart';
+import '../../data/mock/mock_districts.dart';
 
 /// Joylashuv tanlash oynasi. Farg'ona viloyatining shahar va tumanlari.
 Future<String?> showDistrictSheet(BuildContext context, String current) {

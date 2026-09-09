@@ -50,10 +50,10 @@ abstract final class OtColors {
   static const galleryStripeB = Color(0xFFF5F8F6);
 
   // Xarita (5-qismda ishlatiladi)
-  static const mapLand = Color(0xFFE9EFEA);
-  static const mapBlock = Color(0xFFF3F6F4);
-  static const mapPark = Color(0xFFD7E9DD);
-  static const mapWater = Color(0xFFDBE7EF);
+  static const mapLand = Color(0xFFE7EEE9);
+  static const mapBlock = Color(0xFFD7E2DB);
+  static const mapPark = Color(0xFFBEDCCB);
+  static const mapWater = Color(0xFFBFD5E7);
 
   // Soyalar
   static const cardShadow = Color(0x12102214);
