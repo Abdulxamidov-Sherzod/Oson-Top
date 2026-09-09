@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:column;gap:7px;width:100%;">
+  <div style="position:relative;border-radius:16px;overflow:hidden;background:#F6F8F7;box-shadow:0 1px 3px rgba(16,34,26,0.07);">
+    <div style="height:130px;background:repeating-linear-gradient(135deg,#EEF2F0 0px,#EEF2F0 7px,#F7F9F8 7px,#F7F9F8 14px);display:flex;align-items:flex-end;justify-content:center;padding:8px;">
+      <span style="font:400 9px ui-monospace,'SF Mono',Menlo,monospace;color:#8D9A93;letter-spacing:0.02em;text-align:center;">{{ ph }}</span>
+    </div>
+    <sc-if value="{{ fav }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:rgba(255,255,255,0.92);box-shadow:0 1px 3px rgba(16,34,26,0.12);display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#16A45C"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z"></path></svg>
+      </div>
+    </sc-if>
+    <sc-if value="{{ notFav }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:rgba(255,255,255,0.92);box-shadow:0 1px 3px rgba(16,34,26,0.12);display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z"></path></svg>
+      </div>
+    </sc-if>
+  </div>
+  <div style="font:600 13px/1.3 -apple-system,'SF Pro Text','Helvetica Neue',Helvetica,sans-serif;color:#14201A;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ title }}</div>
+  <div style="font:700 14.5px -apple-system,'SF Pro Text','Helvetica Neue',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.01em;">{{ price }}</div>
+  <div style="display:flex;align-items:center;gap:5px;font:400 11px -apple-system,'SF Pro Text','Helvetica Neue',Helvetica,sans-serif;color:#8D9A93;">
+    <span>{{ place }}</span>
+    <span style="width:3px;height:3px;border-radius:2px;background:#C7D0CB;"></span>
+    <span>{{ time }}</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:175,&quot;height&quot;:230},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;iPhone 13 128GB&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;price&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;4 500 000 so'm&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;place&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Farg'ona shahri&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2 soat oldin&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ph&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;mahsulot rasmi&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;fav&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const fav = !!this.props.fav;
+    return { fav, notFav: !fav };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1035 @@
+<title>Oson Top</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --page-bg:#F1F2EF; --page-ink:#191B19; --page-ink2:#6A706B; --page-line:#DEE0DB; --page-card:#FFFFFF;
+  --bezel:#0E100F;
+}
+:root:not([data-theme="light"]){ }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page-bg:#131513; --page-ink:#E8EAE6; --page-ink2:#959B96; --page-line:#282B27; --page-card:#1C1F1C;
+    --bezel:#000000;
+  }
+}
+:root[data-theme="dark"]{
+  --page-bg:#131513; --page-ink:#E8EAE6; --page-ink2:#959B96; --page-line:#282B27; --page-card:#1C1F1C;
+  --bezel:#000000;
+}
+
+/* ---- app interior palette: deliberately light in every theme ---- */
+.phone{
+  --bg:#FCFCFB; --surface:#FFFFFF;
+  --ink:#16181A; --ink2:#5A6166; --ink3:#8D9499;
+  --line:#E8EAE7; --line2:#F1F3F0;
+  --accent:oklch(0.52 0.11 155);
+  --accent-press:oklch(0.44 0.11 155);
+  --accent-soft:oklch(0.958 0.022 155);
+  --accent-line:oklch(0.88 0.05 155);
+  --danger:oklch(0.56 0.16 25);
+  --amber:oklch(0.72 0.13 75);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--page-bg); color:var(--page-ink);
+  font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:oklch(0.52 0.11 155)} a:hover{color:oklch(0.44 0.11 155)}
+.wrap{max-width:1120px;margin:0 auto;padding:40px 20px 72px}
+
+/* ---------- page chrome ---------- */
+.pagehead{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;margin-bottom:28px}
+.pagehead h1{font-family:"Archivo Narrow",system-ui,sans-serif;font-weight:700;font-size:30px;letter-spacing:-.01em;margin:0 0 6px}
+.pagehead p{margin:0;color:var(--page-ink2);font-size:14px;max-width:52ch;line-height:1.55}
+.jump{display:flex;flex-wrap:wrap;gap:8px}
+.jump button{
+  font:inherit;font-size:13px;font-weight:600;color:var(--page-ink);background:var(--page-card);
+  border:1px solid var(--page-line);border-radius:999px;padding:9px 15px;cursor:pointer;transition:.15s;
+}
+.jump button:hover{border-color:oklch(0.72 0.08 155);color:oklch(0.46 0.11 155)}
+.jump button[aria-pressed="true"]{background:oklch(0.52 0.11 155);border-color:oklch(0.52 0.11 155);color:#fff}
+
+.stage{display:flex;justify-content:center;padding:8px 0 4px}
+.phone{
+  width:390px;height:844px;flex:none;background:var(--bezel);border-radius:46px;padding:10px;
+  box-shadow:0 30px 70px -24px rgba(0,0,0,.45), 0 2px 0 rgba(255,255,255,.06) inset;
+}
+.viewport{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:var(--bg);
+  font-size:15px;line-height:1.45;color:var(--ink)}
+@media (max-width:460px){
+  .wrap{padding:24px 12px 48px}
+  .phone{width:100%;height:min(780px,86vh);border-radius:32px;padding:6px}
+  .viewport{border-radius:27px}
+  .pagehead h1{font-size:24px}
+}
+
+/* ---------- screens ---------- */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
+.screen.on{display:flex}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.screen[data-screen="detail"]{z-index:8}
+.pad{padding:0 16px}
+
+/* ---------- app header ---------- */
+.apphdr{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 16px 12px;background:var(--surface);border-bottom:1px solid var(--line2)}
+.brandrow{display:flex;align-items:center;gap:9px}
+.mark{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center;flex:none}
+.brand{font-family:"Archivo Narrow",system-ui,sans-serif;font-weight:700;font-size:21px;letter-spacing:-.005em}
+.loc{display:flex;align-items:center;gap:5px;margin-top:5px;background:none;border:0;padding:4px 6px 4px 0;
+  font:inherit;font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer}
+.loc:hover{color:var(--accent)}
+.iconbtn{width:44px;height:44px;flex:none;border-radius:14px;border:1px solid var(--line);background:var(--surface);
+  display:grid;place-items:center;cursor:pointer;position:relative;color:var(--ink);transition:.15s}
+.iconbtn:hover{border-color:var(--accent-line);background:var(--accent-soft)}
+.badge{position:absolute;top:6px;right:6px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;
+  background:var(--danger);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;
+  border:2px solid var(--surface);font-family:"Public Sans",sans-serif}
+.badge[hidden]{display:none}
+
+/* ---------- search ---------- */
+.searchbar{display:flex;gap:8px;align-items:center;padding:12px 16px 10px;background:var(--surface)}
+.sfield{flex:1;display:flex;align-items:center;gap:9px;height:46px;padding:0 12px;border-radius:14px;
+  background:var(--line2);border:1px solid transparent;transition:.15s}
+.sfield:focus-within{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.sfield input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:15px;color:var(--ink);outline:none}
+.sfield input::placeholder{color:var(--ink3)}
+.xbtn{border:0;background:none;padding:4px;cursor:pointer;color:var(--ink3);display:none}
+.sfield.filled .xbtn{display:block}
+.cancel{border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--accent);cursor:pointer;display:none;white-space:nowrap}
+.searching .cancel{display:block}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 14px;background:var(--surface);
+  border-bottom:1px solid var(--line);scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:7px;height:44px;padding:0 15px;border-radius:13px;flex:none;
+  border:1px solid var(--line);background:var(--surface);font:inherit;font-size:13.5px;font-weight:600;
+  color:var(--ink2);cursor:pointer;white-space:nowrap;transition:.15s}
+.chip:hover{border-color:var(--accent-line)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip[aria-pressed="true"] svg{color:#fff}
+.chip svg{color:var(--ink3);flex:none}
+
+/* recent searches */
+.recent{padding:16px}
+.recent h3{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
+.rlist{display:flex;flex-direction:column;gap:2px;margin-bottom:22px}
+.ritem{display:flex;align-items:center;gap:11px;height:46px;padding:0 8px;border:0;background:none;border-radius:11px;
+  font:inherit;font-size:15px;color:var(--ink);cursor:pointer;text-align:left;width:100%}
+.ritem:hover{background:var(--line2)}
+.ritem span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rtags{display:flex;flex-wrap:wrap;gap:8px}
+.rtag{height:44px;padding:0 15px;border-radius:13px;border:1px solid var(--line);background:var(--surface);
+  font:inherit;font-size:13.5px;font-weight:600;color:var(--ink2);cursor:pointer}
+.rtag:hover{border-color:var(--accent-line);color:var(--accent)}
+
+/* ---------- feed ---------- */
+.feedhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:18px 16px 12px}
+.feedhead h2{font-family:"Archivo Narrow",system-ui,sans-serif;font-size:19px;font-weight:700;margin:0;letter-spacing:-.005em}
+.count{font-size:13px;color:var(--ink3);font-weight:500;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 16px 22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;
+  text-align:left;padding:0;font:inherit;color:inherit;display:flex;flex-direction:column;transition:.15s}
+.card:hover{border-color:var(--accent-line);box-shadow:0 6px 18px -10px rgba(20,40,30,.35)}
+.thumb{position:relative;aspect-ratio:4/3;background:var(--line2)}
+.thumb svg{width:100%;height:100%;display:block}
+.fav{position:absolute;top:7px;right:7px;width:32px;height:32px;border-radius:10px;border:0;cursor:pointer;
+  background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--ink2);backdrop-filter:blur(4px)}
+.fav[aria-pressed="true"]{color:var(--danger)}
+.fav[aria-pressed="true"] svg{fill:currentColor}
+.cbody{padding:10px 11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.price{font-family:"Archivo Narrow",system-ui,sans-serif;font-size:17.5px;font-weight:700;letter-spacing:-.005em}
+.ctitle{font-size:13.5px;line-height:1.35;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty}
+.meta{margin-top:auto;padding-top:6px;font-size:11.5px;color:var(--ink3);line-height:1.45}
+.meta b{display:block;font-weight:500;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:3px;height:3px;border-radius:50%;background:currentColor;flex:none}
+.empty{padding:52px 24px;text-align:center;color:var(--ink3);font-size:14px;line-height:1.6}
+.empty strong{display:block;color:var(--ink);font-size:15.5px;font-weight:600;margin-bottom:6px}
+
+/* ---------- tabbar ---------- */
+.tabbar{position:absolute;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:stretch;background:var(--surface);border-top:1px solid var(--line);
+  padding:8px 10px 22px;gap:4px}
+.screen:not([data-screen="detail"]) .scroll{padding-bottom:92px}
+.tab{flex:1;border:0;background:none;cursor:pointer;font:inherit;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;height:52px;border-radius:14px;color:var(--ink3);font-size:11px;font-weight:600}
+.tab:hover{background:var(--line2)}
+.tab[aria-selected="true"]{color:var(--accent)}
+.tab .tw{position:relative}
+.tab .badge{top:-4px;right:-8px}
+.tab.primary{background:var(--accent);color:#fff;flex:1.15}
+.tab.primary:hover{background:var(--accent-press)}
+
+/* ---------- detail ---------- */
+.gallery{position:relative;background:var(--line2)}
+.slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.slides::-webkit-scrollbar{display:none}
+.slide{flex:none;width:100%;aspect-ratio:4/3;scroll-snap-align:center}
+.slide svg{width:100%;height:100%;display:block}
+.dhdr{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:14px 14px 0;z-index:2}
+.gbtn{width:44px;height:44px;border-radius:14px;border:0;cursor:pointer;background:rgba(255,255,255,.94);
+  display:grid;place-items:center;color:var(--ink);box-shadow:0 2px 10px -4px rgba(0,0,0,.4)}
+.gbtn[aria-pressed="true"]{color:var(--danger)}
+.gbtn[aria-pressed="true"] svg{fill:currentColor}
+.dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:2}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.65);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.dots i.on{background:#fff;width:18px;border-radius:3px}
+
+.dsec{padding:18px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.dprice{font-family:"Archivo Narrow",system-ui,sans-serif;font-size:28px;font-weight:700;letter-spacing:-.015em;margin:0 0 6px}
+.dtitle{font-size:17px;font-weight:600;line-height:1.35;margin:0 0 12px;text-wrap:pretty}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.tag{font-size:12px;font-weight:600;padding:6px 10px;border-radius:9px;background:var(--accent-soft);
+  color:oklch(0.42 0.10 155);border:1px solid var(--accent-line)}
+.tag.plain{background:var(--line2);border-color:var(--line);color:var(--ink2)}
+.dmeta{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink3)}
+.dsec h3{font-family:"Archivo Narrow",system-ui,sans-serif;font-size:16px;font-weight:700;margin:0 0 10px}
+.desc{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink2);white-space:pre-line;text-wrap:pretty}
+.speclist{display:flex;flex-direction:column;gap:0;margin-top:2px}
+.specrow{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line2);font-size:14px}
+.specrow:last-child{border-bottom:0}
+.specrow dt{color:var(--ink3)}
+.specrow dd{margin:0;font-weight:600;text-align:right}
+
+.seller{display:flex;align-items:center;gap:12px}
+.avatar{width:48px;height:48px;border-radius:16px;flex:none;display:grid;place-items:center;
+  font-family:"Archivo Narrow",sans-serif;font-weight:700;font-size:18px;color:#fff;background:var(--accent)}
+.sinfo{flex:1;min-width:0}
+.sname{font-weight:600;font-size:15px;margin-bottom:2px}
+.ssub{font-size:12.5px;color:var(--ink3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.phonebox{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.pnum{font-family:"Archivo Narrow",sans-serif;font-size:22px;font-weight:700;letter-spacing:.01em}
+.warn{display:flex;gap:9px;margin:0;padding:12px 13px;border-radius:12px;background:oklch(0.97 0.03 75);
+  border:1px solid oklch(0.88 0.06 75);font-size:12.5px;line-height:1.55;color:oklch(0.42 0.07 75)}
+.warn svg{flex:none;margin-top:1px}
+
+.actionbar{display:flex;gap:9px;padding:12px 16px 22px;background:var(--surface);border-top:1px solid var(--line)}
+
+/* ---------- buttons ---------- */
+.btn{height:50px;border-radius:14px;border:1px solid transparent;font:inherit;font-size:15px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s;padding:0 18px}
+.btn.pri{background:var(--accent);color:#fff}
+.btn.pri:hover{background:var(--accent-press)}
+.btn.sec{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn.sec:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+.btn.wide{flex:1}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- notifications ---------- */
+.plainhdr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 16px 14px;
+  background:var(--surface);border-bottom:1px solid var(--line)}
+.plainhdr h2{font-family:"Archivo Narrow",system-ui,sans-serif;font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em}
+.linkbtn{border:0;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;padding:6px 0}
+.ngroup{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:18px 16px 8px}
+.nitem{display:flex;gap:12px;padding:13px 16px;background:var(--surface);border-bottom:1px solid var(--line2);
+  cursor:pointer;width:100%;text-align:left;font:inherit;border-left:0;border-right:0;border-top:0;color:inherit}
+.nitem:hover{background:var(--accent-soft)}
+.nitem.unread{background:oklch(0.985 0.012 155)}
+.nicon{width:40px;height:40px;border-radius:13px;flex:none;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.nicon.amber{background:oklch(0.96 0.04 75);color:oklch(0.55 0.12 75)}
+.nicon.gray{background:var(--line2);color:var(--ink2)}
+.nbody{flex:1;min-width:0}
+.ntitle{font-size:14.5px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:7px}
+.ntitle i{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+.ntext{font-size:13px;color:var(--ink2);line-height:1.5;text-wrap:pretty}
+.ntime{font-size:11.5px;color:var(--ink3);margin-top:4px}
+
+/* ---------- add listing form ---------- */
+.form{padding:18px 16px 26px;display:flex;flex-direction:column;gap:20px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field > label{font-size:13px;font-weight:600;color:var(--ink2)}
+.field .hint{font-size:12px;color:var(--ink3);line-height:1.5}
+.inp{height:50px;padding:0 14px;border-radius:13px;border:1px solid var(--line);background:var(--surface);
+  font:inherit;font-size:15px;color:var(--ink);outline:none;transition:.15s;width:100%}
+textarea.inp{height:auto;min-height:110px;padding:13px 14px;line-height:1.55;resize:vertical}
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238D9499' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.inp.bad{border-color:var(--danger);box-shadow:0 0 0 3px oklch(0.95 0.04 25)}
+.err{font-size:12.5px;color:var(--danger);font-weight:500;display:none}
+.err.on{display:block}
+.photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pslot{aspect-ratio:1;border-radius:12px;border:1.5px dashed var(--line);background:var(--line2);cursor:pointer;
+  display:grid;place-items:center;color:var(--ink3);padding:0;overflow:hidden;position:relative;transition:.15s}
+.pslot:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.pslot.has{border-style:solid;border-color:var(--line);background:var(--surface)}
+.pslot svg.artimg{width:100%;height:100%}
+.pslot .rm{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:7px;background:rgba(0,0,0,.6);
+  color:#fff;display:grid;place-items:center}
+.seg{display:flex;gap:6px;padding:4px;background:var(--line2);border-radius:14px}
+.seg button{flex:1;height:42px;border:0;background:none;border-radius:11px;font:inherit;font-size:14px;
+  font-weight:600;color:var(--ink2);cursor:pointer;transition:.15s}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px -1px rgba(0,0,0,.14)}
+.check{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14.5px;min-height:44px}
+.check input{width:20px;height:20px;accent-color:oklch(0.52 0.11 155);cursor:pointer}
+.rowmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3)}
+
+.done{padding:64px 30px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.donemark{width:76px;height:76px;border-radius:26px;background:var(--accent-soft);border:1px solid var(--accent-line);
+  display:grid;place-items:center;color:var(--accent)}
+.done h2{font-family:"Archivo Narrow",sans-serif;font-size:23px;font-weight:700;margin:6px 0 0}
+.done p{margin:0;color:var(--ink2);font-size:14.5px;line-height:1.6;text-wrap:pretty}
+
+/* ---------- spec sheet below phone ---------- */
+.notes{margin-top:56px;border-top:1px solid var(--page-line);padding-top:32px}
+.notes h2{font-family:"Archivo Narrow",system-ui,sans-serif;font-size:20px;font-weight:700;margin:0 0 4px}
+.notes > p{margin:0 0 24px;color:var(--page-ink2);font-size:14px}
+.ngrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.ncard{background:var(--page-card);border:1px solid var(--page-line);border-radius:14px;padding:16px 17px}
+.ncard h3{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--page-ink2);margin:0 0 12px}
+.swatches{display:flex;flex-direction:column;gap:9px}
+.sw{display:flex;align-items:center;gap:10px;font-size:13px}
+.sw i{width:26px;height:26px;border-radius:8px;border:1px solid var(--page-line);flex:none}
+.sw code{font-size:11.5px;color:var(--page-ink2);margin-left:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.ncard ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.75;color:var(--page-ink2)}
+.ncard ul strong{color:var(--page-ink);font-weight:600}
+</style>
+
+<div class="wrap">
+  <div class="pagehead">
+    <div>
+      <h1>Oson Top — ilova maketi</h1>
+      <p>Fargʻona viloyati uchun eʼlonlar ilovasi. Prototip bosiladi: eʼlonni tanlang, qidiring, kategoriya filtrlang, eʼlon qoʻshing.</p>
+    </div>
+    <div class="jump" id="jump">
+      <button data-go="home" aria-pressed="true">Asosiy</button>
+      <button data-go="detail">Batafsil</button>
+      <button data-go="add">Eʼlon berish</button>
+      <button data-go="notif">Bildirishnomalar</button>
+    </div>
+  </div>
+
+  <div class="stage">
+  <div class="phone">
+    <div class="viewport" id="vp">
+
+      <!-- ============ HOME ============ -->
+      <section class="screen on" data-screen="home">
+        <div>
+          <header class="apphdr">
+            <div>
+              <div class="brandrow">
+                <span class="mark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+                <span class="brand">Oson Top</span>
+              </div>
+              <button class="loc" id="locBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.8"/></svg>
+                <span id="locLabel">Fargʻona viloyati</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <button class="iconbtn" id="bellBtn" aria-label="Bildirishnomalar">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16s-2-1.5-2-6.5Z"/><path d="M10.4 19a2 2 0 0 0 3.2 0"/></svg>
+              <span class="badge" id="bellBadge">3</span>
+            </button>
+          </header>
+
+          <div class="searchbar" id="searchBar">
+            <div class="sfield" id="sfield">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8D9499" stroke-width="2.1" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+              <input id="q" type="search" placeholder="Nima qidiryapsiz?" autocomplete="off">
+              <button class="xbtn" id="clearQ" aria-label="Tozalash"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+            </div>
+            <button class="cancel" id="cancelSearch">Bekor</button>
+          </div>
+
+          <div class="chips" id="chips"></div>
+        </div>
+
+        <div class="scroll" id="homeScroll">
+          <div id="recentPanel" hidden>
+            <div class="recent">
+              <h3>Soʻnggi qidiruvlar</h3>
+              <div class="rlist" id="recentList"></div>
+              <h3>Koʻp qidirilgan</h3>
+              <div class="rtags" id="popTags"></div>
+            </div>
+          </div>
+          <div id="feedPanel">
+            <div class="feedhead">
+              <h2 id="feedTitle">Yangi eʼlonlar</h2>
+              <span class="count" id="feedCount"></span>
+            </div>
+            <div class="grid" id="feed"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ADD ============ -->
+      <section class="screen" data-screen="add">
+        <div class="plainhdr"><h2>Eʼlon berish</h2></div>
+        <div class="scroll" id="addScroll">
+          <form class="form" id="addForm" novalidate>
+            <div class="field">
+              <label>Rasmlar</label>
+              <div class="photos" id="photos"></div>
+              <span class="hint">Birinchi rasm asosiy boʻladi. Kamida 1 ta, koʻpi bilan 8 ta rasm.</span>
+              <span class="err" id="errPhoto">Kamida bitta rasm qoʻshing</span>
+            </div>
+
+            <div class="field">
+              <label for="fTitle">Sarlavha</label>
+              <input class="inp" id="fTitle" placeholder="Masalan: Chevrolet Cobalt, 2021-yil" maxlength="70">
+              <div class="rowmeta"><span class="err" id="errTitle">Sarlavhani yozing</span><span id="titleCount" style="margin-left:auto">0/70</span></div>
+            </div>
+
+            <div class="field">
+              <label for="fCat">Kategoriya</label>
+              <select class="inp" id="fCat"></select>
+            </div>
+
+            <div class="field">
+              <label>Holati</label>
+              <div class="seg" id="condSeg">
+                <button type="button" data-v="Yangi">Yangi</button>
+                <button type="button" data-v="Ishlatilgan" aria-pressed="true">Ishlatilgan</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="fPrice">Narxi</label>
+              <input class="inp" id="fPrice" inputmode="numeric" placeholder="0 soʻm">
+              <label class="check"><input type="checkbox" id="fNego"> Narx kelishiladi</label>
+              <span class="err" id="errPrice">Narxni kiriting yoki «kelishiladi» ni belgilang</span>
+            </div>
+
+            <div class="field">
+              <label for="fDesc">Tavsif</label>
+              <textarea class="inp" id="fDesc" placeholder="Mahsulot holati, xususiyatlari, nima uchun sotayotganingiz…" maxlength="1000"></textarea>
+              <span class="hint">Batafsil yozganingiz sari tezroq sotiladi.</span>
+            </div>
+
+            <div class="field">
+              <label for="fCity">Shahar / tuman</label>
+              <select class="inp" id="fCity"></select>
+            </div>
+
+            <div class="field">
+              <label for="fPhone">Telefon raqami</label>
+              <input class="inp" id="fPhone" inputmode="tel" value="+998 " placeholder="+998 90 123-45-67">
+              <span class="hint">Raqam eʼlonda koʻrinadi. Xaridorlar shu raqamga qoʻngʻiroq qiladi.</span>
+              <span class="err" id="errPhone">Toʻliq raqam kiriting</span>
+            </div>
+
+            <button class="btn pri" type="submit" style="height:52px">Eʼlonni joylash</button>
+            <p class="hint" style="text-align:center;margin:-8px 0 0">Eʼlon moderatsiyadan oʻtadi — odatda 15 daqiqa ichida.</p>
+          </form>
+
+          <div class="done" id="addDone" hidden>
+            <div class="donemark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.5 5 5 10-11"/></svg></div>
+            <h2>Eʼlon yuborildi</h2>
+            <p>Moderator tekshirgach eʼloningiz saytda paydo boʻladi. Tayyor boʻlganda bildirishnoma keladi.</p>
+            <button class="btn sec" id="doneBack" style="margin-top:8px">Asosiy sahifaga</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ NOTIFICATIONS ============ -->
+      <section class="screen" data-screen="notif">
+        <div class="plainhdr">
+          <h2>Bildirishnomalar</h2>
+          <button class="linkbtn" id="readAll">Hammasini oʻqildi</button>
+        </div>
+        <div class="scroll" id="notifList"></div>
+      </section>
+
+      <!-- ============ DETAIL ============ -->
+      <section class="screen" data-screen="detail">
+        <div class="scroll" id="detailScroll"></div>
+        <div class="actionbar" id="detailActions"></div>
+      </section>
+
+      <nav class="tabbar" id="tabbar">
+        <button class="tab" data-tab="home" aria-selected="true">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>
+          Asosiy
+        </button>
+        <button class="tab primary" data-tab="add">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Eʼlon berish
+        </button>
+        <button class="tab" data-tab="notif">
+          <span class="tw">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16s-2-1.5-2-6.5Z"/><path d="M10.4 19a2 2 0 0 0 3.2 0"/></svg>
+            <span class="badge" id="tabBadge">3</span>
+          </span>
+          Bildirishnoma
+        </button>
+      </nav>
+
+    </div>
+  </div>
+  </div>
+
+  <section class="notes">
+    <h2>Dizayn tizimi</h2>
+    <p>Ishlab chiqishda shu qiymatlardan foydalaning.</p>
+    <div class="ngrid">
+      <div class="ncard">
+        <h3>Ranglar</h3>
+        <div class="swatches">
+          <div class="sw"><i style="background:oklch(0.52 0.11 155)"></i> Accent <code>#1B6B45</code></div>
+          <div class="sw"><i style="background:oklch(0.958 0.022 155)"></i> Accent soft <code>#EDF6F1</code></div>
+          <div class="sw"><i style="background:#FCFCFB"></i> Fon <code>#FCFCFB</code></div>
+          <div class="sw"><i style="background:#16181A"></i> Matn <code>#16181A</code></div>
+          <div class="sw"><i style="background:#5A6166"></i> Matn 2 <code>#5A6166</code></div>
+          <div class="sw"><i style="background:#E8EAE7"></i> Chegara <code>#E8EAE7</code></div>
+        </div>
+      </div>
+      <div class="ncard">
+        <h3>Shriftlar</h3>
+        <ul>
+          <li><strong>Archivo Narrow 700</strong> — narx, sarlavhalar, logotip</li>
+          <li><strong>Public Sans 400/600</strong> — barcha interfeys matni</li>
+          <li>Asosiy oʻlcham 15px, kichik 13px, mayda 11.5px</li>
+          <li>Narx kartada 17.5px, batafsilda 28px</li>
+        </ul>
+      </div>
+      <div class="ncard">
+        <h3>Oʻlchamlar</h3>
+        <ul>
+          <li>Ekran chetidan <strong>16px</strong> boʻshliq</li>
+          <li>Karta radiusi <strong>14px</strong>, tugma <strong>14px</strong>, kichik element <strong>10–13px</strong></li>
+          <li>Tugma balandligi <strong>50px</strong>, input <strong>50px</strong>, chip <strong>44px</strong></li>
+          <li>Bosish maydoni hech qachon <strong>44px</strong> dan kichik emas</li>
+          <li>Karta rasmi nisbati <strong>4:3</strong>, lentada 2 ustun, oraliq 12px</li>
+        </ul>
+      </div>
+      <div class="ncard">
+        <h3>Eslatmalar</h3>
+        <ul>
+          <li>Rasmlar — <strong>vaqtinchalik chizmalar</strong>, real fotolar oʻrniga</li>
+          <li>Telefon raqam «Raqamni koʻrsatish» bosilgandan keyin ochiladi — spam botlardan himoya</li>
+          <li>Eʼlon moderatsiyadan oʻtadi, darhol chiqmaydi</li>
+          <li>Pastda faqat 3 ta boʻlim — soddaligi ataylab</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- placeholder artwork (real photos go here in the app) ---------- */
+function pal(h,shift){
+  var L=0.94+(shift||0);
+  return {bg:'oklch('+L+' 0.035 '+h+')',mid:'oklch(0.72 0.085 '+h+')',dk:'oklch(0.48 0.085 '+h+')',lt:'oklch(0.985 0.012 '+h+')'};
+}
+var SHAPES={
+  car:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<path d="M50 60 60 40h40l12 20z" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2"/>'+
+    '<path d="M24 82c0-14 8-22 26-22h60c18 0 26 8 26 22z" fill="'+c.mid+'"/>'+
+    '<rect x="24" y="80" width="112" height="6" rx="3" fill="'+c.dk+'"/>'+
+    '<circle cx="50" cy="88" r="12" fill="'+c.dk+'"/><circle cx="50" cy="88" r="4.5" fill="'+c.lt+'"/>'+
+    '<circle cx="112" cy="88" r="12" fill="'+c.dk+'"/><circle cx="112" cy="88" r="4.5" fill="'+c.lt+'"/>';},
+  flat:function(c){var w='';for(var r=0;r<3;r++)for(var i=0;i<3;i++)w+='<rect x="'+(50+i*22)+'" y="'+(42+r*18)+'" width="14" height="12" rx="2" fill="'+c.lt+'"/>';
+    return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<rect x="42" y="34" width="76" height="72" fill="'+c.mid+'"/>'+
+    '<rect x="34" y="26" width="92" height="10" rx="3" fill="'+c.dk+'"/>'+w+
+    '<rect x="72" y="88" width="18" height="18" rx="2" fill="'+c.dk+'"/>';},
+  phone:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<rect x="56" y="14" width="48" height="92" rx="10" fill="'+c.dk+'"/>'+
+    '<rect x="61" y="19" width="38" height="82" rx="6" fill="'+c.lt+'"/>'+
+    '<rect x="72" y="19" width="16" height="5" rx="2.5" fill="'+c.dk+'"/>'+
+    '<rect x="68" y="34" width="24" height="24" rx="6" fill="'+c.mid+'"/>'+
+    '<rect x="68" y="64" width="24" height="4" rx="2" fill="'+c.mid+'"/>'+
+    '<rect x="68" y="73" width="16" height="4" rx="2" fill="'+c.mid+'"/>';},
+  laptop:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<rect x="36" y="26" width="88" height="56" rx="5" fill="'+c.dk+'"/>'+
+    '<rect x="42" y="32" width="76" height="44" rx="2" fill="'+c.lt+'"/>'+
+    '<rect x="50" y="40" width="34" height="4" rx="2" fill="'+c.mid+'"/>'+
+    '<rect x="50" y="49" width="52" height="4" rx="2" fill="'+c.mid+'"/>'+
+    '<path d="M26 86h108l7 10H19z" fill="'+c.mid+'"/>';},
+  dress:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<path d="M66 22h28l18 18-10 10-6-6v58H64V44l-6 6-10-10z" fill="'+c.mid+'"/>'+
+    '<path d="M64 60h44M64 72h44M64 84h44" stroke="'+c.dk+'" stroke-width="2.5"/>'+
+    '<path d="M66 22c4 8 10 12 14 12s10-4 14-12" fill="none" stroke="'+c.dk+'" stroke-width="2.5"/>';},
+  ceramic:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<circle cx="80" cy="60" r="36" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2.5"/>'+
+    '<circle cx="80" cy="60" r="25" fill="none" stroke="'+c.mid+'" stroke-width="3"/>'+
+    '<circle cx="80" cy="60" r="9" fill="'+c.dk+'"/>'+
+    '<circle cx="80" cy="30" r="4" fill="'+c.mid+'"/><circle cx="80" cy="90" r="4" fill="'+c.mid+'"/>'+
+    '<circle cx="50" cy="60" r="4" fill="'+c.mid+'"/><circle cx="110" cy="60" r="4" fill="'+c.mid+'"/>';},
+  truck:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<rect x="20" y="40" width="66" height="42" rx="3" fill="'+c.mid+'"/>'+
+    '<path d="M88 52h26l18 18v12H88z" fill="'+c.dk+'"/>'+
+    '<rect x="94" y="56" width="18" height="12" rx="2" fill="'+c.lt+'"/>'+
+    '<rect x="18" y="80" width="118" height="6" rx="3" fill="'+c.dk+'"/>'+
+    '<circle cx="46" cy="88" r="11" fill="'+c.dk+'"/><circle cx="46" cy="88" r="4" fill="'+c.lt+'"/>'+
+    '<circle cx="112" cy="88" r="11" fill="'+c.dk+'"/><circle cx="112" cy="88" r="4" fill="'+c.lt+'"/>';},
+  sofa:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<rect x="30" y="38" width="100" height="30" rx="9" fill="'+c.mid+'"/>'+
+    '<rect x="22" y="52" width="16" height="34" rx="7" fill="'+c.dk+'"/>'+
+    '<rect x="122" y="52" width="16" height="34" rx="7" fill="'+c.dk+'"/>'+
+    '<rect x="34" y="64" width="92" height="22" rx="7" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2"/>'+
+    '<rect x="38" y="86" width="6" height="10" fill="'+c.dk+'"/><rect x="116" y="86" width="6" height="10" fill="'+c.dk+'"/>';},
+  job:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<path d="M66 40v-6a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v6" fill="none" stroke="'+c.dk+'" stroke-width="3.5"/>'+
+    '<rect x="34" y="40" width="92" height="56" rx="8" fill="'+c.mid+'"/>'+
+    '<rect x="34" y="60" width="92" height="6" fill="'+c.dk+'"/>'+
+    '<rect x="70" y="55" width="20" height="16" rx="3" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2"/>';},
+  bike:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<circle cx="44" cy="76" r="21" fill="none" stroke="'+c.dk+'" stroke-width="4"/>'+
+    '<circle cx="116" cy="76" r="21" fill="none" stroke="'+c.dk+'" stroke-width="4"/>'+
+    '<path d="M44 76 74 44h22l20 32M74 44 66 76h50" fill="none" stroke="'+c.mid+'" stroke-width="4.5" stroke-linejoin="round"/>'+
+    '<path d="M88 40h16" stroke="'+c.dk+'" stroke-width="4" stroke-linecap="round"/>'+
+    '<path d="M68 38h12" stroke="'+c.dk+'" stroke-width="4" stroke-linecap="round"/>';},
+  cow:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<ellipse cx="72" cy="60" rx="38" ry="24" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2.5"/>'+
+    '<circle cx="118" cy="50" r="15" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2.5"/>'+
+    '<path d="M108 38c-4-6-2-10 2-9M128 38c4-6 2-10-2-9" stroke="'+c.dk+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="60" cy="52" r="9" fill="'+c.mid+'"/><circle cx="86" cy="66" r="6" fill="'+c.mid+'"/>'+
+    '<rect x="46" y="80" width="7" height="20" rx="3" fill="'+c.dk+'"/><rect x="66" y="80" width="7" height="20" rx="3" fill="'+c.dk+'"/>'+
+    '<rect x="88" y="80" width="7" height="20" rx="3" fill="'+c.dk+'"/>';},
+  carpet:function(c){return '<rect width="160" height="120" fill="'+c.bg+'"/>'+
+    '<rect x="26" y="22" width="108" height="76" rx="3" fill="'+c.mid+'"/>'+
+    '<rect x="34" y="30" width="92" height="60" rx="2" fill="none" stroke="'+c.lt+'" stroke-width="3"/>'+
+    '<path d="M80 38 106 60 80 82 54 60z" fill="'+c.lt+'" stroke="'+c.dk+'" stroke-width="2"/>'+
+    '<path d="M80 50 92 60 80 70 68 60z" fill="'+c.dk+'"/>'+
+    '<path d="M20 26v68M140 26v68" stroke="'+c.dk+'" stroke-width="3" stroke-linecap="round"/>';}
+};
+function art(kind,hue,shift,cls){
+  var f=SHAPES[kind]||SHAPES.flat;
+  return '<svg class="'+(cls||'artimg')+'" viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'+f(pal(hue,shift))+'</svg>';
+}
+
+/* ---------- data ---------- */
+var CATS=[
+  {id:'all',label:'Hammasi',icon:'<rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/>'},
+  {id:'transport',label:'Transport',icon:'<path d="M4 15h16M6 15V9l2-3h8l2 3v6"/><circle cx="8" cy="17.5" r="1.8"/><circle cx="16" cy="17.5" r="1.8"/>'},
+  {id:'realty',label:'Koʻchmas mulk',icon:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/>'},
+  {id:'electro',label:'Elektronika',icon:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>'},
+  {id:'home',label:'Uy-roʻzgʻor',icon:'<path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3"/><rect x="2.5" y="11" width="19" height="6" rx="2"/><path d="M5 17v2M19 17v2"/>'},
+  {id:'clothes',label:'Kiyim',icon:'<path d="M8.5 3 5 6l2 2.5L8 8v13h8V8l1 .5L19 6l-3.5-3z"/>'},
+  {id:'job',label:'Ish oʻrni',icon:'<rect x="2.5" y="6.5" width="19" height="14" rx="2.5"/><path d="M8.5 6.5V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/>'},
+  {id:'services',label:'Xizmatlar',icon:'<path d="M14.5 4.5a4.5 4.5 0 0 0-5.9 5.9L3 16v5h5l5.6-5.6a4.5 4.5 0 0 0 5.9-5.9L17 12l-3-.5-.5-3z"/>'},
+  {id:'animals',label:'Hayvonlar',icon:'<ellipse cx="12" cy="16" rx="5" ry="4"/><circle cx="6.5" cy="9" r="2.2"/><circle cx="17.5" cy="9" r="2.2"/><circle cx="10" cy="5.5" r="2"/><circle cx="14" cy="5.5" r="2"/>'}
+];
+var CITIES=['Fargʻona sh.','Margʻilon','Qoʻqon','Quvasoy','Rishton','Beshariq','Oltiariq','Quva','Yozyovon','Bogʻdod','Dangʻara','Furqat','Soʻx','Toshloq','Uchkoʻprik','Oʻzbekiston t.','Fargʻona t.','Buvayda'];
+
+var L=[
+ {id:1,cat:'transport',kind:'car',hue:250,title:'Chevrolet Nexia 3, 2018-yil, poziciya 2',price:118000000,city:'Fargʻona sh.',time:'22 daqiqa oldin',cond:'Ishlatilgan',views:412,
+  desc:'2018-yil, poziciya 2. Yurgani 96 000 km, rangi oq.\nMetan (gaz) oʻrnatilgan, hujjatlari joyida. Konditsioner, elektron oynalar, orqa kamera ishlaydi.\nBoʻyalgan yoki urilgan joyi yoʻq, salon toza. Kelib koʻrasiz, kelishamiz.',
+  specs:[['Marka','Chevrolet Nexia 3'],['Yili','2018'],['Yurgani','96 000 km'],['Yoqilgʻi','Benzin / metan'],['Uzatma','Mexanika'],['Rangi','Oq']],
+  seller:{n:'Bekzod Yoʻldoshev',since:'2021-yildan',ads:7,phone:'+998 90 512-34-67'}},
+
+ {id:2,cat:'realty',kind:'flat',hue:200,title:'2 xonali kvartira ijaraga, Yangi Fargʻona',price:2500000,unit:'oy',city:'Fargʻona sh.',time:'1 soat oldin',cond:'Ijaraga',views:238,
+  desc:'Yangi Fargʻona mavzesi, 4-qavatli uyning 2-qavati. 54 m², 2 xona.\nYevro taʼmir, mebel va texnika bilan: konditsioner, kir yuvish mashinasi, muzlatgich.\nOilaga yoki ishlaydigan qizlarga beriladi. Kommunal toʻlov alohida. Depozit 1 oylik.',
+  specs:[['Xonalar','2'],['Maydoni','54 m²'],['Qavat','2 / 4'],['Taʼmir','Yevro'],['Mebel','Toʻliq']],
+  seller:{n:'Nilufar Ahmedova',since:'2023-yildan',ads:3,phone:'+998 91 245-88-10'}},
+
+ {id:3,cat:'electro',kind:'phone',hue:285,title:'iPhone 13, 128 GB, Sierra Blue',price:7200000,city:'Margʻilon',time:'3 soat oldin',cond:'Ishlatilgan',views:596,
+  desc:'128 GB, rangi Sierra Blue. Batareya holati 89%.\nDoim gʻilofda yurgan, ekranida chizilgan joyi yoʻq. Face ID ishlaydi, almashtirilgan detali yoʻq.\nQutisi va zaryadlagich kabeli bor. Almashtirish yoʻq, faqat sotuv.',
+  specs:[['Model','iPhone 13'],['Xotira','128 GB'],['Batareya','89%'],['Rangi','Sierra Blue'],['Komplekt','Quti, kabel']],
+  seller:{n:'Sardor Rahimov',since:'2022-yildan',ads:12,phone:'+998 99 701-52-33'}},
+
+ {id:4,cat:'clothes',kind:'dress',hue:15,title:'Margʻilon atlasidan koʻylak, buyurtmaga',price:320000,city:'Margʻilon',time:'5 soat oldin',cond:'Yangi',views:174,
+  desc:'Tabiiy Margʻilon atlasidan tikilgan koʻylak. Razmerlar 42 dan 52 gacha.\nRang va naqshni oʻzingiz tanlaysiz — namunalar bor. Oʻlchov boʻyicha ham tikib beramiz.\nBuyurtma 3–5 kunda tayyor. Viloyat boʻylab yetkazib berish bor.',
+  specs:[['Mato','Tabiiy atlas'],['Razmer','42–52'],['Tayyorlash','3–5 kun'],['Yetkazish','Bor']],
+  seller:{n:'Dilnoza Toʻxtasinova',since:'2022-yildan',ads:29,phone:'+998 94 330-71-05'}},
+
+ {id:5,cat:'transport',kind:'car',hue:120,title:'Chevrolet Cobalt, 2021-yil, avtomat',price:142000000,city:'Qoʻqon',time:'Bugun, 09:14',cond:'Ishlatilgan',views:733,
+  desc:'2021-yil, avtomat korobka. Yurgani 61 000 km.\nBir qoʻlda yurgan, servis kitobchasi bor. Rangi kumush.\nHujjatlar toza, kredit yoʻq. Bahosi biroz kelishiladi.',
+  specs:[['Marka','Chevrolet Cobalt'],['Yili','2021'],['Yurgani','61 000 km'],['Uzatma','Avtomat'],['Rangi','Kumush']],
+  seller:{n:'Jasur Qodirov',since:'2020-yildan',ads:4,phone:'+998 93 118-40-92'}},
+
+ {id:6,cat:'home',kind:'ceramic',hue:225,title:'Rishton keramikasi, 6 kishilik dasturxon toʻplami',price:480000,city:'Rishton',time:'Bugun, 08:02',cond:'Yangi',views:151,
+  desc:'Rishton ustalari qoʻlida ishlangan toʻplam: 6 ta lagan, 6 ta kosa, 1 ta katta lagan.\nAnʼanaviy koʻk-oq naqsh. Barchasi qoʻlda chizilgan, shuning uchun naqshlar biroz farq qiladi.\nEhtiyot qilib qadoqlab beramiz, pochta orqali ham joʻnatamiz.',
+  specs:[['Buyumlar','13 dona'],['Uslub','Anʼanaviy koʻk-oq'],['Ishlanishi','Qoʻlda'],['Qadoq','Bor']],
+  seller:{n:'Ulugʻbek Nazarov',since:'2021-yildan',ads:41,phone:'+998 90 604-19-77'}},
+
+ {id:7,cat:'services',kind:'truck',hue:65,title:'Yuk tashish xizmati — Labo va Isuzu',price:0,city:'Fargʻona sh.',time:'Kecha',cond:'Xizmat',views:302,
+  desc:'Viloyat ichida va tashqarisiga yuk tashiymiz. Labo (1 t) va Isuzu (5 t) mavjud.\nKoʻchish, mebel, qurilish materiallari. Yuk ortuvchi ishchilar ham bor — alohida kelishiladi.\nKunning istalgan vaqtida. Narx masofaga qarab hisoblanadi.',
+  specs:[['Transport','Labo, Isuzu'],['Yuk sigʻimi','1 t / 5 t'],['Hudud','Viloyat + tashqari'],['Ishchilar','Kelishiladi']],
+  seller:{n:'Anvar Sotiboldiyev',since:'2019-yildan',ads:2,phone:'+998 97 442-63-18'}},
+
+ {id:8,cat:'home',kind:'sofa',hue:30,title:'Burchak divan, ochiladigan, yaxshi holatda',price:4200000,city:'Quvasoy',time:'Kecha',cond:'Ishlatilgan',views:198,
+  desc:'2 yil ishlatilgan, holati juda yaxshi. Ochiladi — 2 kishilik yotoq boʻladi.\nIchida choyshab uchun quti bor. Matosi tozalangan, yirtiq yoki dogʻ yoʻq.\nKoʻchib ketayotganimiz uchun sotilyapti. Oʻzingiz olib ketasiz.',
+  specs:[['Turi','Burchak, ochiladigan'],['Yoshi','2 yil'],['Oʻlchami','280 × 180 sm'],['Rangi','Kulrang']],
+  seller:{n:'Muhabbat Isroilova',since:'2024-yildan',ads:1,phone:'+998 99 512-07-44'}},
+
+ {id:9,cat:'job',kind:'job',hue:155,title:'Doʻkonga sotuvchi qiz kerak',price:4500000,unit:'oy',city:'Fargʻona sh.',time:'2 kun oldin',cond:'Ish',views:1105,
+  desc:'Markaziy bozor yonidagi kiyim doʻkoniga sotuvchi kerak.\nIsh vaqti: 09:00–18:00, yakshanba dam. Tajriba shart emas, oʻrgatamiz.\nOylik 4 500 000 soʻmdan boshlanadi + sotuvdan foiz. Tushlik doʻkon hisobidan.',
+  specs:[['Ish vaqti','09:00–18:00'],['Dam olish','Yakshanba'],['Tajriba','Shart emas'],['Qoʻshimcha','Sotuvdan foiz']],
+  seller:{n:'Shahnoza Karimova',since:'2023-yildan',ads:5,phone:'+998 91 807-25-60'}},
+
+ {id:10,cat:'transport',kind:'bike',hue:340,title:'Velosiped 26 oʻlcham, togʻ velosipedi',price:950000,city:'Oltiariq',time:'2 kun oldin',cond:'Ishlatilgan',views:143,
+  desc:'26 oʻlcham, 21 tezlikli. Ramasi alyuminiy, yengil.\nAmortizatorlari ishlaydi, tormozlari yangi almashtirildi. Kamerasi butun.\nBolam kattalashib qoldi, shuning uchun sotilyapti.',
+  specs:[['Oʻlcham','26"'],['Tezliklar','21'],['Rama','Alyuminiy'],['Holati','Ishchi']],
+  seller:{n:'Otabek Mamatqulov',since:'2024-yildan',ads:2,phone:'+998 88 331-96-27'}},
+
+ {id:11,cat:'animals',kind:'cow',hue:95,title:'Sigir sotiladi, buzogʻi bilan',price:14000000,city:'Quva',time:'3 kun oldin',cond:'—',views:267,
+  desc:'Qora-oq sigir, 4 yoshda, 3-tugʻishi. Kuniga 18–20 litr sut beradi.\nBuzogʻi 2 oylik, urgʻochi. Ikkalasi birga sotiladi.\nVeterinar hujjatlari bor, emlangan. Oʻzingiz kelib koʻrasiz.',
+  specs:[['Yoshi','4 yosh'],['Sut','18–20 l / kun'],['Buzoq','2 oylik, urgʻochi'],['Hujjat','Veterinar bor']],
+  seller:{n:'Hasan Yusupov',since:'2022-yildan',ads:9,phone:'+998 90 271-58-83'}},
+
+ {id:12,cat:'home',kind:'carpet',hue:355,title:'Turk gilami 3×4, deyarli yangi',price:1300000,city:'Beshariq',time:'4 kun oldin',cond:'Ishlatilgan',views:88,
+  desc:'3×4 metr, Turkiya ishlab chiqarishi. 1 yil toʻshalgan, mehmonxonada turgan.\nYuvilgan, hidi yoʻq. Rangi och jigarrang-bej, naqshli.\nUy taʼmirlanayotgani uchun sotilyapti.',
+  specs:[['Oʻlchami','3 × 4 m'],['Ishlab chiqaruvchi','Turkiya'],['Yoshi','1 yil'],['Holati','Yuvilgan']],
+  seller:{n:'Zulfiya Rahmonova',since:'2023-yildan',ads:6,phone:'+998 94 118-33-72'}},
+
+ {id:13,cat:'realty',kind:'flat',hue:40,title:'4 xonali hovli uy, 6 sotix, Margʻilon markazi',price:620000000,city:'Margʻilon',time:'5 kun oldin',cond:'Sotiladi',views:874,
+  desc:'6 sotix yer, 4 xonali uy. Markazga yaqin, maktab va bozor yonida.\nGaz, svet, suv doimiy. Hovlida mevali daraxtlar va garaj bor.\nHujjatlari toʻliq, kadastr tayyor. Vositachilarsiz.',
+  specs:[['Xonalar','4'],['Yer','6 sotix'],['Kommunal','Gaz, svet, suv'],['Garaj','Bor'],['Hujjat','Kadastr tayyor']],
+  seller:{n:'Rustam Ergashev',since:'2020-yildan',ads:3,phone:'+998 93 505-11-29'}},
+
+ {id:14,cat:'electro',kind:'laptop',hue:265,title:'Noutbuk Lenovo IdeaPad 3, Ryzen 5',price:5800000,city:'Fargʻona sh.',time:'6 kun oldin',cond:'Ishlatilgan',views:321,
+  desc:'Ryzen 5 5500U, 16 GB operativ, 512 GB SSD. Ekran 15.6" Full HD.\n1.5 yil ishlatilgan, faqat oʻqish uchun. Batareyasi 4–5 soat chidaydi.\nZaryadlagichi bor, sumkasi ham qoʻshib beriladi.',
+  specs:[['Protsessor','Ryzen 5 5500U'],['Operativ','16 GB'],['Xotira','512 GB SSD'],['Ekran','15.6" FHD'],['Batareya','4–5 soat']],
+  seller:{n:'Aziz Toshmatov',since:'2021-yildan',ads:8,phone:'+998 90 909-14-56'}}
+];
+
+var NOTIFS=[
+ {g:'Bugun',unread:true,icon:'check',t:'Eʼloningiz tasdiqlandi',x:'«iPhone 13, 128 GB» eʼloni endi saytda koʻrinmoqda.',time:'14 daqiqa oldin'},
+ {g:'Bugun',unread:true,icon:'price',t:'Narx tushdi',x:'Saqlagan eʼloningiz — «Chevrolet Cobalt, 2021» — 148 mln dan 142 mln soʻmga tushdi.',time:'2 soat oldin'},
+ {g:'Bugun',unread:true,icon:'search',t:'Qidiruvingizga mos yangi eʼlon',x:'«kvartira ijara Fargʻona» boʻyicha 3 ta yangi eʼlon qoʻshildi.',time:'4 soat oldin'},
+ {g:'Kecha',unread:false,icon:'call',t:'2 marta qoʻngʻiroq qilishdi',x:'«Burchak divan» eʼloningiz boʻyicha ikki kishi bogʻlandi.',time:'Kecha, 17:40'},
+ {g:'Kecha',unread:false,icon:'clock',t:'Eʼlon muddati tugayapti',x:'«Velosiped 26 oʻlcham» eʼloni 3 kundan keyin arxivga tushadi. Uzaytirasizmi?',time:'Kecha, 10:05'},
+ {g:'Ilgariroq',unread:false,icon:'check',t:'Eʼloningiz tasdiqlandi',x:'«Rishton keramikasi, 6 kishilik toʻplam» saytga joylandi.',time:'3 kun oldin'}
+];
+var NICON={
+ check:['','<path d="m4.5 12.5 5 5 10-11"/>'],
+ price:['amber','<path d="M12 4v16M8 8.5c0-2 1.8-3 4-3s4 1 4 3-1.8 2.8-4 3.2-4 1.2-4 3.2 1.8 3 4 3 4-1 4-3"/>'],
+ search:['','<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>'],
+ call:['gray','<path d="M6 3.5h3.5l1.8 4.3-2.2 1.6a12 12 0 0 0 5.5 5.5l1.6-2.2 4.3 1.8V18a2.5 2.5 0 0 1-2.7 2.5A16.5 16.5 0 0 1 3.5 6.2 2.5 2.5 0 0 1 6 3.5Z"/>'],
+ clock:['amber','<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.3l3.2 2"/>']
+};
+
+/* ---------- helpers ---------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+var money=function(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')};
+function priceText(it){
+  if(!it.price) return 'Kelishiladi';
+  return money(it.price)+' soʻm'+(it.unit?' / '+it.unit:'');
+}
+function catLabel(id){for(var i=0;i<CATS.length;i++) if(CATS[i].id===id) return CATS[i].label; return ''}
+function icon(p,sw){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.9)+'" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'}
+
+var state={tab:'home',cat:'all',q:'',searching:false,fav:{},unread:3,detail:null,slide:0,revealed:false,
+  recent:['kvartira ijara Fargʻona','nexia 3','atlas koʻylak']};
+
+/* ---------- navigation ---------- */
+function show(name){
+  var all=document.querySelectorAll('.screen');
+  for(var i=0;i<all.length;i++) all[i].classList.toggle('on',all[i].getAttribute('data-screen')===name);
+  $('#tabbar').style.display = (name==='detail') ? 'none' : 'flex';
+  var tabs=document.querySelectorAll('.tab');
+  for(var j=0;j<tabs.length;j++) tabs[j].setAttribute('aria-selected', String(tabs[j].dataset.tab===name));
+  var jb=document.querySelectorAll('#jump button');
+  for(var k=0;k<jb.length;k++) jb[k].setAttribute('aria-pressed', String(jb[k].dataset.go===name));
+  if(name==='notif') markRead();
+}
+function goTab(name){ state.tab=name; show(name); }
+
+/* ---------- chips ---------- */
+(function(){
+  var h='';
+  for(var i=0;i<CATS.length;i++){
+    var c=CATS[i];
+    h+='<button class="chip" data-cat="'+c.id+'" aria-pressed="'+(c.id==='all')+'">'+icon(c.icon)+c.label+'</button>';
+  }
+  $('#chips').innerHTML=h;
+  $('#chips').addEventListener('click',function(e){
+    var b=e.target.closest('.chip'); if(!b) return;
+    state.cat=b.dataset.cat;
+    var all=$('#chips').querySelectorAll('.chip');
+    for(var i=0;i<all.length;i++) all[i].setAttribute('aria-pressed',String(all[i]===b));
+    renderFeed();
+    $('#homeScroll').scrollTop=0;
+  });
+})();
+
+/* ---------- feed ---------- */
+function matches(it){
+  if(state.cat!=='all' && it.cat!==state.cat) return false;
+  var q=state.q.trim().toLowerCase();
+  if(!q) return true;
+  return (it.title+' '+it.city+' '+catLabel(it.cat)+' '+it.desc).toLowerCase().indexOf(q)>-1;
+}
+function renderFeed(){
+  var list=L.filter(matches), h='';
+  for(var i=0;i<list.length;i++){
+    var it=list[i];
+    h+='<button class="card" data-id="'+it.id+'">'+
+       '<div class="thumb">'+art(it.kind,it.hue,0)+
+       '<span class="fav" role="button" data-fav="'+it.id+'" aria-pressed="'+(!!state.fav[it.id])+'">'+
+       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.7-7.5-9.6A4.4 4.4 0 0 1 12 7.4a4.4 4.4 0 0 1 7.5 3c0 4.9-7.5 9.6-7.5 9.6Z"/></svg></span></div>'+
+       '<div class="cbody"><div class="price">'+priceText(it)+'</div>'+
+       '<div class="ctitle">'+it.title+'</div>'+
+       '<div class="meta"><b>'+it.city+'</b>'+it.time+'</div></div></button>';
+  }
+  if(!list.length){
+    h='<div class="empty" style="grid-column:1/-1"><strong>Hech narsa topilmadi</strong>Boshqa soʻz bilan qidirib koʻring yoki kategoriyani oʻzgartiring.</div>';
+  }
+  $('#feed').innerHTML=h;
+  var q=state.q.trim();
+  $('#feedTitle').textContent = q ? '«'+q+'» boʻyicha' : (state.cat==='all' ? 'Yangi eʼlonlar' : catLabel(state.cat));
+  $('#feedCount').textContent = list.length+' ta eʼlon';
+}
+$('#feed').addEventListener('click',function(e){
+  var f=e.target.closest('[data-fav]');
+  if(f){ e.stopPropagation(); var id=f.dataset.fav; state.fav[id]=!state.fav[id]; f.setAttribute('aria-pressed',String(!!state.fav[id])); return; }
+  var c=e.target.closest('.card'); if(c) openDetail(+c.dataset.id);
+});
+
+/* ---------- search ---------- */
+var qIn=$('#q');
+function setSearching(on){
+  state.searching=on;
+  $('#searchBar').classList.toggle('searching',on);
+  var empty=!qIn.value.trim();
+  $('#recentPanel').hidden = !(on && empty);
+  $('#feedPanel').hidden = (on && empty);
+}
+qIn.addEventListener('focus',function(){setSearching(true)});
+qIn.addEventListener('input',function(){
+  state.q=qIn.value;
+  $('#sfield').classList.toggle('filled',!!qIn.value);
+  setSearching(true);
+  renderFeed();
+});
+$('#clearQ').addEventListener('click',function(){
+  qIn.value=''; state.q=''; $('#sfield').classList.remove('filled'); setSearching(true); renderFeed(); qIn.focus();
+});
+$('#cancelSearch').addEventListener('click',function(){
+  qIn.value=''; state.q=''; $('#sfield').classList.remove('filled'); qIn.blur(); setSearching(false); renderFeed();
+});
+function runSearch(text){
+  qIn.value=text; state.q=text; $('#sfield').classList.add('filled');
+  setSearching(true); $('#recentPanel').hidden=true; $('#feedPanel').hidden=false; renderFeed();
+}
+(function(){
+  var h='';
+  for(var i=0;i<state.recent.length;i++){
+    h+='<button class="ritem" data-s="'+state.recent[i]+'">'+
+       icon('<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.3l3.2 2"/>')+'<span>'+state.recent[i]+'</span>'+
+       icon('<path d="M7 17 17 7M9 7h8v8"/>',2)+'</button>';
+  }
+  $('#recentList').innerHTML=h;
+  var pop=['nexia','iphone','kvartira','divan','atlas','sigir'];
+  var t='';
+  for(var j=0;j<pop.length;j++) t+='<button class="rtag" data-s="'+pop[j]+'">'+pop[j]+'</button>';
+  $('#popTags').innerHTML=t;
+  $('#recentPanel').addEventListener('click',function(e){
+    var b=e.target.closest('[data-s]'); if(b) runSearch(b.dataset.s);
+  });
+})();
+
+/* ---------- detail ---------- */
+function openDetail(id){
+  var it=null; for(var i=0;i<L.length;i++) if(L[i].id===id) it=L[i];
+  if(!it) return;
+  state.detail=it; state.slide=0; state.revealed=false;
+
+  var slides='';
+  for(var s=0;s<3;s++) slides+='<div class="slide">'+art(it.kind,it.hue,s*0.018,'')+'</div>';
+  var dots=''; for(var d=0;d<3;d++) dots+='<i class="'+(d===0?'on':'')+'"></i>';
+
+  var specs='';
+  for(var k=0;k<it.specs.length;k++)
+    specs+='<div class="specrow"><dt>'+it.specs[k][0]+'</dt><dd>'+it.specs[k][1]+'</dd></div>';
+
+  var initials=it.seller.n.split(' ').map(function(w){return w[0]}).slice(0,2).join('');
+
+  $('#detailScroll').innerHTML=
+   '<div class="gallery">'+
+     '<div class="dhdr">'+
+       '<button class="gbtn" id="backBtn" aria-label="Orqaga">'+icon('<path d="M15 5 8 12l7 7"/>',2.3)+'</button>'+
+       '<div style="display:flex;gap:9px">'+
+         '<button class="gbtn" id="shareBtn" aria-label="Ulashish">'+icon('<path d="M12 15V4m0 0L8 8m4-4 4 4"/><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/>',2)+'</button>'+
+         '<button class="gbtn" id="favBtn" aria-pressed="'+(!!state.fav[it.id])+'" aria-label="Saqlash">'+icon('<path d="M12 20s-7.5-4.7-7.5-9.6A4.4 4.4 0 0 1 12 7.4a4.4 4.4 0 0 1 7.5 3c0 4.9-7.5 9.6-7.5 9.6Z"/>',2)+'</button>'+
+       '</div>'+
+     '</div>'+
+     '<div class="slides" id="slides">'+slides+'</div>'+
+     '<div class="dots" id="dots">'+dots+'</div>'+
+   '</div>'+
+
+   '<div class="dsec">'+
+     '<p class="dprice">'+priceText(it)+'</p>'+
+     '<h1 class="dtitle">'+it.title+'</h1>'+
+     '<div class="tags"><span class="tag">'+catLabel(it.cat)+'</span><span class="tag plain">'+it.cond+'</span></div>'+
+     '<div class="dmeta">'+icon('<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.8"/>',1.8)+
+       it.city+'<span class="dot"></span>'+it.time+'<span class="dot"></span>'+it.views+' marta koʻrilgan</div>'+
+   '</div>'+
+
+   '<div class="dsec"><h3>Tavsif</h3><p class="desc">'+it.desc+'</p></div>'+
+
+   '<div class="dsec"><h3>Maʼlumotlar</h3><dl class="speclist">'+specs+'</dl></div>'+
+
+   '<div class="dsec"><h3>Eʼlon egasi</h3>'+
+     '<div class="seller">'+
+       '<div class="avatar">'+initials+'</div>'+
+       '<div class="sinfo"><div class="sname">'+it.seller.n+'</div>'+
+       '<div class="ssub">'+it.seller.since+'<span class="dot"></span>'+it.seller.ads+' ta eʼloni</div></div>'+
+     '</div>'+
+     '<div class="phonebox" id="phoneBox">'+
+       '<button class="btn sec" id="revealBtn" style="justify-content:space-between">'+
+         '<span style="display:flex;align-items:center;gap:9px">'+
+         icon('<path d="M6 3.5h3.5l1.8 4.3-2.2 1.6a12 12 0 0 0 5.5 5.5l1.6-2.2 4.3 1.8V18a2.5 2.5 0 0 1-2.7 2.5A16.5 16.5 0 0 1 3.5 6.2 2.5 2.5 0 0 1 6 3.5Z"/>')+
+         '+998 ХХ ХХХ-ХХ-ХХ</span><span style="font-size:13px;color:var(--accent)">Raqamni koʻrsatish</span></button>'+
+     '</div>'+
+   '</div>'+
+
+   '<div class="dsec" style="border-bottom:0">'+
+     '<p class="warn">'+icon('<path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 10v4.5M12 17.4v.2"/>',2)+
+     '<span><strong>Ehtiyot boʻling.</strong> Oldindan pul oʻtkazmang. Mahsulotni koʻrmasdan bank kartasiga toʻlov qilmang — kelishuv joyida boʻlsin.</span></p>'+
+   '</div>'+
+   '<div style="height:8px"></div>';
+
+  $('#detailActions').innerHTML=
+    '<button class="btn pri wide" id="callBtn">'+icon('<path d="M6 3.5h3.5l1.8 4.3-2.2 1.6a12 12 0 0 0 5.5 5.5l1.6-2.2 4.3 1.8V18a2.5 2.5 0 0 1-2.7 2.5A16.5 16.5 0 0 1 3.5 6.2 2.5 2.5 0 0 1 6 3.5Z"/>',2)+'Qoʻngʻiroq</button>'+
+    '<button class="btn sec" id="msgBtn" style="padding:0 20px">'+icon('<path d="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6.1A8.4 8.4 0 1 1 21 11.5Z"/>',2)+'Xabar</button>';
+
+  $('#detailScroll').scrollTop=0;
+  show('detail');
+}
+$('#detailScroll').addEventListener('click',function(e){
+  if(e.target.closest('#backBtn')){ show(state.tab); return; }
+  var fb=e.target.closest('#favBtn');
+  if(fb){ var id=state.detail.id; state.fav[id]=!state.fav[id]; fb.setAttribute('aria-pressed',String(!!state.fav[id])); renderFeed(); return; }
+  if(e.target.closest('#revealBtn')){
+    state.revealed=true;
+    $('#phoneBox').innerHTML=
+      '<div style="display:flex;align-items:center;gap:11px;padding:13px 14px;border-radius:13px;background:var(--accent-soft);border:1px solid var(--accent-line)">'+
+      '<span style="color:var(--accent)">'+icon('<path d="M6 3.5h3.5l1.8 4.3-2.2 1.6a12 12 0 0 0 5.5 5.5l1.6-2.2 4.3 1.8V18a2.5 2.5 0 0 1-2.7 2.5A16.5 16.5 0 0 1 3.5 6.2 2.5 2.5 0 0 1 6 3.5Z"/>',2)+'</span>'+
+      '<span class="pnum">'+state.detail.seller.phone+'</span></div>'+
+      '<p class="hint" style="margin:0;font-size:12px;color:var(--ink3)">Qoʻngʻiroq qilganda «Oson Top» dan koʻrganingizni ayting.</p>';
+  }
+});
+$('#vp').addEventListener('scroll',function(e){
+  var sl=e.target;
+  if(sl && sl.id==='slides'){
+    var i=Math.round(sl.scrollLeft/sl.clientWidth);
+    var dots=$('#dots'); if(!dots) return;
+    for(var d=0;d<dots.children.length;d++) dots.children[d].classList.toggle('on',d===i);
+  }
+},true);
+$('#detailActions').addEventListener('click',function(e){
+  if(e.target.closest('#callBtn')||e.target.closest('#msgBtn')){
+    var b=e.target.closest('.btn'), old=b.innerHTML;
+    b.innerHTML = e.target.closest('#callBtn') ? 'Qoʻngʻiroq: '+state.detail.seller.phone : 'Telegram ochilmoqda…';
+    setTimeout(function(){b.innerHTML=old},1800);
+  }
+});
+
+/* ---------- notifications ---------- */
+function renderNotifs(){
+  var h='',g='';
+  for(var i=0;i<NOTIFS.length;i++){
+    var n=NOTIFS[i];
+    if(n.g!==g){ g=n.g; h+='<div class="ngroup">'+g+'</div>'; }
+    var ic=NICON[n.icon];
+    h+='<button class="nitem'+(n.unread?' unread':'')+'">'+
+       '<span class="nicon '+ic[0]+'"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ic[1]+'</svg></span>'+
+       '<span class="nbody"><span class="ntitle">'+(n.unread?'<i></i>':'')+n.t+'</span>'+
+       '<span class="ntext">'+n.x+'</span><span class="ntime">'+n.time+'</span></span></button>';
+  }
+  $('#notifList').innerHTML=h;
+}
+function markRead(){
+  setTimeout(function(){
+    for(var i=0;i<NOTIFS.length;i++) NOTIFS[i].unread=false;
+    state.unread=0; renderNotifs(); updateBadges();
+  },900);
+}
+function updateBadges(){
+  var b1=$('#bellBadge'), b2=$('#tabBadge');
+  b1.hidden=b2.hidden=(state.unread===0);
+  b1.textContent=b2.textContent=state.unread;
+}
+$('#readAll').addEventListener('click',function(){
+  for(var i=0;i<NOTIFS.length;i++) NOTIFS[i].unread=false;
+  state.unread=0; renderNotifs(); updateBadges();
+});
+$('#bellBtn').addEventListener('click',function(){goTab('notif')});
+
+/* ---------- add listing form ---------- */
+(function(){
+  var slots=4,h='';
+  for(var i=0;i<slots;i++) h+='<button type="button" class="pslot" data-slot="'+i+'">'+
+    (i===0?'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'
+          :'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="10" r="1.6"/><path d="m4 17 5-4.5 4 3.5 3-2.5 4 3.5"/></svg>')+
+    '</button>';
+  $('#photos').innerHTML=h;
+  var kinds=['phone','sofa','carpet','ceramic'],hues=[285,30,355,225],n=0;
+  $('#photos').addEventListener('click',function(e){
+    var s=e.target.closest('.pslot'); if(!s) return;
+    if(s.classList.contains('has')){ s.classList.remove('has'); s.innerHTML=s.dataset.orig; return; }
+    if(!s.dataset.orig) s.dataset.orig=s.innerHTML;
+    s.classList.add('has');
+    s.innerHTML=art(kinds[n%4],hues[n%4],0)+'<span class="rm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></span>';
+    n++;
+    $('#errPhoto').classList.remove('on');
+  });
+
+  var cs='';for(var c=1;c<CATS.length;c++) cs+='<option value="'+CATS[c].id+'">'+CATS[c].label+'</option>';
+  $('#fCat').innerHTML=cs;
+  var ct='';for(var t=0;t<CITIES.length;t++) ct+='<option>'+CITIES[t]+'</option>';
+  $('#fCity').innerHTML=ct;
+
+  $('#condSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    var all=$('#condSeg').querySelectorAll('button');
+    for(var i=0;i<all.length;i++) all[i].setAttribute('aria-pressed',String(all[i]===b));
+  });
+  $('#fTitle').addEventListener('input',function(){
+    $('#titleCount').textContent=this.value.length+'/70';
+    if(this.value.trim()){this.classList.remove('bad');$('#errTitle').classList.remove('on')}
+  });
+  $('#fPrice').addEventListener('input',function(){
+    var v=this.value.replace(/\D/g,'');
+    this.value=v?money(v)+' soʻm':'';
+    if(v){this.classList.remove('bad');$('#errPrice').classList.remove('on')}
+  });
+  $('#fNego').addEventListener('change',function(){
+    var p=$('#fPrice'); p.disabled=this.checked;
+    p.style.opacity=this.checked?.45:1;
+    if(this.checked){p.value='';p.classList.remove('bad');$('#errPrice').classList.remove('on')}
+  });
+  $('#fPhone').addEventListener('input',function(){
+    if(this.value.replace(/\D/g,'').length>=12){this.classList.remove('bad');$('#errPhone').classList.remove('on')}
+  });
+
+  $('#addForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var ok=true;
+    if(!$('#photos').querySelector('.has')){ $('#errPhoto').classList.add('on'); ok=false; }
+    var ti=$('#fTitle'); if(!ti.value.trim()){ ti.classList.add('bad'); $('#errTitle').classList.add('on'); ok=false; }
+    var pr=$('#fPrice'); if(!$('#fNego').checked && !pr.value.trim()){ pr.classList.add('bad'); $('#errPrice').classList.add('on'); ok=false; }
+    var ph=$('#fPhone'); if(ph.value.replace(/\D/g,'').length<12){ ph.classList.add('bad'); $('#errPhone').classList.add('on'); ok=false; }
+    if(!ok){ var bad=$('.bad')||$('.err.on'); if(bad&&bad.scrollIntoView) bad.scrollIntoView({block:'center',behavior:'smooth'}); return; }
+    $('#addForm').hidden=true; $('#addDone').hidden=false; $('#addScroll').scrollTop=0;
+  });
+  $('#doneBack').addEventListener('click',function(){
+    $('#addForm').hidden=false; $('#addDone').hidden=true; $('#addForm').reset();
+    $('#titleCount').textContent='0/70'; $('#fPhone').value='+998 '; $('#fPrice').disabled=false; $('#fPrice').style.opacity=1;
+    var hs=$('#photos').querySelectorAll('.pslot.has');
+    for(var i=0;i<hs.length;i++){hs[i].classList.remove('has');hs[i].innerHTML=hs[i].dataset.orig}
+    goTab('home');
+  });
+})();
+
+/* ---------- location ---------- */
+$('#locBtn').addEventListener('click',function(){
+  var cur=$('#locLabel').textContent;
+  var idx=CITIES.indexOf(cur);
+  $('#locLabel').textContent = idx===-1 ? CITIES[0] : (idx+1<CITIES.length ? CITIES[idx+1] : 'Fargʻona viloyati');
+});
+
+/* ---------- tabs & jump ---------- */
+$('#tabbar').addEventListener('click',function(e){
+  var t=e.target.closest('.tab'); if(t) goTab(t.dataset.tab);
+});
+$('#jump').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.go==='detail') openDetail(1); else goTab(b.dataset.go);
+});
+
+/* ---------- boot ---------- */
+renderFeed(); renderNotifs(); updateBadges();
+})();
+</script>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>
+  body { margin:0; background:#F4F6F5; -webkit-font-smoothing:antialiased; font-family:-apple-system,'SF Pro Text','Helvetica Neue',Helvetica,Arial,sans-serif; }
+  ::-webkit-scrollbar { width:0; height:0; }
+  a { color:#16A45C; text-decoration:none; }
+  a:hover { color:#0E8C4C; }
+</style>
+</helmet>
+
+<section style="padding:56px 56px 80px;display:flex;flex-direction:column;gap:44px;">
+
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap;max-width:1400px;">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font:400 11px ui-monospace,'SF Mono',Menlo,monospace;color:#8D9A93;letter-spacing:0.14em;text-transform:uppercase;">iOS · Uzbek Latin · UZS</div>
+      <div style="font:800 40px/1.05 -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.03em;">Fargona Bozor</div>
+      <div style="font:400 15px/1.5 -apple-system,Helvetica,sans-serif;color:#6B7A72;max-width:520px;">Farg‘ona viloyati uchun mahalliy e’lonlar ilovasi. Ko‘rish, qidirish, sotuvchi bilan bog‘lanish — bir yoki ikki tegishda.</div>
+    </div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font:400 10px ui-monospace,Menlo,monospace;color:#8D9A93;letter-spacing:0.12em;">RANGLAR</div>
+        <div style="display:flex;gap:8px;">
+          <div style="width:40px;height:40px;border-radius:12px;background:#16A45C;"></div>
+          <div style="width:40px;height:40px;border-radius:12px;background:#EFF7F2;"></div>
+          <div style="width:40px;height:40px;border-radius:12px;background:#14201A;"></div>
+          <div style="width:40px;height:40px;border-radius:12px;background:#F6F8F7;border:1px solid #E8EBE9;"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font:400 10px ui-monospace,Menlo,monospace;color:#8D9A93;letter-spacing:0.12em;">TIPOGRAFIYA</div>
+        <div style="font:800 22px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Sarlavha 22/800</div>
+        <div style="font:400 13px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Matn 13/400 · Meta 11/400</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font:400 10px ui-monospace,Menlo,monospace;color:#8D9A93;letter-spacing:0.12em;">RADIUS / SOYA</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="width:40px;height:40px;border-radius:14px;background:#fff;box-shadow:0 1px 3px rgba(16,34,26,0.08);"></div>
+          <div style="width:40px;height:40px;border-radius:20px;background:#fff;box-shadow:0 2px 10px rgba(16,34,26,0.10);"></div>
+          <div style="font:400 12px -apple-system,Helvetica,sans-serif;color:#6B7A72;">14 · 16 · 20 · 999</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:44px;flex-wrap:wrap;align-items:flex-start;">
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">01 · BOSH SAHIFA</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Home" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+            <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+              <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+              <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+            </div>
+          </div>
+          <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:8px 20px 14px;display:flex;flex-direction:column;gap:12px;background:#FFFFFF;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:9px;">
+                  <div style="width:30px;height:30px;border-radius:10px;background:#16A45C;display:flex;align-items:center;justify-content:center;font:800 15px -apple-system,Helvetica,sans-serif;color:#fff;">F</div>
+                  <div style="font:800 20px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Fargona Bozor</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;background:#F6F8F7;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="2" stroke-linecap="round"><path d="M12 21s6-5.3 6-10a6 6 0 1 0-12 0c0 4.7 6 10 6 10z"></path><circle cx="12" cy="11" r="2"></circle></svg>
+                  <span style="font:600 11.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Farg‘ona viloyati</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="2.6" stroke-linecap="round"><path d="M7 10l5 5 5-5"></path></svg>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;height:46px;padding:0 14px;border-radius:15px;background:#F2F5F3;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8D9A93" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.2"></circle><path d="M15.6 15.6L20 20"></path></svg>
+                <span style="font:400 15px -apple-system,Helvetica,sans-serif;color:#8D9A93;">Nima qidiryapsiz?</span>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;gap:14px;overflow-x:auto;padding:2px 20px 18px;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M11 18h2"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Telefonlar</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15l1.6-5.2A2 2 0 0 1 7.5 8.4h9a2 2 0 0 1 1.9 1.4L20 15v3H4z"></path><circle cx="7.5" cy="18" r="1.4"></circle><circle cx="16.5" cy="18" r="1.4"></circle></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Avtomobil</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v9H4z"></path><path d="M10 20v-5h4v5"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Uy-joy</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="12" rx="2.5"></rect><path d="M9 20h6"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Elektronika</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 4L12 6.5 15.5 4 20 7l-2 3v10H6V10L4 7z"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Kiyim</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="7" rx="2.5"></rect><path d="M6 10V7.5A1.5 1.5 0 0 1 7.5 6h9A1.5 1.5 0 0 1 18 7.5V10"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Mebel</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Xizmatlar</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:62px;flex:none;">
+                <div style="width:58px;height:58px;border-radius:19px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h0.01M12 12h0.01M18 12h0.01"></path></svg>
+                </div>
+                <span style="font:500 10.5px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Boshqa</span>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;align-items:baseline;justify-content:space-between;padding:0 20px 12px;">
+              <div style="font:700 18px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Yangi e’lonlar</div>
+              <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#16A45C;">Barchasi</div>
+            </div>
+            <div style="flex:none;display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;padding:0 20px 24px;">
+              <dc-import name="ListingCard" title="iPhone 13 128GB, ideal holat" price="4 500 000 so‘m" place="Farg‘ona shahri" time="2 soat oldin" ph="telefon rasmi" fav="{{ true }}" hint-size="100%,230px"></dc-import>
+              <dc-import name="ListingCard" title="Chevrolet Cobalt 2019, avtomat" price="132 000 000 so‘m" place="Qo‘qon" time="5 soat oldin" ph="avtomobil rasmi" hint-size="100%,230px"></dc-import>
+              <dc-import name="ListingCard" title="3 xonali kvartira, 2/5, remontli" price="520 000 000 so‘m" place="Marg‘ilon" time="Bugun" ph="kvartira rasmi" hint-size="100%,230px"></dc-import>
+              <dc-import name="ListingCard" title="Rishton keramikasi, 12 kishilik" price="380 000 so‘m" place="Rishton" time="1 kun oldin" ph="servis rasmi" hint-size="100%,230px"></dc-import>
+              <dc-import name="ListingCard" title="Samsung kir yuvish mashinasi 7 kg" price="2 850 000 so‘m" place="Quva" time="3 soat oldin" ph="mashina rasmi" hint-size="100%,230px"></dc-import>
+              <dc-import name="ListingCard" title="Yumshoq burchak divan" price="3 200 000 so‘m" place="Oltiariq" time="1 kun oldin" ph="divan rasmi" hint-size="100%,230px"></dc-import>
+            </div>
+          </div>
+          <dc-import name="TabBar" active="home" badge="{{ notifBadge }}" hint-size="100%,83px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">02 · QIDIRUV</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Search" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+            <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+              <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+              <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+            </div>
+          </div>
+          <div style="flex:none;padding:10px 20px 14px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #F1F3F2;">
+            <div style="font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Qidiruv</div>
+            <div style="display:flex;align-items:center;gap:9px;height:50px;padding:0 14px;border-radius:16px;background:#FFFFFF;border:1.5px solid #16A45C;box-shadow:0 1px 4px rgba(22,164,92,0.12);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.2"></circle><path d="M15.6 15.6L20 20"></path></svg>
+              <span style="flex:1;font:500 16px -apple-system,Helvetica,sans-serif;color:#14201A;">iPhone 13</span>
+              <div style="width:20px;height:20px;border-radius:10px;background:#EDF0EE;display:flex;align-items:center;justify-content:center;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;overflow-x:auto;">
+              <div style="flex:none;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:#EFF7F2;font:600 12.5px -apple-system,Helvetica,sans-serif;color:#0E8C4C;">Telefonlar
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0E8C4C" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </div>
+              <div style="flex:none;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:#F6F8F7;font:600 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Tuman
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="3" stroke-linecap="round"><path d="M7 10l5 5 5-5"></path></svg>
+              </div>
+              <div style="flex:none;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:#F6F8F7;font:600 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Narx
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="3" stroke-linecap="round"><path d="M7 10l5 5 5-5"></path></svg>
+              </div>
+              <div style="flex:none;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:#F6F8F7;font:600 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Holati
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="3" stroke-linecap="round"><path d="M7 10l5 5 5-5"></path></svg>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:16px 20px 24px;gap:20px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <div style="font:700 14px -apple-system,Helvetica,sans-serif;color:#14201A;">So‘nggi qidiruvlar</div>
+                <div style="font:600 12px -apple-system,Helvetica,sans-serif;color:#8D9A93;">Tozalash</div>
+              </div>
+              <div style="display:flex;flex-direction:column;">
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F4F6F5;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA6A0" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v4.5l3 1.8"></path></svg>
+                  <span style="flex:1;font:400 14px -apple-system,Helvetica,sans-serif;color:#14201A;">iPhone 13 Farg‘ona</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C7D0CB" stroke-width="2.4" stroke-linecap="round"><path d="M14 5l-8 7 8 7"></path><path d="M6 12h0" opacity="0"></path></svg>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F4F6F5;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA6A0" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v4.5l3 1.8"></path></svg>
+                  <span style="flex:1;font:400 14px -apple-system,Helvetica,sans-serif;color:#14201A;">Cobalt avtomat Qo‘qon</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 0;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA6A0" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v4.5l3 1.8"></path></svg>
+                  <span style="flex:1;font:400 14px -apple-system,Helvetica,sans-serif;color:#14201A;">Kvartira Marg‘ilon</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="font:700 14px -apple-system,Helvetica,sans-serif;color:#14201A;">Ommabop qidiruvlar</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <div style="padding:8px 13px;border-radius:999px;background:#F6F8F7;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Nexia 3</div>
+                <div style="padding:8px 13px;border-radius:999px;background:#F6F8F7;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Ijaraga uy Farg‘ona</div>
+                <div style="padding:8px 13px;border-radius:999px;background:#F6F8F7;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Rishton keramika</div>
+                <div style="padding:8px 13px;border-radius:999px;background:#F6F8F7;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Redmi Note 13</div>
+                <div style="padding:8px 13px;border-radius:999px;background:#F6F8F7;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Marg‘ilon atlas</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font:700 14px -apple-system,Helvetica,sans-serif;color:#14201A;">34 natija · Farg‘ona viloyati</div>
+              </div>
+              <div style="display:flex;gap:8px;padding:3px;border-radius:12px;background:#F2F5F3;">
+                <div style="flex:1;text-align:center;padding:8px 0;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 3px rgba(16,34,26,0.08);font:600 12.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Eng yangi</div>
+                <div style="flex:1;text-align:center;padding:8px 0;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Arzonidan</div>
+                <div style="flex:1;text-align:center;padding:8px 0;font:500 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Qimmatidan</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;">
+                <dc-import name="ListingCard" title="iPhone 13 Pro 256GB" price="6 900 000 so‘m" place="Farg‘ona shahri" time="1 soat oldin" ph="telefon rasmi" hint-size="100%,230px"></dc-import>
+                <dc-import name="ListingCard" title="iPhone 13 128GB, quti bilan" price="4 500 000 so‘m" place="Qo‘qon" time="2 soat oldin" ph="telefon rasmi" fav="{{ true }}" hint-size="100%,230px"></dc-import>
+              </div>
+            </div>
+          </div>
+          <dc-import name="TabBar" active="search" badge="{{ notifBadge }}" hint-size="100%,83px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">03 · E’LON SAHIFASI</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Listing detail" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+            <div style="flex:none;position:relative;height:330px;background:repeating-linear-gradient(135deg,#EBF0ED 0px,#EBF0ED 8px,#F5F8F6 8px,#F5F8F6 16px);display:flex;align-items:center;justify-content:center;">
+              <span style="font:400 10px ui-monospace,Menlo,monospace;color:#8D9A93;">1 / 6 · telefon rasmi (katta)</span>
+              <div style="position:absolute;top:52px;left:20px;width:36px;height:36px;border-radius:18px;background:rgba(255,255,255,0.92);box-shadow:0 2px 8px rgba(16,34,26,0.12);display:flex;align-items:center;justify-content:center;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"></path></svg>
+              </div>
+              <div style="position:absolute;top:52px;right:20px;display:flex;gap:8px;">
+                <div style="width:36px;height:36px;border-radius:18px;background:rgba(255,255,255,0.92);box-shadow:0 2px 8px rgba(16,34,26,0.12);display:flex;align-items:center;justify-content:center;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="#16A45C"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z"></path></svg>
+                </div>
+                <div style="width:36px;height:36px;border-radius:18px;background:rgba(255,255,255,0.92);box-shadow:0 2px 8px rgba(16,34,26,0.12);display:flex;align-items:center;justify-content:center;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"></path><path d="M8 8l4-4 4 4"></path><path d="M5 14v5h14v-5"></path></svg>
+                </div>
+              </div>
+              <div style="position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:6px;">
+                <div style="width:18px;height:5px;border-radius:3px;background:#16A45C;"></div>
+                <div style="width:5px;height:5px;border-radius:3px;background:rgba(20,32,26,0.22);"></div>
+                <div style="width:5px;height:5px;border-radius:3px;background:rgba(20,32,26,0.22);"></div>
+                <div style="width:5px;height:5px;border-radius:3px;background:rgba(20,32,26,0.22);"></div>
+                <div style="width:5px;height:5px;border-radius:3px;background:rgba(20,32,26,0.22);"></div>
+                <div style="width:5px;height:5px;border-radius:3px;background:rgba(20,32,26,0.22);"></div>
+              </div>
+            </div>
+            <div style="flex:none;padding:18px 20px 12px;display:flex;flex-direction:column;gap:10px;">
+              <div style="font:800 26px/1.15 -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">4 500 000 so‘m</div>
+              <div style="font:600 17px/1.3 -apple-system,Helvetica,sans-serif;color:#14201A;">iPhone 13 128GB, ideal holat, quti bilan</div>
+              <div style="display:flex;flex-wrap:wrap;gap:14px;font:400 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">
+                <div style="display:flex;align-items:center;gap:5px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8D9A93" stroke-width="2" stroke-linecap="round"><path d="M12 21s6-5.3 6-10a6 6 0 1 0-12 0c0 4.7 6 10 6 10z"></path><circle cx="12" cy="11" r="2"></circle></svg>
+                  Farg‘ona shahri, Yangi bozor
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8D9A93" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v4.5l3 1.8"></path></svg>
+                  8-sentabr, 14:20
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8D9A93" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path><circle cx="12" cy="12" r="2.4"></circle></svg>
+                  312 ko‘rish
+                </div>
+              </div>
+            </div>
+            <div style="flex:none;margin:6px 20px 0;padding:14px;border-radius:18px;background:#F8FAF9;display:flex;align-items:center;gap:12px;">
+              <div style="width:46px;height:46px;border-radius:23px;background:#DCEFE5;display:flex;align-items:center;justify-content:center;font:700 16px -apple-system,Helvetica,sans-serif;color:#0E8C4C;">SA</div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <div style="font:600 14.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Sardor Aliyev</div>
+                <div style="display:flex;align-items:center;gap:6px;font:400 12px -apple-system,Helvetica,sans-serif;color:#6B7A72;">
+                  <span style="color:#F2A81D;font-size:12px;">★★★★★</span>
+                  <span>4.8 · 32 sharh</span>
+                </div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#8D9A93;">2023-yildan beri · 9 e’lon</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C7D0CB" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+            </div>
+            <div style="flex:none;padding:18px 20px 10px;display:flex;flex-direction:column;gap:8px;">
+              <div style="font:700 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Tavsif</div>
+              <div style="font:400 14px/1.55 -apple-system,Helvetica,sans-serif;color:#3F4B45;text-wrap:pretty;">Telefon 1 yil ishlatilgan, hech qanday nuqsoni yo‘q. Batareya holati 92%. Quti, original kabel va himoya g‘ilofi bilan beriladi. Kelishish mumkin, almashtirish yo‘q. Farg‘ona shahrida ko‘rish mumkin.</div>
+            </div>
+            <div style="flex:none;padding:8px 0 20px;display:flex;flex-direction:column;gap:12px;">
+              <div style="padding:0 20px;font:700 15px -apple-system,Helvetica,sans-serif;color:#14201A;">O‘xshash e’lonlar</div>
+              <div style="display:flex;gap:14px;overflow-x:auto;padding:0 20px 4px;">
+                <div style="width:150px;flex:none;"><dc-import name="ListingCard" title="iPhone 12 64GB" price="3 400 000 so‘m" place="Marg‘ilon" time="4 soat oldin" ph="telefon rasmi" hint-size="100%,230px"></dc-import></div>
+                <div style="width:150px;flex:none;"><dc-import name="ListingCard" title="iPhone 13 Pro Max 128GB" price="7 800 000 so‘m" place="Quva" time="Bugun" ph="telefon rasmi" hint-size="100%,230px"></dc-import></div>
+                <div style="width:150px;flex:none;"><dc-import name="ListingCard" title="Samsung S22, ideal" price="4 100 000 so‘m" place="Rishton" time="2 kun oldin" ph="telefon rasmi" hint-size="100%,230px"></dc-import></div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;display:flex;gap:10px;padding:12px 20px 26px;background:rgba(255,255,255,0.97);border-top:1px solid #EDF0EE;backdrop-filter:blur(14px);">
+            <div style="flex:1.2;height:52px;border-radius:16px;background:#16A45C;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(22,164,92,0.3);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3l2 5-2.2 1.4a11 11 0 0 0 5.8 5.8L15 14l5 2v3a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg>
+              <span style="font:700 15.5px -apple-system,Helvetica,sans-serif;color:#fff;">Telefon qilish</span>
+            </div>
+            <div style="flex:1;height:52px;border-radius:16px;background:#FFFFFF;border:1.5px solid #DCE3DF;display:flex;align-items:center;justify-content:center;gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+              <span style="font:600 15.5px -apple-system,Helvetica,sans-serif;color:#14201A;">Xabar yozish</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">04 · BILDIRISHNOMALAR</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Notifications" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+            <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+              <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+              <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+            </div>
+          </div>
+          <div style="flex:none;padding:10px 20px 12px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #F1F3F2;">
+            <div style="font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Bildirishnomalar</div>
+            <div style="font:600 12.5px -apple-system,Helvetica,sans-serif;color:#16A45C;">O‘qildi</div>
+          </div>
+          <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:10px 14px 20px;gap:8px;">
+            <div style="display:flex;gap:12px;padding:14px;border-radius:18px;background:#F1FAF5;">
+              <div style="width:40px;height:40px;flex:none;border-radius:14px;background:#DCEFE5;display:flex;align-items:center;justify-content:center;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0E8C4C" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.2"></circle><path d="M15.6 15.6L20 20"></path></svg>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <div style="font:600 14px/1.35 -apple-system,Helvetica,sans-serif;color:#14201A;">Siz qidirgan iPhone 13 e’loni joylandi</div>
+                <div style="font:400 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">4 500 000 so‘m · Farg‘ona shahri</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#8D9A93;">12 daqiqa oldin</div>
+              </div>
+              <div style="width:8px;height:8px;border-radius:5px;background:#16A45C;margin-top:5px;"></div>
+            </div>
+            <div style="display:flex;gap:12px;padding:14px;border-radius:18px;background:#F1FAF5;">
+              <div style="width:40px;height:40px;flex:none;border-radius:14px;background:#DCEFE5;display:flex;align-items:center;justify-content:center;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0E8C4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <div style="font:600 14px/1.35 -apple-system,Helvetica,sans-serif;color:#14201A;">E’loningizga yangi xabar keldi</div>
+                <div style="font:400 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Nodira: “Narxi kelishiladimi?”</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#8D9A93;">1 soat oldin</div>
+              </div>
+              <div style="width:8px;height:8px;border-radius:5px;background:#16A45C;margin-top:5px;"></div>
+            </div>
+            <div style="display:flex;gap:12px;padding:14px;border-radius:18px;background:#FFFFFF;">
+              <div style="width:40px;height:40px;flex:none;border-radius:14px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15l5-5 3 3 6-6"></path><path d="M19 7v4h-4"></path></svg>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <div style="font:500 14px/1.35 -apple-system,Helvetica,sans-serif;color:#3F4B45;">Saqlangan e’lon narxi o‘zgardi</div>
+                <div style="font:400 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Chevrolet Cobalt 2019 · 132 000 000 so‘m</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#8D9A93;">Kecha, 18:40</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;padding:14px;border-radius:18px;background:#FFFFFF;">
+              <div style="width:40px;height:40px;flex:none;border-radius:14px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4.5 4.5L19 7"></path></svg>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <div style="font:500 14px/1.35 -apple-system,Helvetica,sans-serif;color:#3F4B45;">E’loningiz tasdiqlandi va e’lon qilindi</div>
+                <div style="font:400 12.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Yumshoq burchak divan · Oltiariq</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#8D9A93;">6-sentabr</div>
+              </div>
+            </div>
+          </div>
+          <dc-import name="TabBar" active="alerts" badge="{{ notifBadge }}" hint-size="100%,83px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">05 · E’LON BERISH</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Create listing" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+            <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+              <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+              <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+            </div>
+          </div>
+          <div style="flex:none;padding:10px 20px 12px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #F1F3F2;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">E’lon berish</div>
+              <div style="width:32px;height:32px;border-radius:16px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="flex:1;height:4px;border-radius:3px;background:#16A45C;"></div>
+              <div style="flex:1;height:4px;border-radius:3px;background:#E3E8E5;"></div>
+              <span style="font:600 11.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">1-qadam / 2</span>
+            </div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:16px 20px 20px;display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Rasmlar <span style="color:#8D9A93;font-weight:400;">· 1-8 dona</span></div>
+              <div style="display:flex;gap:10px;">
+                <div style="width:86px;height:86px;border-radius:16px;border:1.5px dashed #BFD4C8;background:#F8FAF9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="2" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg>
+                  <span style="font:600 10.5px -apple-system,Helvetica,sans-serif;color:#16A45C;">Rasm qo‘shish</span>
+                </div>
+                <div style="width:86px;height:86px;border-radius:16px;background:repeating-linear-gradient(135deg,#EDF1EF 0px,#EDF1EF 7px,#F7F9F8 7px,#F7F9F8 14px);display:flex;align-items:flex-end;justify-content:center;padding:6px;">
+                  <span style="font:400 8.5px ui-monospace,Menlo,monospace;color:#8D9A93;">rasm 1</span>
+                </div>
+                <div style="width:86px;height:86px;border-radius:16px;background:repeating-linear-gradient(135deg,#EDF1EF 0px,#EDF1EF 7px,#F7F9F8 7px,#F7F9F8 14px);display:flex;align-items:flex-end;justify-content:center;padding:6px;">
+                  <span style="font:400 8.5px ui-monospace,Menlo,monospace;color:#8D9A93;">rasm 2</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Sarlavha</div>
+              <div style="height:48px;border-radius:14px;background:#F6F8F7;display:flex;align-items:center;padding:0 14px;font:400 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Yumshoq burchak divan</div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+                <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Kategoriya</div>
+                <div style="height:48px;border-radius:14px;background:#F6F8F7;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">
+                  <span style="font:400 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Mebel</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="2.6" stroke-linecap="round"><path d="M7 10l5 5 5-5"></path></svg>
+                </div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+                <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Narx (so‘m)</div>
+                <div style="height:48px;border-radius:14px;background:#F6F8F7;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">
+                  <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">3 200 000</span>
+                  <span style="font:400 12px -apple-system,Helvetica,sans-serif;color:#8D9A93;">UZS</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Joylashuv</div>
+              <div style="height:48px;border-radius:14px;background:#F6F8F7;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="2" stroke-linecap="round"><path d="M12 21s6-5.3 6-10a6 6 0 1 0-12 0c0 4.7 6 10 6 10z"></path><circle cx="12" cy="11" r="2"></circle></svg>
+                  <span style="font:400 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Oltiariq tumani</span>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="2.6" stroke-linecap="round"><path d="M7 10l5 5 5-5"></path></svg>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Tavsif <span style="color:#8D9A93;font-weight:400;">· ixtiyoriy</span></div>
+              <div style="min-height:82px;border-radius:14px;background:#F6F8F7;padding:12px 14px;font:400 14px/1.5 -apple-system,Helvetica,sans-serif;color:#3F4B45;">2 yil ishlatilgan, toza holatda. Olib ketish o‘zingizdan.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="font:600 13px -apple-system,Helvetica,sans-serif;color:#14201A;">Aloqa uchun telefon</div>
+              <div style="height:48px;border-radius:14px;background:#F6F8F7;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">
+                <span style="font:500 15px -apple-system,Helvetica,sans-serif;color:#14201A;">+998 90 123 45 67</span>
+                <span style="font:600 12px -apple-system,Helvetica,sans-serif;color:#16A45C;">O‘zgartirish</span>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;padding:12px 20px 26px;background:rgba(255,255,255,0.97);border-top:1px solid #EDF0EE;">
+            <div style="height:54px;border-radius:16px;background:#16A45C;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(22,164,92,0.3);font:700 16px -apple-system,Helvetica,sans-serif;color:#fff;">E’lonni joylash</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">06 · PROFIL</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Profile" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+            <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+              <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+              <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+            </div>
+          </div>
+          <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:10px 20px 20px;gap:20px;">
+            <div style="font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Profil</div>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:72px;height:72px;border-radius:36px;background:#DCEFE5;display:flex;align-items:center;justify-content:center;font:700 24px -apple-system,Helvetica,sans-serif;color:#0E8C4C;">DR</div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <div style="font:700 19px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.01em;">Dilshod Rahimov</div>
+                <div style="font:400 14px -apple-system,Helvetica,sans-serif;color:#6B7A72;">+998 90 123 45 67</div>
+                <div style="font:400 12px -apple-system,Helvetica,sans-serif;color:#8D9A93;">Farg‘ona shahri · 2024-yildan</div>
+              </div>
+              <div style="width:34px;height:34px;border-radius:17px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4l5 5-9 9H6v-5z"></path></svg>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;padding:14px 12px;border-radius:16px;background:#F8FAF9;display:flex;flex-direction:column;gap:4px;">
+                <div style="font:800 22px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;">3</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Aktiv e’lon</div>
+              </div>
+              <div style="flex:1;padding:14px 12px;border-radius:16px;background:#F8FAF9;display:flex;flex-direction:column;gap:4px;">
+                <div style="font:800 22px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;">1 248</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Ko‘rishlar</div>
+              </div>
+              <div style="flex:1;padding:14px 12px;border-radius:16px;background:#F8FAF9;display:flex;flex-direction:column;gap:4px;">
+                <div style="font:800 22px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;">27</div>
+                <div style="font:400 11.5px -apple-system,Helvetica,sans-serif;color:#6B7A72;">Saqlanganlar</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;border-radius:18px;background:#FFFFFF;box-shadow:0 1px 3px rgba(16,34,26,0.07);overflow:hidden;">
+              <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid #F4F6F5;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.9" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 9h8M8 13h5"></path></svg>
+                </div>
+                <span style="flex:1;font:500 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Mening e’lonlarim</span>
+                <span style="font:400 13px -apple-system,Helvetica,sans-serif;color:#8D9A93;">3</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C7D0CB" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid #F4F6F5;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.9" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z"></path></svg>
+                </div>
+                <span style="flex:1;font:500 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Saqlangan e’lonlar</span>
+                <span style="font:400 13px -apple-system,Helvetica,sans-serif;color:#8D9A93;">27</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C7D0CB" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid #F4F6F5;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#EFF7F2;display:flex;align-items:center;justify-content:center;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16A45C" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+                </div>
+                <span style="flex:1;font:500 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Xabarlar</span>
+                <span style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#16A45C;color:#fff;font:700 11px -apple-system,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;">2</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C7D0CB" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B7A72" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"></path></svg>
+                </div>
+                <span style="flex:1;font:500 15px -apple-system,Helvetica,sans-serif;color:#14201A;">Sozlamalar</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C7D0CB" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+              </div>
+            </div>
+            <div style="text-align:center;font:600 14px -apple-system,Helvetica,sans-serif;color:#8D9A93;padding:4px 0;">Chiqish</div>
+          </div>
+          <dc-import name="TabBar" active="profile" badge="{{ notifBadge }}" hint-size="100%,83px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">07 · SAQLANGANLAR</div>
+      <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+        <div data-screen-label="Favorites" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+            <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+              <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+              <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+            </div>
+          </div>
+          <div style="flex:none;padding:10px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F1F3F2;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"></path></svg>
+            <div style="font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Saqlangan e’lonlar</div>
+          </div>
+          <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;padding:16px 20px 24px;align-content:start;">
+            <dc-import name="ListingCard" title="iPhone 13 128GB, ideal holat" price="4 500 000 so‘m" place="Farg‘ona shahri" time="2 soat oldin" ph="telefon rasmi" fav="{{ true }}" hint-size="100%,230px"></dc-import>
+            <dc-import name="ListingCard" title="Chevrolet Cobalt 2019, avtomat" price="132 000 000 so‘m" place="Qo‘qon" time="5 soat oldin" ph="avtomobil rasmi" fav="{{ true }}" hint-size="100%,230px"></dc-import>
+            <dc-import name="ListingCard" title="Marg‘ilon atlas ko‘ylak" price="450 000 so‘m" place="Marg‘ilon" time="Bugun" ph="kiyim rasmi" fav="{{ true }}" hint-size="100%,230px"></dc-import>
+            <dc-import name="ListingCard" title="Rishton keramikasi, 12 kishilik" price="380 000 so‘m" place="Rishton" time="1 kun oldin" ph="servis rasmi" fav="{{ true }}" hint-size="100%,230px"></dc-import>
+          </div>
+          <dc-import name="TabBar" active="profile" badge="{{ notifBadge }}" hint-size="100%,83px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ showEmptyStates }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:44px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">04b · BILDIRISHNOMA — BO‘SH</div>
+          <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+            <div data-screen-label="Notifications empty" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+              <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+                <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+                <div style="display:flex;align-items:center;gap:5px;">
+                  <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+                  <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+                  <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+                </div>
+              </div>
+              <div style="flex:none;padding:10px 20px 12px;border-bottom:1px solid #F1F3F2;font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Bildirishnomalar</div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 44px;">
+                <div style="width:76px;height:76px;border-radius:26px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9AA6A0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 14 6 10z"></path><path d="M10.5 19a1.8 1.8 0 0 0 3 0"></path></svg>
+                </div>
+                <div style="font:700 17px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Bildirishnomalar yo‘q</div>
+                <div style="font:400 14px/1.5 -apple-system,Helvetica,sans-serif;color:#6B7A72;text-align:center;">Qidiruvni saqlab qo‘ysangiz, mos e’lon chiqqanda birinchi bo‘lib xabar beramiz.</div>
+                <div style="margin-top:6px;padding:13px 22px;border-radius:14px;background:#16A45C;font:700 14.5px -apple-system,Helvetica,sans-serif;color:#fff;box-shadow:0 4px 14px rgba(22,164,92,0.28);">Qidiruvni saqlash</div>
+              </div>
+              <dc-import name="TabBar" active="alerts" hint-size="100%,83px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B7A72;letter-spacing:0.1em;">07b · SAQLANGANLAR — BO‘SH</div>
+          <div style="padding:9px;background:#0E1512;border-radius:53px;box-shadow:0 24px 60px rgba(16,34,26,0.18);">
+            <div data-screen-label="Favorites empty" style="width:390px;height:844px;background:#FFFFFF;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;">
+              <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 2px;">
+                <span style="font:600 15px -apple-system,Helvetica,sans-serif;color:#14201A;">9:41</span>
+                <div style="display:flex;align-items:center;gap:5px;">
+                  <div style="width:17px;height:11px;border-radius:2px;background:#14201A;"></div>
+                  <div style="width:15px;height:11px;border-radius:3px;background:#14201A;"></div>
+                  <div style="width:24px;height:12px;border-radius:4px;border:1.5px solid #14201A;padding:2px;"><div style="width:100%;height:100%;border-radius:2px;background:#14201A;"></div></div>
+                </div>
+              </div>
+              <div style="flex:none;padding:10px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F1F3F2;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14201A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"></path></svg>
+                <div style="font:800 24px -apple-system,'SF Pro Display',Helvetica,sans-serif;color:#14201A;letter-spacing:-0.02em;">Saqlangan e’lonlar</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 44px;">
+                <div style="width:76px;height:76px;border-radius:26px;background:#F2F5F3;display:flex;align-items:center;justify-content:center;">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9AA6A0" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z"></path></svg>
+                </div>
+                <div style="font:700 17px -apple-system,Helvetica,sans-serif;color:#14201A;text-align:center;">Saqlangan e’lonlar yo‘q</div>
+                <div style="font:400 14px/1.5 -apple-system,Helvetica,sans-serif;color:#6B7A72;text-align:center;">E’lon yoqqan bo‘lsa, yurakcha belgisini bosing — shu yerda saqlanadi.</div>
+                <div style="margin-top:6px;padding:13px 22px;border-radius:14px;background:#16A45C;font:700 14.5px -apple-system,Helvetica,sans-serif;color:#fff;box-shadow:0 4px 14px rgba(22,164,92,0.28);">E’lonlarni ko‘rish</div>
+              </div>
+              <dc-import name="TabBar" active="profile" hint-size="100%,83px"></dc-import>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;notifBadge&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:9,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Holat&quot;},&quot;showEmptyStates&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Holat&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      notifBadge: this.props.notifBadge ?? 2,
+      showEmptyStates: this.props.showEmptyStates ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>
