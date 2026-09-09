@@ -1,50 +1,87 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../shared/widgets/empty_state.dart';
+import '../../state/notifications_controller.dart';
+import 'widgets/notification_tile.dart';
 
-/// 6-qismda quriladi. Bosh sahifadagi qo'ng'iroqcha shu yerga olib keladi.
+/// Bosh sahifadagi qo'ng'iroqchadan ochiladi — tab emas.
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<NotificationsController>();
+    final items = controller.items;
+
     return Scaffold(
-      backgroundColor: OtColors.surface,
+      backgroundColor: OtColors.ground,
       body: SafeArea(
+        bottom: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  OtSize.screenPad, 10, OtSize.screenPad, 12),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    behavior: HitTestBehavior.opaque,
-                    child: const SizedBox(
-                      width: OtSize.minTap,
-                      height: OtSize.minTap,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(Icons.arrow_back_ios_new,
-                            size: 20, color: OtColors.ink),
+            _header(context, controller),
+            Expanded(
+              child: items.isEmpty
+                  ? const EmptyState(
+                      icon: Icons.notifications_none,
+                      title: 'Bildirishnomalar yoʻq',
+                      body: 'Qidiruvni saqlab qoʻysangiz, mos eʼlon '
+                          'chiqqanda birinchi boʻlib xabar beramiz.',
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(
+                          14, OtSize.x12, 14, OtSize.x24),
+                      itemCount: items.length,
+                      itemBuilder: (_, i) => NotificationTile(
+                        item: items[i],
+                        onTap: () => controller.markRead(items[i].id),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Text('Bildirishnomalar', style: OtText.display),
-                  ),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: OtSize.screenPad),
-              child: Text('6-qism da quriladi', style: OtText.metaMd),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _header(BuildContext context, NotificationsController c) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+          OtSize.screenPad, 10, OtSize.screenPad, 12),
+      decoration: const BoxDecoration(
+        color: OtColors.surface,
+        border: Border(bottom: BorderSide(color: OtColors.lineFaint)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            behavior: HitTestBehavior.opaque,
+            child: const SizedBox(
+              width: 36,
+              height: OtSize.minTap,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Icon(Icons.arrow_back_ios_new,
+                    size: 20, color: OtColors.ink),
+              ),
+            ),
+          ),
+          Expanded(child: Text('Bildirishnomalar', style: OtText.display)),
+          if (c.unreadCount > 0)
+            GestureDetector(
+              onTap: c.markAllRead,
+              behavior: HitTestBehavior.opaque,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                child: Text('Oʻqildi', style: OtText.link),
+              ),
+            ),
+        ],
       ),
     );
   }

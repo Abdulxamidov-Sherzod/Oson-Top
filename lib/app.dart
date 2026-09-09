@@ -5,6 +5,8 @@ import 'core/theme/ot_theme.dart';
 import 'data/mock/mock_listings.dart';
 import 'data/repositories/listing_repository.dart';
 import 'features/listing_detail/listing_detail_screen.dart';
+import 'features/create_listing/create_listing_screen.dart';
+import 'features/notifications/notifications_screen.dart';
 import 'features/search/search_screen.dart';
 import 'features/shell/app_shell.dart';
 import 'state/favorites_controller.dart';
@@ -25,6 +27,9 @@ Widget _home() => switch (_startScreen) {
           listing: mockListings.first,
           debugScrollTo: 900,
         ),
+      'create' => const CreateListingScreen(),
+      'notifications' => const NotificationsScreen(),
+      'profile' => const AppShell(initialTab: 2),
       _ => const AppShell(),
     };
 

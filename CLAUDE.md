@@ -8,7 +8,16 @@ Farg'ona viloyati uchun e'lonlar ilovasi (OLX'ga o'xshash, soddaroq). Flutter, m
 
 ## Hozirgi holat
 
-Backend YO'Q. Hamma ma'lumot `lib/data/mock/` ichidan keladi. Ro'yxatdan o'tish ham yo'q — foydalanuvchi mock.
+**Frontend tayyor.** Bosh sahifa, qidiruv, e'lon sahifasi, e'lon berish (2 qadam),
+bildirishnomalar, profil, saqlanganlar — hammasi ishlaydi.
+
+Backend YO'Q. Hamma ma'lumot `lib/data/mock/` ichidan keladi. Ro'yxatdan o'tish ham
+yo'q — foydalanuvchi mock (`mock_user.dart`).
+
+**Tugallanmagan bitta joy:** haqiqiy Yandex MapKit ulanmagan. E'lon sahifasidagi
+xarita — `StaticMapCard`, ya'ni chizma. E'lon berish formasidagi "Xaritada belgilash"
+hozircha manzilni qo'lda qo'yadi. Ikkalasi ham MapKit kelganda almashtiriladi;
+API kalit kerak.
 
 ## Dizayn
 
@@ -71,6 +80,11 @@ lib/
 - **Ranglar** faqat `OtColors` dan olinadi. Kodda `Color(0xFF...)` yozilmaydi.
 - **Matn uslublari** faqat `OtText` dan. `TextStyle(...)` inline yozilmaydi.
 - **Bo'shliqlar** 4px qadam bilan: 4, 8, 12, 16, 20, 24.
+- **Karta balandligi qattiq hisoblanmaydi.** `ListingCard` ichida rasm `Expanded` —
+  qolgan joyni o'zi to'ldiradi. Shrift metrikasi platformadan platformaga farq
+  qiladi, qattiq hisoblasangiz overflow chiqadi.
+- **Mustaqil ishlaydigan ekran** `Material` yoki `Scaffold` ichida bo'lsin —
+  `TextField` Material ajdodini talab qiladi.
 - **Bosish maydoni** hech qachon 44px dan kichik emas.
 - Har bir ekran `SafeArea` ichida.
 - Rasm yo'q joyda `OtPhotoPlaceholder` ishlatiladi (chiziqli fon, dizayndagidek).
@@ -80,10 +94,40 @@ lib/
 ```bash
 flutter run                      # ulangan qurilma yoki simulyator
 flutter analyze                  # xatolarni tekshirish
+flutter test                     # testlar
 open -a Simulator                # iOS simulyatorini ochish
 ```
 
+### To'g'ridan-to'g'ri kerakli ekranni ochish
+
+Simulyatorda bosib yurmaslik uchun `lib/app.dart` da debug kirish nuqtasi bor:
+
+```bash
+flutter run --dart-define=start=search          # qidiruv
+flutter run --dart-define=start=detail          # e'lon sahifasi
+flutter run --dart-define=start=detail_bottom   # e'lonning pastki qismi (xarita)
+flutter run --dart-define=start=create          # e'lon berish
+flutter run --dart-define=start=notifications   # bildirishnomalar
+flutter run --dart-define=start=profile         # profil
+```
+
+Bo'sh bo'lsa odatdagidek bosh sahifadan boshlanadi. Bu faqat ishlab chiqish uchun —
+relizga chiqishdan oldin olib tashlanadi.
+
+## Testlar
+
+`test/` ichida 20 ta test. Widget testlarda ekran o'lchamini shunday bering:
+
+```dart
+tester.view.physicalSize = const Size(390, 844);
+tester.view.devicePixelRatio = 1.0;
+addTearDown(tester.view.reset);
+```
+
+`setSurfaceSize` ishlatmang — u fizik o'lchamni qo'yadi va logik ekran 3 barobar
+kichrayib ketadi.
+
 ## Ish rejasi
 
-To'liq reja: `docs/ish-rejasi.html`. Ish 8 qismga bo'lingan, har biri alohida sessiya.
-Bu fayl 0-qismda (poydevor) yozilgan.
+To'liq reja: `docs/ish-rejasi.html`. Frontend qismlari (0–4, 6, 7) bajarilgan.
+Qolgani: 5-qism (Yandex MapKit) va backend.

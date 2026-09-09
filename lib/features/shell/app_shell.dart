@@ -7,14 +7,19 @@ import 'widgets/ot_tab_bar.dart';
 
 /// Ilovaning asosiy qobig'i: 3 ta tab va ular orasida almashish.
 class AppShell extends StatefulWidget {
-  const AppShell({super.key});
+  const AppShell({super.key, this.initialTab = 0});
+
+  /// Qaysi tabdan boshlanadi (0 — bosh sahifa)
+  final int initialTab;
 
   @override
   State<AppShell> createState() => _AppShellState();
 }
 
 class _AppShellState extends State<AppShell> {
-  int _index = 0;
+  late int _index = widget.initialTab;
+
+  void _go(int i) => setState(() => _index = i);
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +27,15 @@ class _AppShellState extends State<AppShell> {
       backgroundColor: OtColors.ground,
       body: IndexedStack(
         index: _index,
-        children: const [
-          HomeScreen(),
-          CreateListingScreen(),
-          ProfileScreen(),
+        children: [
+          const HomeScreen(),
+          CreateListingScreen(onClose: () => _go(0)),
+          const ProfileScreen(),
         ],
       ),
       bottomNavigationBar: OtTabBar(
         index: _index,
-        onChanged: (i) => setState(() => _index = i),
+        onChanged: _go,
       ),
     );
   }
