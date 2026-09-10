@@ -6,6 +6,7 @@ class AppUser {
     required this.district,
     required this.memberSince,
     required this.activeListings,
+    required this.totalListings,
     required this.totalViews,
     this.favorites = 0,
   });
@@ -19,6 +20,10 @@ class AppUser {
       district: (user['district'] as String?) ?? '',
       memberSince: user['member_since'] as int,
       activeListings: stats['active_listings'] as int? ?? 0,
+      // Eski serverda bu maydon yoʻq — u holda aktivlar soni koʻrsatiladi
+      totalListings: stats['total_listings'] as int? ??
+          stats['active_listings'] as int? ??
+          0,
       totalViews: stats['total_views'] as int? ?? 0,
       favorites: stats['favorites'] as int? ?? 0,
     );
@@ -29,6 +34,9 @@ class AppUser {
   final String district;
   final int memberSince;
   final int activeListings;
+
+  /// Hamma holatdagi eʼlonlar — moderatsiyadagisi ham
+  final int totalListings;
   final int totalViews;
   final int favorites;
 

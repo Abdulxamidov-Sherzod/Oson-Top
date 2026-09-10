@@ -33,6 +33,11 @@ async def profile(session: Session, user: CurrentUser) -> MeOut:
         .select_from(Listing)
         .where(Listing.owner_id == user.id, Listing.status == ListingStatus.active)
     )
+    total = await session.scalar(
+        select(func.count())
+        .select_from(Listing)
+        .where(Listing.owner_id == user.id)
+    )
     views = await session.scalar(
         select(func.coalesce(func.sum(Listing.views), 0)).where(
             Listing.owner_id == user.id
@@ -45,6 +50,7 @@ async def profile(session: Session, user: CurrentUser) -> MeOut:
         user=_user_out(user),
         stats=ProfileStats(
             active_listings=active or 0,
+            total_listings=total or 0,
             total_views=views or 0,
             favorites=saved or 0,
         ),

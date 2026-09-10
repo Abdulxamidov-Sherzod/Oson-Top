@@ -35,7 +35,11 @@ class ProfileIn(BaseModel):
 
 
 class ProfileStats(BaseModel):
+    # Lentada koʻrinayotganlari
     active_listings: int
+    # Hammasi — moderatsiyadagi va qaytarilgani ham. "Mening eʼlonlarim"
+    # roʻyxati shularni koʻrsatadi, shuning uchun yonidagi son ham shu.
+    total_listings: int
     total_views: int
     favorites: int
 

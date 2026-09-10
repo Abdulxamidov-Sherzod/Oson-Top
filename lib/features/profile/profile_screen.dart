@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/format.dart';
+import '../../core/lang.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
@@ -22,9 +23,6 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
     final favorites = context.watch<FavoritesController>();
-    final unread = context.select<NotificationsController, int>(
-      (n) => n.unreadCount,
-    );
 
     final user = auth.user;
     if (user == null) return const _SignedOutProfile();
@@ -37,19 +35,19 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(
               OtSize.screenPad, 10, OtSize.screenPad, OtSize.x24),
           children: [
-            Text('Profil', style: OtText.display),
+            Text(tr('Profil'), style: OtText.display),
             const SizedBox(height: OtSize.x20),
             _identity(user),
             const SizedBox(height: OtSize.x16),
             _stats(user, favorites.count),
             const SizedBox(height: OtSize.x20),
-            _menu(context, user, favorites.count, unread),
+            _menu(context, user, favorites.count),
             const SizedBox(height: OtSize.x20),
             Center(
               child: TextButton(
                 onPressed: () => _signOut(context),
                 child: Text(
-                  'Chiqish',
+                  tr('Chiqish'),
                   style: OtText.bodyStrong.copyWith(color: OtColors.inkMuted),
                 ),
               ),
@@ -91,23 +89,11 @@ class ProfileScreen extends StatelessWidget {
               Text(user.phone, style: OtText.metaMd),
               const SizedBox(height: 2),
               Text(
-                '${user.district} · '
-                '${OtFormat.memberSince(user.memberSince)}',
+                tr('${user.district} · ${OtFormat.memberSince(user.memberSince)}'),
                 style: OtText.metaSm,
               ),
             ],
           ),
-        ),
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            color: OtColors.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: OtColors.line),
-          ),
-          child: const Icon(Icons.edit_outlined,
-              size: 16, color: OtColors.inkMuted),
         ),
       ],
     );
@@ -126,7 +112,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Text(value, style: OtText.titleSm.copyWith(fontSize: 20)),
                 const SizedBox(height: 3),
-                Text(label, style: OtText.metaSm),
+                Text(tr(label), style: OtText.metaSm),
               ],
             ),
           ),
@@ -143,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _menu(BuildContext context, AppUser user, int saved, int unread) {
+  Widget _menu(BuildContext context, AppUser user, int saved) {
     return Container(
       decoration: BoxDecoration(
         color: OtColors.surface,
@@ -154,29 +140,23 @@ class ProfileScreen extends StatelessWidget {
         children: [
           _MenuTile(
             icon: Icons.inventory_2_outlined,
-            label: 'Mening eʼlonlarim',
-            trailing: '${user.activeListings}',
+            label: tr('Mening eʼlonlarim'),
+            trailing: '${user.totalListings}',
             onTap: () => _push(context, const MyListingsScreen()),
           ),
           _MenuTile(
             icon: Icons.favorite_border,
-            label: 'Saqlangan eʼlonlar',
+            label: tr('Saqlangan eʼlonlar'),
             trailing: '$saved',
             onTap: () => _push(context, const FavoritesScreen()),
           ),
           _MenuTile(
-            icon: Icons.chat_bubble_outline,
-            label: 'Xabarlar',
-            badge: unread,
-            onTap: () {},
-          ),
-          _MenuTile(
-            icon: Icons.tune,
-            label: 'Sozlamalar',
+            icon: Icons.language,
+            label: tr('Til'),
+            trailing: otLang.label,
             last: true,
-            onTap: () {},
+            onTap: () => pickLang(context),
           ),
-
         ],
       ),
     );
@@ -185,7 +165,37 @@ class ProfileScreen extends StatelessWidget {
   void _push(BuildContext context, Widget screen) => Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => screen));
 
+
   Future<void> _signOut(BuildContext context) async {
+    // Chiqish bir bosishda boʻlmasin — qaytadan kirish uchun Telegram kerak
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        backgroundColor: OtColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OtSize.rLg),
+        ),
+        title: Text(tr('Chiqasizmi?'), style: OtText.titleSm),
+        content: Text(
+          tr('Qaytadan kirish uchun Telegram orqali tasdiqlash kerak boʻladi.'),
+          style: OtText.body.copyWith(color: OtColors.inkMuted),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop(false),
+            child: Text(tr('Bekor qilish'),
+                style: OtText.body.copyWith(color: OtColors.inkMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop(true),
+            child: Text(tr('Chiqish'),
+                style: OtText.bodyStrong.copyWith(color: OtColors.danger)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
     final auth = context.read<AuthController>();
     final favorites = context.read<FavoritesController>();
     final notifications = context.read<NotificationsController>();
@@ -211,24 +221,33 @@ class _SignedOutProfile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Profil', style: OtText.display),
+              Text(tr('Profil'), style: OtText.display),
               const Spacer(),
-              const EmptyState(
+              EmptyState(
                 icon: Icons.person_outline,
-                title: 'Hali kirmadingiz',
-                body: 'Eʼlon berish, saqlash va xabarlar uchun '
-                    'Telegram orqali kiring.',
+                title: tr('Hali kirmadingiz'),
+                body: tr('Eʼlon berish va saqlash uchun Telegram orqali kiring.'),
               ),
               const SizedBox(height: OtSize.x16),
               SizedBox(
                 width: double.infinity,
                 child: OtButton(
-                  label: 'Telegram orqali kirish',
+                  label: tr('Telegram orqali kirish'),
                   icon: Icons.send_outlined,
                   large: true,
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const LoginScreen()),
                   ),
+                ),
+              ),
+              const SizedBox(height: OtSize.x12),
+              // Til kirmasdan ham almashtiriladi
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => pickLang(context),
+                  icon: const Icon(Icons.language,
+                      size: 18, color: OtColors.inkMuted),
+                  label: Text(otLang.label, style: OtText.metaMd),
                 ),
               ),
               const Spacer(flex: 2),
@@ -240,13 +259,61 @@ class _SignedOutProfile extends StatelessWidget {
   }
 }
 
+Future<void> pickLang(BuildContext context) async {
+  final controller = context.read<LangController>();
+
+  final picked = await showModalBottomSheet<OtLang>(
+    context: context,
+    backgroundColor: OtColors.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(OtSize.rSheet)),
+    ),
+    builder: (sheet) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: OtSize.x12),
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: OtColors.lineField,
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+          const SizedBox(height: OtSize.x16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: OtSize.screenPad),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(tr('Til'), style: OtText.titleSm),
+            ),
+          ),
+          const SizedBox(height: OtSize.x8),
+          for (final lang in OtLang.values)
+            ListTile(
+              // Nom o'z alifbosida yozilgan, shuning uchun tr() qo'llanmaydi
+              title: Text(lang.label, style: OtText.body),
+              trailing: lang == otLang
+                  ? const Icon(Icons.check, color: OtColors.accent, size: 20)
+                  : null,
+              onTap: () => Navigator.of(sheet).pop(lang),
+            ),
+          const SizedBox(height: OtSize.x8),
+        ],
+      ),
+    ),
+  );
+
+  if (picked != null) await controller.set(picked);
+}
+
 class _MenuTile extends StatelessWidget {
   const _MenuTile({
     required this.icon,
     required this.label,
     required this.onTap,
     this.trailing,
-    this.badge,
     this.last = false,
   });
 
@@ -254,7 +321,6 @@ class _MenuTile extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final String? trailing;
-  final int? badge;
   final bool last;
 
   @override
@@ -281,25 +347,8 @@ class _MenuTile extends StatelessWidget {
               child: Icon(icon, size: 18, color: OtColors.accent),
             ),
             const SizedBox(width: 12),
-            Expanded(child: Text(label, style: OtText.bodyStrong)),
-            if (badge != null && badge! > 0)
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                  color: OtColors.accent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '$badge',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: OtColors.surface,
-                  ),
-                ),
-              )
-            else if (trailing != null)
+            Expanded(child: Text(tr(label), style: OtText.bodyStrong)),
+            if (trailing != null)
               Text(trailing!, style: OtText.metaSm),
             const SizedBox(width: 6),
             const Icon(Icons.chevron_right,

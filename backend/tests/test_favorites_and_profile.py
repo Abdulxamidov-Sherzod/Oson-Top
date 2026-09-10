@@ -55,8 +55,26 @@ async def test_profil_statistikasi(client: AsyncClient):
 
     stats = (await client.get(f"{API}/me", headers=seller)).json()["stats"]
     assert stats["active_listings"] == 1
+    assert stats["total_listings"] == 1
     assert stats["favorites"] == 1
     assert stats["total_views"] >= 1
+
+
+async def test_moderatsiyadagi_elon_umumiy_songa_kiradi(client: AsyncClient):
+    """«Mening e'lonlarim» ro'yxati hamma holatdagini ko'rsatadi, shuning
+    uchun yonidagi son ham hammasini sanashi kerak — faqat aktivni emas."""
+    from tests.test_listings import create_listing
+
+    await publish(client)                       # 1-si tasdiqlangan
+    seller = await login(client, SELLER)
+    await create_listing(client, seller)        # 2-si moderatsiyada
+
+    stats = (await client.get(f"{API}/me", headers=seller)).json()["stats"]
+    assert stats["active_listings"] == 1
+    assert stats["total_listings"] == 2
+
+    page = (await client.get(f"{API}/me/listings", headers=seller)).json()
+    assert page["total"] == 2
 
 
 async def test_profilni_tahrirlash(client: AsyncClient):
