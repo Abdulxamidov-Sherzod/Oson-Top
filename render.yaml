@@ -51,6 +51,11 @@ services:
       - key: SUPABASE_BUCKET
         value: listing-photos
 
+      # Egasining raqamlari — shu raqam bilan kirgan hisob admin boʻladi.
+      # Vergul bilan, qiymat Render'da qoʻlda kiritiladi.
+      - key: ADMIN_PHONES
+        sync: false
+
       # Ishlab chiqarishda parolsiz kirish YOPIQ boʻlishi shart
       - key: ALLOW_DEV_LOGIN
         value: "false"

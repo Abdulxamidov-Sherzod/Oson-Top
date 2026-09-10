@@ -191,7 +191,7 @@ relizga chiqishdan oldin olib tashlanadi.
 ## Testlar
 
 `test/` ichida 14 ta test (formatlash va server javobini o'qish).
-Backend testlari: `cd backend && ./.venv/bin/pytest` — 25 ta. Widget testlarda ekran o'lchamini shunday bering:
+Backend testlari: `cd backend && ./.venv/bin/pytest` — 43 ta. Widget testlarda ekran o'lchamini shunday bering:
 
 ```dart
 tester.view.physicalSize = const Size(390, 844);
@@ -219,11 +219,24 @@ Uchalasi ham gitʼga tushmaydi. Yangi kompyuterda qoʻlda yaratiladi:
 
 | Nima | Fayl | Namuna |
 |---|---|---|
-| Bot tokeni, baza, Supabase | `backend/.env` | `.env.example` |
+| Bot tokeni, baza, Supabase, `ADMIN_PHONES` | `backend/.env` | `.env.example` |
 | MapKit (iOS) | `ios/Flutter/Secrets.xcconfig` | `Secrets.example.xcconfig` |
 | MapKit (Android) | `android/local.properties` | `mapkit.apiKey=...` |
 
 Serverdagi qiymatlar Render → Environment boʻlimida.
+
+### Kim moderator bo'ladi
+
+Rol bazadagi `users.role` — `user` | `moderator` | `admin`. Ikki yo'l bilan beriladi:
+
+1. **`ADMIN_PHONES`** (`backend/.env` va Render → Environment) — vergul bilan
+   ajratilgan raqamlar ro'yxati. Shu raqam bilan kirgan hisob **har safar**
+   admin bo'lib qoladi (`app/roles.py`). Baza tozalansa ham huquq qaytadi,
+   qo'lda `UPDATE` qilish kerak emas.
+2. **Adminka → «Foydalanuvchilar»** — admin boshqalarga moderator huquqini
+   beradi va hisobni bloklaydi. Moderator ro'yxatni ko'radi, lekin
+   o'zgartira olmaydi. Hech kim o'z rolini o'zgartira olmaydi — aks holda
+   yagona admin o'zini tushirib yuborsa, panel qulflanib qoladi.
 
 **Diqqat:** `.env` dan nusxa olmang. Bir marta shunday qilinganda
 `.env.local-backup` gitʼga tushib, bot tokeni GitHub'ga chiqib ketgan —

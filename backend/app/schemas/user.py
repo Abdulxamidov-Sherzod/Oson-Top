@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from ..models.enums import UserRole
+
 
 class UserOut(BaseModel):
     id: int
@@ -8,6 +10,8 @@ class UserOut(BaseModel):
     district: str | None
     member_since: int
     phone_verified: bool
+    # Moderatsiya paneli shu maydonga qarab bo'limlarni ko'rsatadi
+    role: UserRole = UserRole.user
 
     model_config = {"from_attributes": True}
 

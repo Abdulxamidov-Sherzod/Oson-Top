@@ -24,6 +24,7 @@ from sqlalchemy import select
 from ..config import settings
 from ..db import SessionLocal
 from ..models import LoginToken, User
+from ..roles import apply_owner_role
 
 log = logging.getLogger("oson.telegram")
 
@@ -212,6 +213,7 @@ async def handle_update(update: dict) -> None:
                 user.phone = phone
                 user.phone_verified = True
 
+            apply_owner_role(user)
             record.user_id = user.id
             await session.commit()
             await _say_done(chat_id)

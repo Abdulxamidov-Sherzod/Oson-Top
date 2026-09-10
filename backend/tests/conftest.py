@@ -49,15 +49,23 @@ async def login(client: AsyncClient, phone: str = "+998901112233") -> dict[str, 
     return {"Authorization": f"Bearer {resp.json()['access_token']}"}
 
 
-async def make_moderator(phone: str) -> None:
+async def set_role(phone: str, role: UserRole) -> None:
     from sqlalchemy import select, update
 
     async with SessionLocal() as session:
         await session.execute(
-            update(User).where(User.phone == phone).values(role=UserRole.moderator)
+            update(User).where(User.phone == phone).values(role=role)
         )
         await session.commit()
         assert await session.scalar(select(User).where(User.phone == phone))
+
+
+async def make_moderator(phone: str) -> None:
+    await set_role(phone, UserRole.moderator)
+
+
+async def make_admin(phone: str) -> None:
+    await set_role(phone, UserRole.admin)
 
 
 def png_bytes() -> bytes:

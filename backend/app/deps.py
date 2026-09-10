@@ -56,6 +56,17 @@ async def current_moderator(
     return user
 
 
+async def current_admin(
+    user: Annotated[User, Depends(current_user)],
+) -> User:
+    """Rol berish va bloklash — faqat admin. Moderator e'lonlarni ko'radi,
+    lekin o'ziga yoki boshqaga huquq bera olmaydi."""
+    if user.role != UserRole.admin:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Faqat admin uchun")
+    return user
+
+
 CurrentUser = Annotated[User, Depends(current_user)]
 OptionalUser = Annotated[User | None, Depends(optional_user)]
 Moderator = Annotated[User, Depends(current_moderator)]
+Admin = Annotated[User, Depends(current_admin)]

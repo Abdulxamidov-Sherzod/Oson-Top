@@ -147,6 +147,56 @@ kbd{
 .more:disabled{opacity:.6;cursor:default}
 .tail{text-align:center;color:var(--ink-3);font-size:13px;padding:14px 0 0}
 
+/* ---------- foydalanuvchilar ---------- */
+.tools{
+  display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:14px;
+}
+/* display:flex `hidden` atributini bosib ketadi — qaytarib qo'yamiz */
+.tools[hidden]{display:none}
+.search{
+  flex:1;min-width:200px;border:1px solid var(--line);background:var(--surface);
+  border-radius:12px;padding:11px 14px;font:inherit;font-size:14.5px;color:var(--ink);
+}
+.search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.urow{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:13px 16px;margin-bottom:9px;display:flex;align-items:center;gap:14px;
+  flex-wrap:wrap;
+}
+.urow.busy{opacity:.5;pointer-events:none}
+.urow .who-cell{flex:1;min-width:190px}
+.uname{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.uname .self{
+  font-size:11.5px;font-weight:700;color:var(--accent-dark);
+  background:var(--accent-soft);border:1px solid var(--accent-line);
+  padding:1px 7px;border-radius:999px;margin-left:7px;vertical-align:1px;
+}
+.umeta{font-size:13px;color:var(--ink-3);margin-top:3px}
+.umeta a{color:var(--ink-3)}
+.role-pick{
+  border:1px solid var(--line);background:var(--field);color:var(--ink);
+  border-radius:10px;padding:8px 11px;font:inherit;font-size:13.5px;font-weight:600;
+}
+.role-pick:disabled{opacity:.55;cursor:default}
+.role-pick[data-role="moderator"],.role-pick[data-role="admin"]{
+  background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-dark);
+}
+.block{
+  background:var(--surface);color:var(--danger);border:1px solid var(--danger);
+  border-radius:10px;padding:8px 13px;font-weight:600;font-size:13.5px;
+}
+.block:hover{background:var(--danger-soft)}
+.block.on{background:var(--danger-soft)}
+.unblock{
+  background:var(--surface);color:var(--ink-2);border:1px solid var(--line);
+  border-radius:10px;padding:8px 13px;font-weight:600;font-size:13.5px;
+}
+.unblock:hover{border-color:var(--accent-line);color:var(--accent-dark)}
+.blocked-tag{
+  font-size:12px;font-weight:700;color:#8B2226;background:var(--danger-soft);
+  border:1px solid var(--danger);padding:3px 9px;border-radius:999px;
+}
+
 /* ---------- holatlar ---------- */
 .empty{
   text-align:center;padding:70px 20px;color:var(--ink-3);
@@ -191,6 +241,9 @@ kbd{
     <button class="tab" data-tab="rejected" aria-selected="false">
       Qaytarilgan <span class="n" id="n-rejected">0</span>
     </button>
+    <button class="tab" data-tab="users" aria-selected="false" id="tab-users" hidden>
+      Foydalanuvchilar <span class="n" id="n-users">0</span>
+    </button>
   </div>
 </header>
 
@@ -205,6 +258,11 @@ kbd{
 
   <div id="app" hidden>
     <div id="error" class="err" hidden></div>
+    <div id="tools" class="tools" hidden>
+      <input id="search" class="search" type="search" autocomplete="off"
+             placeholder="Nom, raqam yoki Telegram username boʻyicha qidirish">
+      <span class="hint" id="staff-note"></span>
+    </div>
     <div id="list"></div>
   </div>
 </div>
@@ -217,6 +275,8 @@ let focused = 0;
 let tab = 'moderation';
 let total = 0;
 let loadingMore = false;
+let me = null;
+let userQuery = '';
 const PAGE = 20;
 
 const $ = (id) => document.getElementById(id);
@@ -324,6 +384,13 @@ const EMPTY = {
   moderation: ['Navbat boʻsh', 'Hamma eʼlon koʻrib chiqilgan.'],
   active: ['Tasdiqlangan eʼlon yoʻq', 'Tasdiqlanganlar shu yerda koʻrinadi.'],
   rejected: ['Qaytarilgan eʼlon yoʻq', 'Qaytarilganlar shu yerda koʻrinadi.'],
+  users: ['Hech kim topilmadi', 'Qidiruvni oʻzgartirib koʻring.'],
+};
+
+const ROLE_LABEL = {
+  user: 'Foydalanuvchi',
+  moderator: 'Moderator',
+  admin: 'Admin',
 };
 
 function actionsFor(it) {
@@ -347,6 +414,9 @@ function actionsFor(it) {
 
 function render() {
   const list = $('list');
+  $('tools').hidden = tab !== 'users';
+
+  if (tab === 'users') { renderUsers(list); return; }
 
   if (!items.length) {
     const [title, body] = EMPTY[tab];
@@ -408,6 +478,52 @@ function render() {
   }).join('') + tailHtml();
 }
 
+function renderUsers(list) {
+  if (!items.length) {
+    const [title, body] = EMPTY.users;
+    list.innerHTML = `<div class="empty"><strong>${title}</strong>${body}</div>`;
+    return;
+  }
+
+  // Rol berish va bloklash faqat adminda; moderator roʻyxatni koʻradi xolos
+  const canEdit = me && me.user.role === 'admin';
+
+  list.innerHTML = items.map((u) => {
+    const isSelf = me && u.id === me.user.id;
+    const options = ['user', 'moderator', 'admin'].map((r) =>
+      `<option value="${r}" ${r === u.role ? 'selected' : ''}>${ROLE_LABEL[r]}</option>`
+    ).join('');
+
+    const tg = u.telegram_username
+      ? ` · <a target="_blank" rel="noopener"
+             href="https://t.me/${encodeURIComponent(u.telegram_username)}"
+             >@${escapeHtml(u.telegram_username)}</a>`
+      : '';
+
+    return `
+      <div class="urow" data-id="${u.id}">
+        <div class="who-cell">
+          <div class="uname">${escapeHtml(u.name || 'Nomsiz')}${
+            isSelf ? '<span class="self">siz</span>' : ''
+          }</div>
+          <div class="umeta">
+            ${escapeHtml(u.phone || 'raqam yoʻq')}${tg}
+            · ${u.listing_count} ta eʼlon
+            · ${timeAgo(u.created_at)} qoʻshilgan
+          </div>
+        </div>
+        ${u.is_blocked ? '<span class="blocked-tag">Bloklangan</span>' : ''}
+        <select class="role-pick" data-role="${u.role}" data-id="${u.id}"
+                ${canEdit && !isSelf ? '' : 'disabled'}>${options}</select>
+        ${canEdit && !isSelf
+          ? (u.is_blocked
+              ? `<button class="unblock" data-act="unblock" data-id="${u.id}">Blokni yechish</button>`
+              : `<button class="block" data-act="block" data-id="${u.id}">Bloklash</button>`)
+          : ''}
+      </div>`;
+  }).join('') + tailHtml();
+}
+
 function tailHtml() {
   if (items.length >= total) {
     return items.length > 6
@@ -434,6 +550,13 @@ async function loadCounts() {
       $('n-' + key).textContent = counts[key];
     }
   } catch { /* sonlar muhim emas — ro'yxat baribir yuklanadi */ }
+
+  try {
+    const people = await api('/moderation/users/counts');
+    $('n-users').textContent = people.total;
+    $('staff-note').textContent =
+      `${people.staff} ta xodim · ${people.blocked} ta bloklangan`;
+  } catch { /* shu yerda ham sonlar ikkinchi darajali */ }
 }
 
 async function fetchPage(offset) {
@@ -444,11 +567,17 @@ async function fetchPage(offset) {
   );
 }
 
+function fetchUsers(offset) {
+  const params = new URLSearchParams({ limit: PAGE, offset });
+  if (userQuery) params.set('q', userQuery);
+  return api('/moderation/users?' + params);
+}
+
 async function load() {
   try {
     $('error').hidden = true;
     $('list').innerHTML = '<div class="empty">Yuklanmoqda…</div>';
-    const page = await fetchPage(0);
+    const page = tab === 'users' ? await fetchUsers(0) : await fetchPage(0);
     items = page.items;
     total = page.total;
     focused = 0;
@@ -466,7 +595,9 @@ async function loadMore() {
   loadingMore = true;
   render();
   try {
-    const page = await fetchPage(items.length);
+    const page = tab === 'users'
+      ? await fetchUsers(items.length)
+      : await fetchPage(items.length);
     items = items.concat(page.items);
     total = page.total;
   } catch (error) {
@@ -484,6 +615,60 @@ $('tabs').addEventListener('click', (event) => {
     el.setAttribute('aria-selected', String(el.dataset.tab === tab));
   }
   load();
+});
+
+let searchTimer = null;
+$('search').addEventListener('input', (event) => {
+  const value = event.target.value;
+  clearTimeout(searchTimer);
+  // Har harfda so'rov yubormaymiz
+  searchTimer = setTimeout(() => {
+    userQuery = value.trim();
+    load();
+  }, 350);
+});
+
+async function setRole(id, role) {
+  const row = document.querySelector(`.urow[data-id="${id}"]`);
+  if (row) row.classList.add('busy');
+  try {
+    const updated = await api(`/moderation/users/${id}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    });
+    items = items.map((u) => (u.id === id ? updated : u));
+    render();
+    loadCounts();
+    toast(`${updated.name || updated.phone} — ${ROLE_LABEL[role]}`);
+  } catch (error) {
+    if (row) row.classList.remove('busy');
+    toast(error.message);
+    render();
+  }
+}
+
+async function setBlocked(id, blocked) {
+  const row = document.querySelector(`.urow[data-id="${id}"]`);
+  if (row) row.classList.add('busy');
+  try {
+    const updated = await api(`/moderation/users/${id}/block`, {
+      method: 'PATCH',
+      body: JSON.stringify({ blocked }),
+    });
+    items = items.map((u) => (u.id === id ? updated : u));
+    render();
+    loadCounts();
+    toast(blocked ? 'Bloklandi' : 'Blok yechildi');
+  } catch (error) {
+    if (row) row.classList.remove('busy');
+    toast(error.message);
+  }
+}
+
+document.addEventListener('change', (event) => {
+  const pick = event.target.closest('.role-pick');
+  if (!pick) return;
+  setRole(Number(pick.dataset.id), pick.value);
 });
 
 async function decide(id, action, reason) {
@@ -533,6 +718,14 @@ document.addEventListener('click', (event) => {
   const act = event.target.dataset?.act;
   if (!act) return;
   const id = Number(event.target.dataset.id);
+  if (act === 'block' || act === 'unblock') {
+    const row = items.find((u) => u.id === id);
+    const who = row ? (row.name || row.phone) : 'Hisob';
+    if (act === 'block' &&
+        !confirm(`${who} bloklansinmi?\nU ilovaga kira olmay qoladi.`)) return;
+    setBlocked(id, act === 'block');
+    return;
+  }
   if (act === 'reject') rejectFlow(id);
   else decide(id, act);
 });
@@ -553,8 +746,11 @@ $('refresh').onclick = load;
 async function boot() {
   if (!token) return showGate('');
   try {
-    const me = await api('/me');
-    $('who').textContent = (me.user.name || me.user.phone);
+    me = await api('/me');
+    $('who').textContent =
+      (me.user.name || me.user.phone) + ' · ' + ROLE_LABEL[me.user.role];
+    // Moderator ro'yxatni ko'radi, o'zgartirishni faqat admin qiladi
+    $('tab-users').hidden = !['moderator', 'admin'].includes(me.user.role);
     $('gate').hidden = true;
     $('app').hidden = false;
     $('refresh').hidden = false;

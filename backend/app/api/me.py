@@ -22,6 +22,7 @@ def _user_out(user) -> UserOut:
         district=user.district,
         member_since=user.created_at.year,
         phone_verified=user.phone_verified,
+        role=user.role,
     )
 
 

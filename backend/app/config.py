@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     # Telegramsiz kirish — faqat ishlab chiqishda. Ishlab chiqarishda false!
     allow_dev_login: bool = False
 
+    # Egalarining raqamlari — bu raqam bilan kirgan hisob har safar admin
+    # bo'lib qoladi. Baza tozalansa ham huquq yo'qolmaydi, qo'lda UPDATE
+    # qilish kerak emas. Vergul bilan: +998901112233,+998901112244
+    # Yozilish shakli muhim emas — app/roles.py normallashtirib solishtiradi.
+    admin_phones: str = ""
+
     # local | supabase
     storage_backend: str = "local"
     supabase_url: str = ""
@@ -42,6 +48,7 @@ class Settings(BaseSettings):
     @property
     def max_photo_bytes(self) -> int:
         return self.max_photo_mb * 1024 * 1024
+
 
 
 @lru_cache

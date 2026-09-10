@@ -7,6 +7,7 @@ from sqlalchemy import select
 from ..config import settings
 from ..deps import Session
 from ..models import LoginToken, User
+from ..roles import apply_owner_role
 from ..schemas.auth import DevLoginIn, LoginStart, LoginStatus, RefreshIn, Tokens
 from ..security import create_token, decode_token, normalize_phone
 from ..services import telegram
@@ -101,6 +102,9 @@ async def dev_login(payload: DevLoginIn, session: Session) -> Tokens:
         await session.commit()
         await session.refresh(user)
 
+    if apply_owner_role(user):
+        await session.commit()
+
     return Tokens(
         access_token=create_token(user.id, "access"),
         refresh_token=create_token(user.id, "refresh"),
@@ -118,6 +122,8 @@ async def refresh(payload: RefreshIn, session: Session) -> Tokens:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token yaroqsiz")
 
     user.last_seen_at = datetime.now(UTC)
+    # Egasining raqami .env ga keyin qo'shilgan bo'lsa ham huquq tiklanadi
+    apply_owner_role(user)
     await session.commit()
 
     return Tokens(
