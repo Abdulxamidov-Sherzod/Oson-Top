@@ -4,6 +4,7 @@ import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
 import '../../../shared/widgets/ot_chip.dart';
+import '../../../core/lang.dart';
 
 /// Qidiruv maydoni bo'sh bo'lganda ko'rinadi: so'nggi va ommabop so'rovlar.
 class SearchSuggestions extends StatelessWidget {
@@ -40,14 +41,14 @@ class SearchSuggestions extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text('Soʻnggi qidiruvlar', style: OtText.section),
+                child: Text(tr('Soʻnggi qidiruvlar'), style: OtText.section),
               ),
               GestureDetector(
                 onTap: onClearAll,
                 behavior: HitTestBehavior.opaque,
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  child: Text('Tozalash', style: OtText.link),
+                  child: Text(tr('Tozalash'), style: OtText.link),
                 ),
               ),
             ],
@@ -56,7 +57,7 @@ class SearchSuggestions extends StatelessWidget {
           for (final q in recent) _recentRow(q),
           const SizedBox(height: OtSize.x20),
         ],
-        Text('Koʻp qidiriladigan', style: OtText.section),
+        Text(tr('Koʻp qidiriladigan'), style: OtText.section),
         const SizedBox(height: OtSize.x12),
         Wrap(
           spacing: 8,

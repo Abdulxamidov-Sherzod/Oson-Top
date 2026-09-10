@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
-import '../../../core/theme/ot_text.dart';
+import '../../../shared/widgets/ot_logo.dart';
+import '../../../core/lang.dart';
 
 /// Logotip, joylashuv tanlash va bildirishnoma tugmasi.
 /// Bildirishnoma tab EMAS — dizayn qarori, `CLAUDE.md` ga qarang.
@@ -38,32 +39,9 @@ class HomeHeader extends StatelessWidget {
     );
   }
 
-  Widget _brand() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 30,
-          height: 30,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: OtColors.accent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Text(
-            'O',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              color: OtColors.surface,
-            ),
-          ),
-        ),
-        const SizedBox(width: 9),
-        Text('Oson Top', style: OtText.title),
-      ],
-    );
-  }
+  /// Logo yozuvning o'zini o'z ichiga oladi, shuning uchun yonida
+  /// "Oson Top" matni takrorlanmaydi.
+  Widget _brand() => const OtLogo(height: 38);
 
   Widget _districtPill() {
     return GestureDetector(
@@ -83,7 +61,7 @@ class HomeHeader extends StatelessWidget {
             const SizedBox(width: 5),
             Flexible(
               child: Text(
-                district,
+                tr(district),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(

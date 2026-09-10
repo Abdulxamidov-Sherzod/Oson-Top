@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import 'core/theme/ot_colors.dart';
+import 'core/theme/ot_sizes.dart';
 import 'core/theme/ot_theme.dart';
 import 'data/api/api_client.dart';
 import 'data/api/token_store.dart';
@@ -18,9 +19,11 @@ import 'features/map_picker/map_picker_screen.dart';
 import 'features/notifications/notifications_screen.dart';
 import 'features/search/search_screen.dart';
 import 'features/shell/app_shell.dart';
+import 'shared/widgets/ot_logo.dart';
 import 'state/auth_controller.dart';
 import 'state/favorites_controller.dart';
 import 'state/notifications_controller.dart';
+import 'core/lang.dart';
 
 /// Ilovaning barcha provayderlari. Alohida funksiya — testda butun
 /// ilovani ko'tarmasdan tekshirib ko'rish mumkin.
@@ -31,6 +34,7 @@ List<SingleChildWidget> appProviders(ApiClient api, TokenStore tokens) => [
       Provider(create: (_) => FavoritesRepository(api)),
       Provider(create: (_) => CreateListingRepository(api)),
       Provider(create: (_) => NotificationsRepository(api)),
+      ChangeNotifierProvider(create: (_) => LangController()..load()),
       ChangeNotifierProvider(create: (_) => AuthController(api, tokens)),
       ChangeNotifierProvider(
         create: (ctx) => FavoritesController(ctx.read<FavoritesRepository>()),
@@ -51,11 +55,19 @@ class OsonTopApp extends StatelessWidget {
 
     return MultiProvider(
       providers: appProviders(api, tokens),
-      child: MaterialApp(
-        title: 'Oson Top',
-        debugShowCheckedModeBanner: false,
-        theme: otTheme,
-        home: const _Root(),
+      // `tr()` matn yozilgan joyda chaqiriladi va hech qanday provayderga
+      // obuna boʻlmaydi, shuning uchun til almashganda oddiy qayta qurish
+      // yetmaydi: yoʻldagi `const` widgetlar oʻzgarmagani uchun Flutter
+      // ularning ostini butunlay chetlab oʻtadi. Kalit almashsa esa daraxt
+      // yangidan quriladi.
+      child: Consumer<LangController>(
+        builder: (_, lang, _) => MaterialApp(
+          key: ValueKey(lang.lang),
+          title: 'Oson Top',
+          debugShowCheckedModeBanner: false,
+          theme: otTheme,
+          home: const _Root(),
+        ),
       ),
     );
   }
@@ -126,7 +138,21 @@ class _Splash extends StatelessWidget {
     return const Scaffold(
       backgroundColor: OtColors.surface,
       body: Center(
-        child: CircularProgressIndicator(color: OtColors.accent),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            OtLogo(height: 100),
+            SizedBox(height: OtSize.x24),
+            SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.4,
+                color: OtColors.accent,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -149,8 +175,8 @@ class _ConnectionError extends StatelessWidget {
             children: [
               const Icon(Icons.cloud_off, size: 40, color: OtColors.inkFaint),
               const SizedBox(height: 16),
-              const Text(
-                'Serverga ulanib boʻlmadi',
+              Text(
+                tr('Serverga ulanib boʻlmadi'),
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -158,8 +184,8 @@ class _ConnectionError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Internetni tekshiring va qaytadan urinib koʻring.',
+              Text(
+                tr('Internetni tekshiring va qaytadan urinib koʻring.'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -168,7 +194,7 @@ class _ConnectionError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              TextButton(onPressed: onRetry, child: const Text('Qaytadan')),
+              TextButton(onPressed: onRetry, child: Text(tr('Qaytadan'))),
             ],
           ),
         ),

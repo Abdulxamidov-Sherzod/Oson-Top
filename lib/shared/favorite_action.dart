@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../features/auth/login_screen.dart';
 import '../state/auth_controller.dart';
 import '../state/favorites_controller.dart';
+import '../core/lang.dart';
 
 /// Yurakcha bosilganda nima bo'lishi.
 ///
@@ -37,7 +38,7 @@ abstract final class FavoriteAction {
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$error')),
+        SnackBar(content: Text(tr('$error'))),
       );
     }
   }

@@ -20,6 +20,7 @@ import 'home_controller.dart';
 import 'widgets/category_rail.dart';
 import 'widgets/home_header.dart';
 import 'widgets/search_bar_button.dart';
+import '../../core/lang.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -105,7 +106,7 @@ class _HomeViewState extends State<_HomeView> {
                   ),
                   error: (message) => EmptyState(
                     icon: Icons.cloud_off,
-                    title: 'Yuklab boʻlmadi',
+                    title: tr('Yuklab boʻlmadi'),
                     body: message,
                     actionLabel: 'Qaytadan',
                     onAction: home.paged.load,
@@ -142,8 +143,8 @@ class _HomeViewState extends State<_HomeView> {
   Widget _sectionHeader(HomeController home) {
     final reference = context.read<ReferenceRepository>();
     final title = home.categoryId == null
-        ? 'Yangi eʼlonlar'
-        : reference.labelOf(home.categoryId!);
+        ? tr('Yangi eʼlonlar')
+        : tr(reference.labelOf(home.categoryId!));
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -161,7 +162,7 @@ class _HomeViewState extends State<_HomeView> {
             ),
           ),
           const SizedBox(width: 12),
-          Text('${home.total} ta eʼlon', style: OtText.metaSm),
+          Text(tr('${home.total} ta eʼlon'), style: OtText.metaSm),
         ],
       ),
     );
@@ -170,11 +171,11 @@ class _HomeViewState extends State<_HomeView> {
   Widget _empty(HomeController home) {
     return EmptyState(
       icon: Icons.search_off,
-      title: 'Eʼlon topilmadi',
+      title: tr('Eʼlon topilmadi'),
       body: home.district == allDistricts
-          ? 'Bu kategoriyada hozircha eʼlon yoʻq. Boshqasini tanlab koʻring.'
+          ? tr('Bu kategoriyada hozircha eʼlon yoʻq. Boshqasini tanlab koʻring.')
           : '${home.district} boʻyicha bu kategoriyada eʼlon yoʻq.',
-      actionLabel: 'Filtrni tozalash',
+      actionLabel: tr('Filtrni tozalash'),
       onAction: home.resetFilters,
     );
   }

@@ -11,6 +11,7 @@ import '../../state/auth_controller.dart';
 import '../../state/notifications_controller.dart';
 import '../auth/login_screen.dart';
 import 'widgets/notification_tile.dart';
+import '../../core/lang.dart';
 
 /// Bosh sahifadagi qo'ng'iroqchadan ochiladi — tab emas.
 class NotificationsScreen extends StatefulWidget {
@@ -62,10 +63,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: !signedIn
                   ? EmptyState(
                       icon: Icons.notifications_none,
-                      title: 'Kirmagansiz',
-                      body: 'Eʼloningiz tasdiqlanganda yoki xaridor '
-                          'bogʻlanganda shu yerda xabar chiqadi.',
-                      actionLabel: 'Telegram orqali kirish',
+                      title: tr('Kirmagansiz'),
+                      body: tr('Eʼloningiz tasdiqlanganda yoki xaridor bogʻlanganda shu yerda xabar chiqadi.'),
+                      actionLabel: tr('Telegram orqali kirish'),
                       onAction: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => const LoginScreen(),
@@ -79,17 +79,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   : controller.paged.state is AsyncError && items.isEmpty
                   ? EmptyState(
                       icon: Icons.cloud_off,
-                      title: 'Yuklab boʻlmadi',
+                      title: tr('Yuklab boʻlmadi'),
                       body: (controller.paged.state as AsyncError).message,
                       actionLabel: 'Qaytadan',
                       onAction: controller.load,
                     )
                   : items.isEmpty
-                  ? const EmptyState(
+                  ? EmptyState(
                       icon: Icons.notifications_none,
-                      title: 'Bildirishnomalar yoʻq',
-                      body: 'Qidiruvni saqlab qoʻysangiz, mos eʼlon '
-                          'chiqqanda birinchi boʻlib xabar beramiz.',
+                      title: tr('Bildirishnomalar yoʻq'),
+                      body: tr('Qidiruvni saqlab qoʻysangiz, mos eʼlon chiqqanda birinchi boʻlib xabar beramiz.'),
                     )
                   : ListView.builder(
                       controller: _scroll,
@@ -132,14 +131,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
             ),
           ),
-          Expanded(child: Text('Bildirishnomalar', style: OtText.display)),
+          Expanded(child: Text(tr('Bildirishnomalar'), style: OtText.display)),
           if (c.unreadCount > 0)
             GestureDetector(
               onTap: c.markAllRead,
               behavior: HitTestBehavior.opaque,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-                child: Text('Oʻqildi', style: OtText.link),
+                child: Text(tr('Oʻqildi'), style: OtText.link),
               ),
             ),
         ],

@@ -6,6 +6,7 @@ import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../data/repositories/listing_repository.dart';
 import '../../../shared/widgets/ot_button.dart';
+import '../../../core/lang.dart';
 
 /// Pastdagi bog'lanish paneli.
 ///
@@ -43,7 +44,7 @@ class _ContactBarState extends State<ContactBar> {
         if (!mounted) return;
         setState(() => _loading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$error')),
+          SnackBar(content: Text(tr('$error'))),
         );
       }
       return;
@@ -87,7 +88,7 @@ class _ContactBarState extends State<ContactBar> {
             child: OtButton(
               label: _loading
                   ? 'Yuklanmoqda…'
-                  : (_phone ?? 'Raqamni koʻrsatish'),
+                  : (_phone ?? tr('Raqamni koʻrsatish')),
               icon: Icons.call,
               large: true,
               onPressed: _loading ? null : _onPrimary,
@@ -97,7 +98,7 @@ class _ContactBarState extends State<ContactBar> {
           Expanded(
             flex: 10,
             child: OtButton(
-              label: 'Xabar',
+              label: tr('Xabar'),
               kind: OtButtonKind.secondary,
               icon: Icons.chat_bubble_outline,
               large: true,

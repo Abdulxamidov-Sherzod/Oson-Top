@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
+import '../../core/lang.dart';
 
 /// Ikki yoki uch variantli tanlov — "Yangi / Ishlatilgan",
 /// "Eng yangi / Arzonidan / Qimmatidan".
@@ -56,7 +57,7 @@ class OtSegmented<T> extends StatelessWidget {
               : null,
         ),
         child: Text(
-          label,
+          tr(label),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,

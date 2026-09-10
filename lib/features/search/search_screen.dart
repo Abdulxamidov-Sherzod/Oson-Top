@@ -17,6 +17,7 @@ import '../listing_detail/listing_detail_screen.dart';
 import 'search_controller.dart';
 import 'widgets/filter_sheets.dart';
 import 'widgets/search_suggestions.dart';
+import '../../core/lang.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key, this.initialQuery = ''});
@@ -145,10 +146,10 @@ class _SearchViewState extends State<_SearchView> {
                       cursorColor: OtColors.accent,
                       style: const TextStyle(
                           fontSize: 15, color: OtColors.ink),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'Nima qidiryapsiz?',
+                        hintText: tr('Nima qidiryapsiz?'),
                         hintStyle: TextStyle(
                             fontSize: 15, color: OtColors.inkFaint),
                       ),
@@ -232,7 +233,7 @@ class _SearchViewState extends State<_SearchView> {
           ),
           const SizedBox(width: 8),
           OtChip(
-            label: c.condition?.label ?? 'Holati',
+            label: tr(c.condition?.label ?? 'Holati'),
             selected: c.condition != null,
             trailing: c.condition != null ? Icons.close : Icons.expand_more,
             onTap: () async {
@@ -274,7 +275,7 @@ class _SearchViewState extends State<_SearchView> {
       ),
       error: (message) => EmptyState(
         icon: Icons.cloud_off,
-        title: 'Yuklab boʻlmadi',
+        title: tr('Yuklab boʻlmadi'),
         body: message,
         actionLabel: 'Qaytadan',
         onAction: c.paged.load,
@@ -283,9 +284,9 @@ class _SearchViewState extends State<_SearchView> {
         if (items.isEmpty) {
           return EmptyState(
             icon: Icons.search_off,
-            title: 'Hech narsa topilmadi',
-            body: 'Boshqa soʻz bilan qidirib koʻring yoki filtrlarni tozalang.',
-            actionLabel: c.hasFilters ? 'Filtrlarni tozalash' : null,
+            title: tr('Hech narsa topilmadi'),
+            body: tr('Boshqa soʻz bilan qidirib koʻring yoki filtrlarni tozalang.'),
+            actionLabel: c.hasFilters ? tr('Filtrlarni tozalash') : null,
             onAction: c.hasFilters ? c.resetFilters : null,
           );
         }
@@ -304,13 +305,13 @@ class _SearchViewState extends State<_SearchView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${c.total} natija · ${c.district}',
+                        tr('${c.total} natija · ${c.district}'),
                         style: OtText.section,
                       ),
                       const SizedBox(height: OtSize.x12),
                       OtSegmented<SortOrder>(
                         options: {
-                          for (final s in SortOrder.values) s: s.label,
+                          for (final s in SortOrder.values) s: tr(s.label),
                         },
                         value: c.sort,
                         onChanged: c.setSort,

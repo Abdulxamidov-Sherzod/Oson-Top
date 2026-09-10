@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/lang.dart';
 
 /// Formadagi maydon: yorliq + input + ixtiyoriy izoh yoki xato.
 class OtTextField extends StatelessWidget {
@@ -46,10 +47,10 @@ class OtTextField extends StatelessWidget {
           text: TextSpan(
             style: OtText.label,
             children: [
-              TextSpan(text: label),
+              TextSpan(text: tr(label)),
               if (optional)
-                const TextSpan(
-                  text: ' · ixtiyoriy',
+                TextSpan(
+                  text: tr(' · ixtiyoriy'),
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     color: OtColors.inkFaint,
@@ -115,7 +116,7 @@ class OtTextField extends StatelessWidget {
           ),
         ] else if (helper != null) ...[
           const SizedBox(height: 6),
-          Text(helper!, style: OtText.metaSm),
+          Text(tr(helper!), style: OtText.metaSm),
         ],
       ],
     );

@@ -4,6 +4,7 @@ import '../../../core/format.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
+import '../../../core/lang.dart';
 
 /// Bosilganda tanlov oynasi ochiladigan maydon — kategoriya, tuman.
 class PickerField extends StatelessWidget {
@@ -25,7 +26,7 @@ class PickerField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: OtText.label),
+        Text(tr(label), style: OtText.label),
         const SizedBox(height: 7),
         GestureDetector(
           onTap: onTap,
@@ -45,7 +46,7 @@ class PickerField extends StatelessWidget {
                 ],
                 Expanded(
                   child: Text(
-                    value,
+                    tr(value),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 15, color: OtColors.ink),
@@ -108,7 +109,7 @@ class _PriceFieldState extends State<PriceField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Narx', style: OtText.label),
+        Text(tr('Narx'), style: OtText.label),
         const SizedBox(height: 7),
         Opacity(
           opacity: off ? 0.45 : 1,
@@ -144,7 +145,7 @@ class _PriceFieldState extends State<PriceField> {
                     ),
                   ),
                 ),
-                const Text('soʻm', style: OtText.metaSm),
+                Text(tr('soʻm'), style: OtText.metaSm),
               ],
             ),
           ),
@@ -166,7 +167,7 @@ class _PriceFieldState extends State<PriceField> {
                   color: off ? OtColors.accent : OtColors.inkFaint,
                 ),
                 const SizedBox(width: 10),
-                const Text('Narx kelishiladi',
+                Text(tr('Narx kelishiladi'),
                     style: TextStyle(fontSize: 14.5, color: OtColors.ink)),
               ],
             ),

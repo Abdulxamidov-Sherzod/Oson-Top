@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../core/env.dart';
 import 'token_store.dart';
+import '../../core/lang.dart';
 
 /// Server bilan aloqa. Token qo'shish va eskirganda yangilash shu yerda —
 /// ekranlar bu haqda bilmaydi.
@@ -134,12 +135,12 @@ class ApiException implements Exception {
       }
     }
     return ApiException(
-      'Serverda xatolik yuz berdi',
+      tr('Serverda xatolik yuz berdi'),
       statusCode: response.statusCode,
     );
   }
 
   static ApiException network([Object? error]) => ApiException(
-        'Internetga ulanib boʻlmadi. Aloqani tekshiring.',
+        tr('Internetga ulanib boʻlmadi. Aloqani tekshiring.'),
       );
 }

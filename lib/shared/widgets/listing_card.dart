@@ -5,6 +5,7 @@ import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../data/models/listing.dart';
 import 'ot_photo_placeholder.dart';
+import '../../core/lang.dart';
 
 /// Lentadagi e'lon kartasi. Bosh sahifa, qidiruv, saqlanganlar va
 /// e'lon berishning 2-qadamida ishlatiladi.
@@ -52,7 +53,7 @@ class ListingCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 7),
-          Text(OtFormat.listingPrice(listing), style: OtText.cardPrice),
+          Text(tr(OtFormat.listingPrice(listing)), style: OtText.cardPrice),
           const SizedBox(height: 7),
           _meta(),
         ],
@@ -129,7 +130,7 @@ class ListingCard extends StatelessWidget {
       children: [
         Flexible(
           child: Text(
-            listing.district,
+            tr(listing.district),
             style: OtText.meta,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -145,7 +146,7 @@ class ListingCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 5),
-        Text(OtFormat.timeAgo(listing.postedAt), style: OtText.meta),
+        Text(tr(OtFormat.timeAgo(listing.postedAt)), style: OtText.meta),
       ],
     );
   }

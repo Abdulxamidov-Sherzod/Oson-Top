@@ -5,6 +5,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/lang.dart';
 
 /// E'londagi joylashuv kartasi: xarita, markazda pin va manzil.
 ///
@@ -140,7 +141,7 @@ class LocationMapCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(onTap == null ? 'Xaritada ochish' : 'Oʻzgartirish',
+          Text(onTap == null ? tr('Xaritada ochish') : tr('Oʻzgartirish'),
               style: OtText.link),
         ],
       ),

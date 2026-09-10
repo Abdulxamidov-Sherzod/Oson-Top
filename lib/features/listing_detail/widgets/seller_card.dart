@@ -5,6 +5,7 @@ import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
 import '../../../data/models/seller.dart';
+import '../../../core/lang.dart';
 
 /// E'lon egasi haqidagi karta.
 ///
@@ -58,13 +59,13 @@ class SellerCard extends StatelessWidget {
                   ),
                   if (seller.phoneVerified) ...[
                     const SizedBox(height: 3),
-                    const Row(
+                    Row(
                       children: [
                         Icon(Icons.verified_outlined,
                             size: 14, color: OtColors.accent),
                         SizedBox(width: 5),
                         Text(
-                          'Raqam tasdiqlangan',
+                          tr('Raqam tasdiqlangan'),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -76,8 +77,7 @@ class SellerCard extends StatelessWidget {
                   ],
                   const SizedBox(height: 3),
                   Text(
-                    '${OtFormat.memberSince(seller.memberSince)} · '
-                    '${seller.listingCount} ta eʼlon',
+                    tr('${OtFormat.memberSince(seller.memberSince)} · ${seller.listingCount} ta eʼlon'),
                     style: OtText.metaSm,
                   ),
                 ],

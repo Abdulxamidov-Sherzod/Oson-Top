@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/lang.dart';
 
 enum OtButtonKind {
   /// Yashil, to'ldirilgan — asosiy harakat
@@ -74,7 +75,7 @@ class OtButton extends StatelessWidget {
                   const SizedBox(width: 8),
                 ],
                 Text(
-                  label,
+                  tr(label),
                   style: (_primary ? OtText.button : OtText.buttonGhost)
                       .copyWith(color: fg),
                 ),

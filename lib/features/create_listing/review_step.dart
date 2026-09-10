@@ -8,6 +8,7 @@ import '../../data/repositories/reference_repository.dart';
 import '../../shared/widgets/listing_card.dart';
 import '../../shared/widgets/ot_button.dart';
 import 'create_listing_form.dart';
+import '../../core/lang.dart';
 
 /// 2-qadam: e'lon lentada qanday ko'rinishini ko'rsatamiz va tasdiqlaymiz.
 class ReviewStep extends StatefulWidget {
@@ -31,7 +32,7 @@ class _ReviewStepState extends State<ReviewStep> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(form.submitError ?? 'Joylab boʻlmadi')),
+      SnackBar(content: Text(tr(form.submitError ?? 'Joylab boʻlmadi'))),
     );
   }
 
@@ -61,11 +62,11 @@ class _ReviewStepState extends State<ReviewStep> {
             padding: const EdgeInsets.fromLTRB(
                 OtSize.screenPad, OtSize.x16, OtSize.screenPad, OtSize.x24),
             children: [
-              Text('Koʻrib chiqing',
+              Text(tr('Koʻrib chiqing'),
                   style: OtText.titleSm.copyWith(fontSize: 21)),
               const SizedBox(height: 5),
-              const Text(
-                'Eʼloningiz lentada xaridorlarga shunday koʻrinadi.',
+              Text(
+                tr('Eʼloningiz lentada xaridorlarga shunday koʻrinadi.'),
                 style: OtText.metaMd,
               ),
               const SizedBox(height: OtSize.x16),
@@ -88,13 +89,13 @@ class _ReviewStepState extends State<ReviewStep> {
               const SizedBox(height: OtSize.x20),
               Row(
                 children: [
-                  Expanded(child: Text('Maʼlumotlar', style: OtText.section)),
+                  Expanded(child: Text(tr('Maʼlumotlar'), style: OtText.section)),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     behavior: HitTestBehavior.opaque,
-                    child: const Padding(
+                    child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                      child: Text('Oʻzgartirish', style: OtText.link),
+                      child: Text(tr('Oʻzgartirish'), style: OtText.link),
                     ),
                   ),
                 ],
@@ -173,15 +174,14 @@ class _ReviewStepState extends State<ReviewStep> {
         borderRadius: BorderRadius.circular(OtSize.rCard),
         border: Border.all(color: OtColors.accentLine),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.info_outline, size: 17, color: OtColors.accentPressed),
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Moderatsiyadan oʻtgach eʼlon saytda paydo boʻladi — odatda '
-              '15 daqiqa. Tayyor boʻlganda bildirishnoma keladi.',
+              tr('Moderatsiyadan oʻtgach eʼlon saytda paydo boʻladi — odatda 15 daqiqa. Tayyor boʻlganda bildirishnoma keladi.'),
               style: TextStyle(
                 fontSize: 12.5,
                 height: 1.5,
@@ -218,7 +218,7 @@ class _ReviewStepState extends State<ReviewStep> {
                   ),
                 ),
               ),
-              Expanded(child: Text('Eʼlon berish', style: OtText.display)),
+              Expanded(child: Text(tr('Eʼlon berish'), style: OtText.display)),
             ],
           ),
           const SizedBox(height: OtSize.x12),
@@ -228,7 +228,7 @@ class _ReviewStepState extends State<ReviewStep> {
               const SizedBox(width: 10),
               Expanded(child: _bar()),
               const SizedBox(width: 10),
-              const Text('2-qadam / 2',
+              Text(tr('2-qadam / 2'),
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
@@ -260,7 +260,7 @@ class _ReviewStepState extends State<ReviewStep> {
         children: [
           Expanded(
             child: OtButton(
-              label: 'Orqaga',
+              label: tr('Orqaga'),
               kind: OtButtonKind.secondary,
               large: true,
               onPressed: () => Navigator.of(context).pop(),
@@ -270,7 +270,7 @@ class _ReviewStepState extends State<ReviewStep> {
           Expanded(
             flex: 16,
             child: OtButton(
-              label: form.submitting ? 'Joylanmoqda…' : 'Tasdiqlab joylash',
+              label: form.submitting ? 'Joylanmoqda…' : tr('Tasdiqlab joylash'),
               large: true,
               onPressed: form.submitting ? null : () => _submit(form),
             ),
@@ -300,18 +300,17 @@ class _ReviewStepState extends State<ReviewStep> {
                 size: 38, color: OtColors.accent),
           ),
           const SizedBox(height: OtSize.x20),
-          Text('Eʼlon yuborildi', style: OtText.titleSm.copyWith(fontSize: 23)),
+          Text(tr('Eʼlon yuborildi'), style: OtText.titleSm.copyWith(fontSize: 23)),
           const SizedBox(height: OtSize.x8),
-          const Text(
-            'Moderator tekshirgach eʼloningiz saytda paydo boʻladi. '
-            'Tayyor boʻlganda bildirishnoma keladi.',
+          Text(
+            tr('Moderator tekshirgach eʼloningiz saytda paydo boʻladi. Tayyor boʻlganda bildirishnoma keladi.'),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14.5, height: 1.6, color: OtColors.inkMuted),
           ),
           const SizedBox(height: OtSize.x24),
           OtButton(
-            label: 'Asosiy sahifaga',
+            label: tr('Asosiy sahifaga'),
             kind: OtButtonKind.secondary,
             onPressed: () {
               Navigator.of(context).pop();

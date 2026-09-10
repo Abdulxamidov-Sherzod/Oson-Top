@@ -10,6 +10,7 @@ import '../../../data/repositories/reference_repository.dart';
 import '../../../data/models/listing.dart';
 import '../../../shared/widgets/ot_button.dart';
 import '../search_controller.dart';
+import '../../../core/lang.dart';
 
 /// Filtr oynalarining umumiy qobig'i: tutqich, sarlavha, tarkib.
 Future<T?> _sheet<T>(BuildContext context, String title, Widget body) {
@@ -41,7 +42,7 @@ Future<T?> _sheet<T>(BuildContext context, String title, Widget body) {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                   OtSize.screenPad, 16, OtSize.screenPad, 10),
-              child: Row(children: [Text(title, style: OtText.display)]),
+              child: Row(children: [Text(tr(title), style: OtText.display)]),
             ),
             Flexible(child: body),
           ],
@@ -93,14 +94,14 @@ Future<String?> showCategoryFilter(BuildContext context, String? current) {
       children: [
         _option(
           context,
-          label: 'Barcha kategoriyalar',
+          label: tr('Barcha kategoriyalar'),
           selected: current == null,
           onTap: () => Navigator.of(context).pop(null),
         ),
         for (final c in categories)
           _option(
             context,
-            label: c.label,
+            label: tr(c.label),
             selected: c.id == current,
             onTap: () => Navigator.of(context).pop(c.id),
           ),
@@ -126,14 +127,14 @@ Future<ConditionPick?> showConditionFilter(
       children: [
         _option(
           context,
-          label: 'Farqi yoʻq',
+          label: tr('Farqi yoʻq'),
           selected: current == null,
           onTap: () => Navigator.of(context).pop(const ConditionPick(null)),
         ),
         for (final c in [ListingCondition.fresh, ListingCondition.used])
           _option(
             context,
-            label: c.label,
+            label: tr(c.label),
             selected: c == current,
             onTap: () => Navigator.of(context).pop(ConditionPick(c)),
           ),
@@ -199,8 +200,8 @@ class _PriceBodyState extends State<_PriceBody> {
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Bittasini boʻsh qoldirsangiz ham boʻladi.',
+          Text(
+            tr('Bittasini boʻsh qoldirsangiz ham boʻladi.'),
             style: OtText.metaSm,
           ),
           const SizedBox(height: OtSize.x20),
@@ -208,7 +209,7 @@ class _PriceBodyState extends State<_PriceBody> {
             children: [
               Expanded(
                 child: OtButton(
-                  label: 'Tozalash',
+                  label: tr('Tozalash'),
                   kind: OtButtonKind.secondary,
                   onPressed: () =>
                       Navigator.of(context).pop(const PriceRange()),
@@ -218,7 +219,7 @@ class _PriceBodyState extends State<_PriceBody> {
               Expanded(
                 flex: 2,
                 child: OtButton(
-                  label: 'Qoʻllash',
+                  label: tr('Qoʻllash'),
                   onPressed: () => Navigator.of(context).pop(
                     PriceRange(min: _parse(_min), max: _parse(_max)),
                   ),
@@ -266,7 +267,7 @@ class _PriceBodyState extends State<_PriceBody> {
               ),
             ),
           ),
-          const Text('soʻm', style: OtText.metaSm),
+          Text(tr('soʻm'), style: OtText.metaSm),
         ],
       ),
     );

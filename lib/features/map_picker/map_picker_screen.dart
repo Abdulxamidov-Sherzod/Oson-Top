@@ -9,6 +9,7 @@ import '../../core/theme/ot_text.dart';
 import '../../data/geo/geocoding.dart';
 import '../../data/geo/user_location.dart';
 import '../../shared/widgets/ot_button.dart';
+import '../../core/lang.dart';
 
 /// Xaritada tanlangan nuqta
 class PickedPoint {
@@ -134,10 +135,10 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(tr(message)),
         action: settings
             ? SnackBarAction(
-                label: 'Sozlamalar',
+                label: tr('Sozlamalar'),
                 onPressed: UserLocation.openSettings,
               )
             : null,
@@ -226,7 +227,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
-                      _address ?? 'Xaritani suring',
+                      _address ?? tr('Xaritani suring'),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -348,14 +349,13 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
                   children: [
                     Text(
                       _resolving
-                          ? 'Manzil aniqlanmoqda…'
-                          : (_address ?? 'Manzil topilmadi'),
+                          ? tr('Manzil aniqlanmoqda…')
+                          : (_address ?? tr('Manzil topilmadi')),
                       style: OtText.bodyStrong,
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      '${_center.latitude.toStringAsFixed(5)}, '
-                      '${_center.longitude.toStringAsFixed(5)}',
+                      '${_center.latitude.toStringAsFixed(5)}, ${_center.longitude.toStringAsFixed(5)}',
                       style: OtText.metaSm,
                     ),
                   ],
@@ -379,7 +379,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
                 const SizedBox(width: 9),
                 Expanded(
                   child: Text(
-                    'Eʼlonda taxminiy hudud koʻrsatiladi, aniq uy raqami emas.',
+                    tr('Eʼlonda taxminiy hudud koʻrsatiladi, aniq uy raqami emas.'),
                     style: OtText.metaSm.copyWith(height: 1.45),
                   ),
                 ),
@@ -390,7 +390,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
           SizedBox(
             width: double.infinity,
             child: OtButton(
-              label: 'Shu joyni tanlash',
+              label: tr('Shu joyni tanlash'),
               large: true,
               onPressed: () => Navigator.of(context).pop(
                 PickedPoint(

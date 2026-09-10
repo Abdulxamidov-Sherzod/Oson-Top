@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/lang.dart';
 
 /// Joylashuv tanlash oynasi. Farg'ona viloyatining shahar va tumanlari.
 /// Barcha tumanlar varianti — filtrni bekor qilish uchun
@@ -56,7 +57,7 @@ class _DistrictSheet extends StatelessWidget {
                   OtSize.screenPad, 16, OtSize.screenPad, 10),
               child: Row(
                 children: [
-                  Text('Joylashuv', style: OtText.display),
+                  Text(tr('Joylashuv'), style: OtText.display),
                 ],
               ),
             ),

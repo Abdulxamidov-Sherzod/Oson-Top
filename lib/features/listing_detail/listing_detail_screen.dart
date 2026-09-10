@@ -17,6 +17,7 @@ import 'widgets/contact_bar.dart';
 import 'widgets/photo_gallery.dart';
 import 'widgets/safety_note.dart';
 import 'widgets/seller_card.dart';
+import '../../core/lang.dart';
 
 class ListingDetailScreen extends StatefulWidget {
   const ListingDetailScreen({
@@ -103,7 +104,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         children: [
           EmptyState(
             icon: Icons.cloud_off,
-            title: 'Eʼlon ochilmadi',
+            title: tr('Eʼlon ochilmadi'),
             body: message,
             actionLabel: 'Qaytadan',
             onAction: _load,
@@ -141,13 +142,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                     const SafetyNote(),
                     if (listing.description.isNotEmpty) ...[
                       const SizedBox(height: OtSize.x24),
-                      Text('Tavsif', style: OtText.section),
+                      Text(tr('Tavsif'), style: OtText.section),
                       const SizedBox(height: OtSize.x8),
                       Text(listing.description, style: OtText.body),
                     ],
                     if (listing.hasLocation) ...[
                       const SizedBox(height: OtSize.x24),
-                      Text('Joylashuv', style: OtText.section),
+                      Text(tr('Joylashuv'), style: OtText.section),
                       const SizedBox(height: OtSize.x12),
                       LocationMapCard(
                         lat: listing.lat!,
@@ -156,8 +157,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                         address: listing.address,
                       ),
                       const SizedBox(height: OtSize.x8),
-                      const Text(
-                        'Xaritada taxminiy hudud koʻrsatilgan.',
+                      Text(
+                        tr('Xaritada taxminiy hudud koʻrsatilgan.'),
                         style: OtText.metaSm,
                       ),
                     ],
@@ -226,7 +227,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(OtFormat.listingPrice(listing), style: OtText.priceLarge),
+          Text(tr(OtFormat.listingPrice(listing)), style: OtText.priceLarge),
           const SizedBox(height: OtSize.x8),
           Text(listing.title, style: OtText.listingTitle),
           const SizedBox(height: OtSize.x12),
@@ -258,7 +259,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         ),
       ),
       child: Text(
-        label,
+        tr(label),
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -277,7 +278,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       runSpacing: 6,
       children: [
         _metaItem(Icons.place_outlined, place),
-        _metaItem(Icons.schedule, OtFormat.fullDate(listing.postedAt)),
+        _metaItem(Icons.schedule, tr(OtFormat.fullDate(listing.postedAt))),
         _metaItem(Icons.visibility_outlined, '${listing.views} koʻrish'),
       ],
     );
@@ -288,7 +289,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         children: [
           Icon(icon, size: 13, color: OtColors.inkFaint),
           const SizedBox(width: 5),
-          Text(text, style: OtText.metaMd),
+          Text(tr(text), style: OtText.metaMd),
         ],
       );
 
@@ -299,9 +300,9 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: OtSize.x24),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: OtSize.screenPad),
-          child: Text('Oʻxshash eʼlonlar', style: OtText.section),
+          child: Text(tr('Oʻxshash eʼlonlar'), style: OtText.section),
         ),
         const SizedBox(height: OtSize.x12),
         SizedBox(

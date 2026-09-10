@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
+import '../../../core/lang.dart';
 
 /// Pastdagi 3 ta tab. Qidiruv va Bildirishnoma bu yerda YO'Q —
 /// ular bosh sahifadan ochiladi (dizayn qarori, `CLAUDE.md` ga qarang).
@@ -46,7 +47,7 @@ class OtTabBar extends StatelessWidget {
           children: [
             Icon(icon, size: 24, color: color),
             const SizedBox(height: 4),
-            Text(label, style: OtText.tab.copyWith(color: color)),
+            Text(tr(label), style: OtText.tab.copyWith(color: color)),
           ],
         ),
       ),
@@ -81,7 +82,7 @@ class OtTabBar extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Eʼlon berish',
+              tr('Eʼlon berish'),
               style: OtText.tab.copyWith(
                 color: active ? OtColors.accent : OtColors.inkInactive,
               ),

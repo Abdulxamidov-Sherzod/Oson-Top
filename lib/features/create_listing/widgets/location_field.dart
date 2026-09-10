@@ -4,6 +4,7 @@ import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
 import '../../../shared/widgets/location_map_card.dart';
+import '../../../core/lang.dart';
 
 /// Joylashuv: tuman (majburiy) + xaritada aniq nuqta (ixtiyoriy).
 ///
@@ -36,7 +37,7 @@ class LocationField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Joylashuv', style: OtText.label),
+        Text(tr('Joylashuv'), style: OtText.label),
         const SizedBox(height: 7),
         GestureDetector(
           onTap: onDistrictTap,
@@ -54,7 +55,7 @@ class LocationField extends StatelessWidget {
                     size: 15, color: OtColors.accent),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(district,
+                  child: Text(tr(district),
                       style: const TextStyle(
                           fontSize: 15, color: OtColors.ink)),
                 ),
@@ -90,7 +91,7 @@ class LocationField extends StatelessWidget {
                       color: OtColors.surface.withValues(alpha: 0.94),
                       borderRadius: BorderRadius.circular(9),
                     ),
-                    child: const Text('Olib tashlash',
+                    child: Text(tr('Olib tashlash'),
                         style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -113,12 +114,12 @@ class LocationField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(OtSize.rMd),
                 border: Border.all(color: OtColors.lineField),
               ),
-              child: const Row(
+              child: Row(
                 children: [
                   Icon(Icons.map_outlined, size: 17, color: OtColors.accent),
                   SizedBox(width: 9),
                   Expanded(
-                    child: Text('Xaritada belgilash',
+                    child: Text(tr('Xaritada belgilash'),
                         style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
@@ -132,8 +133,8 @@ class LocationField extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 7),
-        const Text(
-          'Aniq nuqta ixtiyoriy — faqat tumanni qoldirsangiz ham boʻladi.',
+        Text(
+          tr('Aniq nuqta ixtiyoriy — faqat tumanni qoldirsangiz ham boʻladi.'),
           style: OtText.metaSm,
         ),
       ],

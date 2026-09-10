@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/ot_colors.dart';
+import '../../../core/lang.dart';
 
 /// Bosh sahifadagi qidiruv qatori. O'zi yozib bo'lmaydi — bosilganda
 /// qidiruv ekrani ochiladi (2-qism).
@@ -20,12 +21,12 @@ class SearchBarButton extends StatelessWidget {
           color: OtColors.fieldAlt,
           borderRadius: BorderRadius.circular(15),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.search, size: 18, color: OtColors.inkFaint),
             SizedBox(width: 9),
             Text(
-              'Nima qidiryapsiz?',
+              tr('Nima qidiryapsiz?'),
               style: TextStyle(fontSize: 15, color: OtColors.inkFaint),
             ),
           ],

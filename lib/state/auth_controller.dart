@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import '../data/api/api_client.dart';
 import '../data/api/token_store.dart';
 import '../data/models/app_user.dart';
+import '../core/lang.dart';
 
 enum AuthStatus { checking, signedOut, signedIn }
 
@@ -58,7 +59,7 @@ class AuthController extends ChangeNotifier {
     } on DioException {
       // Internet yo'q — tokenni o'chirmaymiz, keyin qayta urinadi
       status = AuthStatus.signedOut;
-      error = 'Serverga ulanib boʻlmadi';
+      error = tr('Serverga ulanib boʻlmadi');
     }
     notifyListeners();
   }
@@ -80,7 +81,7 @@ class AuthController extends ChangeNotifier {
       _startPolling();
       return json['deep_link'] as String;
     } on DioException {
-      error = 'Serverga ulanib boʻlmadi';
+      error = tr('Serverga ulanib boʻlmadi');
       notifyListeners();
       return null;
     }
@@ -114,7 +115,7 @@ class AuthController extends ChangeNotifier {
           await loadProfile();
         case 'expired':
           cancelTelegramLogin();
-          error = 'Havola eskirdi. Qaytadan urinib koʻring.';
+          error = tr('Havola eskirdi. Qaytadan urinib koʻring.');
           notifyListeners();
         default:
           break; // pending — kutamiz
@@ -153,7 +154,7 @@ class AuthController extends ChangeNotifier {
       await loadProfile();
       return true;
     } on DioException {
-      error = 'Serverga ulanib boʻlmadi';
+      error = tr('Serverga ulanib boʻlmadi');
       notifyListeners();
       return false;
     }

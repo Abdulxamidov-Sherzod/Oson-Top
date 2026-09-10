@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
+import '../../core/lang.dart';
 
 /// Qidiruv ekranidagi filtr chipi va ommabop so'rovlar chipi.
 class OtChip extends StatelessWidget {
@@ -41,7 +42,7 @@ class OtChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                label,
+                tr(label),
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,

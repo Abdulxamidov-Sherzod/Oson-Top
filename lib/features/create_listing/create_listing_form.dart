@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../data/models/listing.dart';
 import '../../data/repositories/create_listing_repository.dart';
+import '../../core/lang.dart';
 
 /// Bitta tanlangan rasm: fayl + serverdagi id (yuklangandan keyin).
 class PickedPhoto {
@@ -47,17 +48,17 @@ class CreateListingForm extends ChangeNotifier {
 
   String? get photosError {
     if (!_submitted) return null;
-    if (photos.isEmpty) return 'Kamida bitta rasm qoʻshing';
-    if (photos.any((p) => p.uploading)) return 'Rasmlar yuklanmoqda, kuting';
-    if (photos.every((p) => !p.isReady)) return 'Rasm yuklanmadi, qaytadan urining';
+    if (photos.isEmpty) return tr('Kamida bitta rasm qoʻshing');
+    if (photos.any((p) => p.uploading)) return tr('Rasmlar yuklanmoqda, kuting');
+    if (photos.every((p) => !p.isReady)) return tr('Rasm yuklanmadi, qaytadan urining');
     return null;
   }
 
   String? get titleError =>
-      _submitted && title.trim().length < 3 ? 'Sarlavhani yozing' : null;
+      _submitted && title.trim().length < 3 ? tr('Sarlavhani yozing') : null;
 
   String? get priceError => _submitted && !negotiable && (price ?? 0) <= 0
-      ? 'Narxni kiriting yoki «kelishiladi» ni belgilang'
+      ? tr('Narxni kiriting yoki «kelishiladi» ni belgilang')
       : null;
 
   bool get isValid =>

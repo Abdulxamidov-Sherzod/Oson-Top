@@ -4,6 +4,7 @@ import '../../core/paged_list.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/lang.dart';
 
 /// Ro'yxat oxiriga yaqinlashganda keyingi sahifani so'raydi.
 ///
@@ -51,7 +52,7 @@ class LoadMoreFooter extends StatelessWidget {
     if (!paged.hasMore && paged.items.length > 8) {
       return Padding(
         padding: const EdgeInsets.only(bottom: OtSize.x24),
-        child: Center(child: Text(endLabel, style: OtText.metaSm)),
+        child: Center(child: Text(tr(endLabel), style: OtText.metaSm)),
       );
     }
     return const SizedBox(height: OtSize.x24);

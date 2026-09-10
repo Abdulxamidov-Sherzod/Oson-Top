@@ -8,6 +8,7 @@ import '../create_listing_form.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
+import '../../../core/lang.dart';
 
 /// Rasm tanlash. Birinchi rasm asosiy bo'ladi — lentada shu ko'rinadi.
 class PhotoPicker extends StatelessWidget {
@@ -37,9 +38,9 @@ class PhotoPicker extends StatelessWidget {
           text: TextSpan(
             style: OtText.label,
             children: [
-              const TextSpan(text: 'Rasmlar'),
+              TextSpan(text: tr('Rasmlar')),
               TextSpan(
-                text: ' · 1-$maxPhotos dona',
+                text: tr(' · 1-$maxPhotos dona'),
                 style: const TextStyle(
                   fontWeight: FontWeight.w400,
                   color: OtColors.inkFaint,
@@ -72,8 +73,8 @@ class PhotoPicker extends StatelessWidget {
           ),
         ] else if (photos.isNotEmpty) ...[
           const SizedBox(height: 8),
-          const Text(
-            'Birinchi rasm asosiy — lentada shu koʻrinadi.',
+          Text(
+            tr('Birinchi rasm asosiy — lentada shu koʻrinadi.'),
             style: OtText.metaSm,
           ),
         ],
@@ -97,13 +98,13 @@ class PhotoPicker extends StatelessWidget {
             strokeAlign: BorderSide.strokeAlignInside,
           ),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.add, size: 22, color: OtColors.accent),
             SizedBox(height: 5),
             Text(
-              'Rasm qoʻshish',
+              tr('Rasm qoʻshish'),
               style: TextStyle(
                 fontSize: 10.5,
                 fontWeight: FontWeight.w600,
@@ -181,8 +182,8 @@ class PhotoPicker extends StatelessWidget {
                   color: OtColors.accent,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
-                  'asosiy',
+                child: Text(
+                  tr('asosiy'),
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
@@ -241,13 +242,13 @@ class PhotoPicker extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.photo_library_outlined,
                   color: OtColors.accent),
-              title: const Text('Galereyadan tanlash'),
+              title: Text(tr('Galereyadan tanlash')),
               onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
             ),
             ListTile(
               leading:
                   const Icon(Icons.photo_camera_outlined, color: OtColors.accent),
-              title: const Text('Suratga olish'),
+              title: Text(tr('Suratga olish')),
               onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
             ),
             const SizedBox(height: 8),

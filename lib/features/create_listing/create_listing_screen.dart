@@ -18,6 +18,7 @@ import 'review_step.dart';
 import 'widgets/form_rows.dart';
 import 'widgets/location_field.dart';
 import 'widgets/photo_picker.dart';
+import '../../core/lang.dart';
 
 class CreateListingScreen extends StatelessWidget {
   const CreateListingScreen({super.key, this.onClose});
@@ -82,9 +83,9 @@ class _FormViewState extends State<_FormView> {
                   ),
                   const SizedBox(height: 18),
                   OtTextField(
-                    label: 'Sarlavha',
+                    label: tr('Sarlavha'),
                     controller: _title,
-                    hint: 'Masalan: Yumshoq burchak divan',
+                    hint: tr('Masalan: Yumshoq burchak divan'),
                     maxLength: 70,
                     error: form.titleError,
                     onChanged: form.setTitle,
@@ -95,7 +96,7 @@ class _FormViewState extends State<_FormView> {
                     children: [
                       Expanded(
                         child: PickerField(
-                          label: 'Kategoriya',
+                          label: tr('Kategoriya'),
                           value: context
                               .read<ReferenceRepository>()
                               .labelOf(form.categoryId),
@@ -119,7 +120,7 @@ class _FormViewState extends State<_FormView> {
                     ],
                   ),
                   const SizedBox(height: 18),
-                  Text('Holati', style: OtText.label),
+                  Text(tr('Holati'), style: OtText.label),
                   const SizedBox(height: 7),
                   OtSegmented<ListingCondition>(
                     options: const {
@@ -151,12 +152,11 @@ class _FormViewState extends State<_FormView> {
                   ),
                   const SizedBox(height: 18),
                   OtTextField(
-                    label: 'Tavsif',
+                    label: tr('Tavsif'),
                     controller: _description,
                     optional: true,
                     multiline: true,
-                    hint: 'Mahsulot holati, xususiyatlari, nima uchun '
-                        'sotayotganingiz…',
+                    hint: tr('Mahsulot holati, xususiyatlari, nima uchun sotayotganingiz…'),
                     maxLength: 1000,
                     onChanged: form.setDescription,
                   ),
@@ -188,8 +188,7 @@ class _FormViewState extends State<_FormView> {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Aloqa uchun Telegramda tasdiqlagan raqamingiz ishlatiladi. '
-              'U eʼlonda yopiq turadi.',
+              tr('Aloqa uchun Telegramda tasdiqlagan raqamingiz ishlatiladi. U eʼlonda yopiq turadi.'),
               style: OtText.metaSm.copyWith(height: 1.45),
             ),
           ),
@@ -209,7 +208,7 @@ class _FormViewState extends State<_FormView> {
         children: [
           Row(
             children: [
-              Expanded(child: Text('Eʼlon berish', style: OtText.display)),
+              Expanded(child: Text(tr('Eʼlon berish'), style: OtText.display)),
               if (widget.onClose != null)
                 GestureDetector(
                   onTap: widget.onClose,
@@ -234,7 +233,7 @@ class _FormViewState extends State<_FormView> {
               const SizedBox(width: 10),
               Expanded(child: _progress(false)),
               const SizedBox(width: 10),
-              const Text('1-qadam / 2',
+              Text(tr('1-qadam / 2'),
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
@@ -263,7 +262,7 @@ class _FormViewState extends State<_FormView> {
         border: Border(top: BorderSide(color: OtColors.line)),
       ),
       child: OtButton(
-        label: 'Davom etish',
+        label: tr('Davom etish'),
         trailingIcon: Icons.arrow_forward,
         large: true,
         onPressed: () => _next(form),

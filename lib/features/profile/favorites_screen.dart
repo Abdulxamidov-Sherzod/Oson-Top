@@ -12,6 +12,7 @@ import '../../shared/widgets/listing_grid.dart';
 import '../../shared/widgets/load_more.dart';
 import '../../state/favorites_controller.dart';
 import '../listing_detail/listing_detail_screen.dart';
+import '../../core/lang.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -76,7 +77,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ),
                 error: (message) => EmptyState(
                   icon: Icons.cloud_off,
-                  title: 'Yuklab boʻlmadi',
+                  title: tr('Yuklab boʻlmadi'),
                   body: message,
                   actionLabel: 'Qaytadan',
                   onAction: _paged.load,
@@ -84,10 +85,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 data: (items) => items.isEmpty
                     ? EmptyState(
                         icon: Icons.favorite_border,
-                        title: 'Saqlangan eʼlonlar yoʻq',
-                        body: 'Eʼlon yoqqan boʻlsa, yurakcha belgisini '
-                            'bosing — shu yerda saqlanadi.',
-                        actionLabel: 'Eʼlonlarni koʻrish',
+                        title: tr('Saqlangan eʼlonlar yoʻq'),
+                        body: tr('Eʼlon yoqqan boʻlsa, yurakcha belgisini bosing — shu yerda saqlanadi.'),
+                        actionLabel: tr('Eʼlonlarni koʻrish'),
                         onAction: () => Navigator.of(context).pop(),
                       )
                     : CustomScrollView(
@@ -140,7 +140,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               ),
             ),
           ),
-          Expanded(child: Text('Saqlangan eʼlonlar', style: OtText.display)),
+          Expanded(child: Text(tr('Saqlangan eʼlonlar'), style: OtText.display)),
         ],
       ),
     );

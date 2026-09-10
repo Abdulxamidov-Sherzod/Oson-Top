@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
+import '../../../core/lang.dart';
 
 /// Firibgarlikdan ogohlantirish. Har bir e'lon sahifasida bo'ladi —
 /// bu ilovaning majburiy qismi, `CLAUDE.md` ga qarang.
@@ -26,7 +27,7 @@ class SafetyNote extends StatelessWidget {
                 size: 18, color: OtColors.warnIcon),
           ),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: Text.rich(
               TextSpan(
                 style: TextStyle(
@@ -36,15 +37,14 @@ class SafetyNote extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: 'Ehtiyot boʻling. ',
+                    text: tr('Ehtiyot boʻling. '),
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       color: OtColors.warnInkStrong,
                     ),
                   ),
                   TextSpan(
-                    text: 'Oldindan pul oʻtkazmang. Mahsulotni koʻrmasdan '
-                        'kartaga toʻlov qilmang — kelishuv joyida boʻlsin.',
+                    text: tr('Oldindan pul oʻtkazmang. Mahsulotni koʻrmasdan kartaga toʻlov qilmang — kelishuv joyida boʻlsin.'),
                   ),
                 ],
               ),

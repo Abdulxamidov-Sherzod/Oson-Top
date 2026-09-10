@@ -5,6 +5,7 @@ import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
 import '../../../data/models/app_notification.dart';
+import '../../../core/lang.dart';
 
 class NotificationTile extends StatelessWidget {
   const NotificationTile({super.key, required this.item, this.onTap});
@@ -74,7 +75,7 @@ class NotificationTile extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(item.body, style: OtText.metaMd.copyWith(fontSize: 13)),
                   const SizedBox(height: 4),
-                  Text(OtFormat.timeAgo(item.at), style: OtText.metaSm),
+                  Text(tr(OtFormat.timeAgo(item.at)), style: OtText.metaSm),
                 ],
               ),
             ),

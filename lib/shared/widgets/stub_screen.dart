@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../core/lang.dart';
 
 /// Vaqtinchalik ekran. 0-qismda navigatsiyani sinash uchun — har bir
 /// ekran o'z qismida shu widget o'rniga haqiqiy kod bilan almashtiriladi.
@@ -22,7 +23,7 @@ class StubScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            Text(title, style: OtText.display),
+            Text(tr(title), style: OtText.display),
             const SizedBox(height: OtSize.x12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

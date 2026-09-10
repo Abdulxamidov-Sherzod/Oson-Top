@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_text.dart';
 import 'ot_button.dart';
+import '../../core/lang.dart';
 
 /// Bo'sh ro'yxat holati — bildirishnomalar, saqlanganlar, qidiruv natijasi.
 class EmptyState extends StatelessWidget {
@@ -39,13 +40,13 @@ class EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              title,
+              tr(title),
               textAlign: TextAlign.center,
               style: OtText.bodyStrong.copyWith(fontSize: 17),
             ),
             const SizedBox(height: 6),
             Text(
-              body,
+              tr(body),
               textAlign: TextAlign.center,
               style: OtText.body.copyWith(
                 color: OtColors.inkMuted,

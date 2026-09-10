@@ -12,6 +12,7 @@ import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/load_more.dart';
 import '../../shared/widgets/ot_photo_placeholder.dart';
 import '../listing_detail/listing_detail_screen.dart';
+import '../../core/lang.dart';
 
 /// Mening e'lonlarim. Foydalanuvchi mock — hozircha `s1` sotuvchining
 /// e'lonlari ko'rsatiladi. Backend qo'shilganda haqiqiy egasi bo'yicha filtrlanadi.
@@ -88,7 +89,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Text('Mening eʼlonlarim', style: OtText.display),
+                    child: Text(tr('Mening eʼlonlarim'), style: OtText.display),
                   ),
                 ],
               ),
@@ -100,17 +101,16 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                 ),
                 error: (message) => EmptyState(
                   icon: Icons.cloud_off,
-                  title: 'Yuklab boʻlmadi',
+                  title: tr('Yuklab boʻlmadi'),
                   body: message,
                   actionLabel: 'Qaytadan',
                   onAction: _paged.load,
                 ),
                 data: (items) => items.isEmpty
-                    ? const EmptyState(
+                    ? EmptyState(
                         icon: Icons.inventory_2_outlined,
-                        title: 'Eʼlonlaringiz yoʻq',
-                        body: 'Birinchi eʼloningizni joylang — '
-                            '2 daqiqa vaqt oladi.',
+                        title: tr('Eʼlonlaringiz yoʻq'),
+                        body: tr('Birinchi eʼloningizni joylang — 2 daqiqa vaqt oladi.'),
                       )
                     : ListView.separated(
                         controller: _scroll,
@@ -167,13 +167,13 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                     style: OtText.cardTitle.copyWith(fontSize: 14),
                   ),
                   const SizedBox(height: 4),
-                  Text(OtFormat.listingPrice(l), style: OtText.cardPrice),
+                  Text(tr(OtFormat.listingPrice(l)), style: OtText.cardPrice),
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       _statusChip(l.status),
                       const SizedBox(width: 8),
-                      Text('${l.views} koʻrish', style: OtText.metaSm),
+                      Text(tr('${l.views} koʻrish'), style: OtText.metaSm),
                     ],
                   ),
                 ],
@@ -199,7 +199,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
         borderRadius: BorderRadius.circular(7),
       ),
       child: Text(
-        status.label,
+        tr(status.label),
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,

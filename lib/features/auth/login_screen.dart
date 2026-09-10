@@ -7,6 +7,7 @@ import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../shared/widgets/ot_button.dart';
 import '../../state/auth_controller.dart';
+import '../../core/lang.dart';
 
 /// Kirish. SMS yo'q — Telegram bot raqamni o'zi tasdiqlab beradi.
 class LoginScreen extends StatefulWidget {
@@ -48,15 +49,13 @@ class _LoginScreenState extends State<LoginScreen> {
               _brand(),
               const SizedBox(height: OtSize.x24),
               Text(
-                'Fargʻona viloyati eʼlonlari',
+                tr('Fargʻona viloyati eʼlonlari'),
                 textAlign: TextAlign.center,
                 style: OtText.titleSm.copyWith(fontSize: 22),
               ),
               const SizedBox(height: OtSize.x8),
-              const Text(
-                'Kirish uchun Telegram yetarli — SMS kutish shart emas. '
-                'Bot raqamingizni soʻraydi, u eʼlonlaringizda xaridorlar '
-                'bogʻlanishi uchun kerak.',
+              Text(
+                tr('Kirish uchun Telegram yetarli — SMS kutish shart emas. Bot raqamingizni soʻraydi, u eʼlonlaringizda xaridorlar bogʻlanishi uchun kerak.'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.5,
@@ -109,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: OtSize.x16),
-        Text('Oson Top', style: OtText.display.copyWith(fontSize: 30)),
+        Text(tr('Oson Top'), style: OtText.display.copyWith(fontSize: 30)),
       ],
     );
   }
@@ -120,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(
           width: double.infinity,
           child: OtButton(
-            label: 'Telegram orqali kirish',
+            label: tr('Telegram orqali kirish'),
             icon: Icons.send_outlined,
             large: true,
             onPressed: () => _openTelegram(context, auth),
@@ -131,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
           TextButton(
             onPressed: widget.onSkip,
             child: Text(
-              'Keyinroq — avval eʼlonlarni koʻraman',
+              tr('Keyinroq — avval eʼlonlarni koʻraman'),
               style: OtText.bodyStrong.copyWith(color: OtColors.inkMuted),
             ),
           ),
@@ -150,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(OtSize.rCard),
             border: Border.all(color: OtColors.accentLine),
           ),
-          child: const Row(
+          child: Row(
             children: [
               SizedBox(
                 width: 18,
@@ -163,8 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(width: 14),
               Expanded(
                 child: Text(
-                  'Telegramda «Raqamni ulashish» tugmasini bosing — '
-                  'shundan keyin bu yerga oʻzi qaytadi.',
+                  tr('Telegramda «Raqamni ulashish» tugmasini bosing — shundan keyin bu yerga oʻzi qaytadi.'),
                   style: TextStyle(
                     fontSize: 13.5,
                     height: 1.5,
@@ -179,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
         TextButton(
           onPressed: auth.cancelTelegramLogin,
           child: Text(
-            'Bekor qilish',
+            tr('Bekor qilish'),
             style: OtText.bodyStrong.copyWith(color: OtColors.inkMuted),
           ),
         ),
@@ -195,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Telegram ochilmadi')),
+        SnackBar(content: Text(tr('Telegram ochilmadi'))),
       );
     }
   }

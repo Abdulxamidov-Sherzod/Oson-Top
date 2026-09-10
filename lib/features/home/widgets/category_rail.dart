@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../data/models/category.dart';
+import '../../../core/lang.dart';
 
 /// Gorizontal kategoriya ro'yxati. Tanlangan kategoriyani qayta bosish
 /// filtrni bekor qiladi.
@@ -37,7 +38,10 @@ class CategoryRail extends StatelessWidget {
       onTap: () => onSelect(c.id),
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 62,
+        // Ikonka 58px, lekin nom kengroq joy talab qiladi: kirillcha va
+        // ruscha lotinchadan uzun ("Недвижимость"), tor katakda esa
+        // so'z o'rtasidan bo'linib ketardi.
+        width: 74,
         child: Column(
           children: [
             AnimatedContainer(
@@ -56,7 +60,7 @@ class CategoryRail extends StatelessWidget {
             ),
             const SizedBox(height: 7),
             Text(
-              c.label,
+              tr(c.label),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
