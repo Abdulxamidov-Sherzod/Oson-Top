@@ -75,9 +75,8 @@ async def telegram_webhook(
 ) -> dict[str, bool]:
     """Ishlab chiqarishda Telegram yangilanishlarni shu yerga yuboradi.
     Ishlab chiqishda long polling ishlaydi va bu chaqirilmaydi."""
-    if settings.telegram_webhook_secret and (
-        x_telegram_bot_api_secret_token != settings.telegram_webhook_secret
-    ):
+    expected = telegram.webhook_secret()
+    if expected and x_telegram_bot_api_secret_token != expected:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Sirli kalit notoʻgʻri")
 
     await telegram.handle_update(await request.json())

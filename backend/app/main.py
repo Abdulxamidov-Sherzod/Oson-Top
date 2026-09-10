@@ -36,10 +36,10 @@ async def lifespan(app: FastAPI):
             # Serverda: Telegram yangilanishlarni oʻzi yuboradi
             try:
                 await telegram.setup_webhook()
-            except Exception:
+            except Exception as exc:
                 # Bot ishlamasa ham lenta ochilishi kerak
-                logging.getLogger("oson.telegram").exception(
-                    "Webhook oʻrnatilmadi — kirish ishlamaydi"
+                logging.getLogger("oson.telegram").error(
+                    "Webhook oʻrnatilmadi — kirish ishlamaydi: %s", exc
                 )
         else:
             # Domen yoʻq — long polling. Ishlab chiqishda shu ishlaydi.

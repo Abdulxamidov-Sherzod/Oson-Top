@@ -13,7 +13,9 @@ shuning uchun SMS ham, uning puli ham kerak emas.
 """
 
 import asyncio
+import hashlib
 import logging
+import re
 from datetime import UTC, datetime
 
 import httpx
@@ -61,6 +63,26 @@ async def call(method: str, **payload) -> dict:
     if not data.get("ok"):
         raise TelegramError(f"{method}: {data}")
     return data["result"]
+
+
+# Telegram sirli kalitda faqat shu belgilarga ruxsat beradi
+_SAFE_SECRET = re.compile(r"^[A-Za-z0-9_-]{1,256}$")
+
+
+def webhook_secret() -> str | None:
+    """Telegram qabul qiladigan shakldagi sirli kalit.
+
+    Render `generateValue` bilan tasodifiy satr yaratadi va unda `+`, `/`,
+    `=` boʻlishi mumkin — Telegram bunday kalitni rad etadi. Shuning uchun
+    mos boʻlmagan qiymatni sha256 bilan xavfsiz shaklga oʻtkazamiz.
+    Natija barqaror: bir xil kalitdan har doim bir xil token chiqadi.
+    """
+    raw = settings.telegram_webhook_secret
+    if not raw:
+        return None
+    if _SAFE_SECRET.match(raw):
+        return raw
+    return hashlib.sha256(raw.encode()).hexdigest()
 
 
 def deep_link(token: str) -> str:
@@ -221,10 +243,15 @@ async def poll_forever() -> None:
 
 
 async def setup_webhook() -> None:
-    await call(
-        "setWebhook",
-        url=settings.telegram_webhook_url,
-        secret_token=settings.telegram_webhook_secret or None,
-        allowed_updates=["message"],
-    )
-    log.info("Telegram webhook o'rnatildi: %s", settings.telegram_webhook_url)
+    payload: dict[str, object] = {
+        "url": settings.telegram_webhook_url,
+        "allowed_updates": ["message"],
+        # Eski yangilanishlar yigʻilib qolgan boʻlsa tashlab yuboramiz
+        "drop_pending_updates": True,
+    }
+    secret = webhook_secret()
+    if secret:
+        payload["secret_token"] = secret
+
+    await call("setWebhook", **payload)
+    log.info("Telegram webhook oʻrnatildi: %s", settings.telegram_webhook_url)
