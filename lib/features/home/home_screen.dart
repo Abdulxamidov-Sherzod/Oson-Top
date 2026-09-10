@@ -10,6 +10,7 @@ import '../../data/repositories/reference_repository.dart';
 import '../../shared/widgets/district_sheet.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/listing_grid.dart';
+import '../../shared/widgets/load_more.dart';
 import '../../state/favorites_controller.dart';
 import '../../state/notifications_controller.dart';
 import '../listing_detail/listing_detail_screen.dart';
@@ -48,23 +49,13 @@ class _HomeViewState extends State<_HomeView> {
   @override
   void initState() {
     super.initState();
-    _scroll.addListener(_onScroll);
+    attachLoadMore(_scroll, () => context.read<HomeController>().paged.loadMore());
   }
 
   @override
   void dispose() {
-    _scroll
-      ..removeListener(_onScroll)
-      ..dispose();
+    _scroll.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    // Oxiriga yaqinlashganda keyingi sahifani oldindan yuklaymiz
-    if (_scroll.position.pixels >
-        _scroll.position.maxScrollExtent - 600) {
-      context.read<HomeController>().loadMore();
-    }
   }
 
   @override
@@ -108,7 +99,7 @@ class _HomeViewState extends State<_HomeView> {
                   color: OtColors.ground,
                   border: Border(top: BorderSide(color: OtColors.line)),
                 ),
-                child: home.state.when(
+                child: home.paged.state.when(
                   loading: () => const Center(
                     child: CircularProgressIndicator(color: OtColors.accent),
                   ),
@@ -117,7 +108,7 @@ class _HomeViewState extends State<_HomeView> {
                     title: 'Yuklab boʻlmadi',
                     body: message,
                     actionLabel: 'Qaytadan',
-                    onAction: home.load,
+                    onAction: home.paged.load,
                   ),
                   data: (items) =>
                       items.isEmpty ? _empty(home) : _feed(home, items),
@@ -133,7 +124,7 @@ class _HomeViewState extends State<_HomeView> {
   Widget _feed(HomeController home, List<Listing> items) {
     return RefreshIndicator(
       color: OtColors.accent,
-      onRefresh: home.refresh,
+      onRefresh: home.paged.refresh,
       child: CustomScrollView(
         controller: _scroll,
         slivers: [
@@ -142,22 +133,7 @@ class _HomeViewState extends State<_HomeView> {
             listings: items,
             onTap: (l) => _open(ListingDetailScreen(listingId: l.id)),
           ),
-          if (home.isLoadingMore)
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: OtSize.x24),
-                child: Center(
-                  child: SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: OtColors.accent,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          SliverToBoxAdapter(child: LoadMoreFooter(paged: home.paged)),
         ],
       ),
     );

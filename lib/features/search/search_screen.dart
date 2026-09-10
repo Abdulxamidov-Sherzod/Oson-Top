@@ -9,6 +9,7 @@ import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/district_sheet.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/listing_grid.dart';
+import '../../shared/widgets/load_more.dart';
 import '../../shared/widgets/ot_chip.dart';
 import '../../shared/widgets/ot_segmented.dart';
 import '../../state/favorites_controller.dart';
@@ -45,18 +46,24 @@ class _SearchView extends StatefulWidget {
 class _SearchViewState extends State<_SearchView> {
   late final _input = TextEditingController(text: widget.initialQuery);
   final _focus = FocusNode();
+  final _scroll = ScrollController();
 
   @override
   void initState() {
     super.initState();
     // Ekran ochilishi bilan klaviatura chiqadi — odam darhol yoza boshlaydi
     WidgetsBinding.instance.addPostFrameCallback((_) => _focus.requestFocus());
+    attachLoadMore(
+      _scroll,
+      () => context.read<SearchScreenController>().paged.loadMore(),
+    );
   }
 
   @override
   void dispose() {
     _input.dispose();
     _focus.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -261,7 +268,7 @@ class _SearchViewState extends State<_SearchView> {
   }
 
   Widget _results(SearchScreenController c) {
-    return c.results.when(
+    return c.paged.state.when(
       loading: () => const Center(
         child: CircularProgressIndicator(color: OtColors.accent),
       ),
@@ -270,7 +277,7 @@ class _SearchViewState extends State<_SearchView> {
         title: 'Yuklab boʻlmadi',
         body: message,
         actionLabel: 'Qaytadan',
-        onAction: c.search,
+        onAction: c.paged.load,
       ),
       data: (items) {
         if (items.isEmpty) {
@@ -286,6 +293,7 @@ class _SearchViewState extends State<_SearchView> {
         return Container(
           color: OtColors.ground,
           child: CustomScrollView(
+            controller: _scroll,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
               SliverToBoxAdapter(
@@ -319,6 +327,7 @@ class _SearchViewState extends State<_SearchView> {
                   ),
                 ),
               ),
+              SliverToBoxAdapter(child: LoadMoreFooter(paged: c.paged)),
             ],
           ),
         );

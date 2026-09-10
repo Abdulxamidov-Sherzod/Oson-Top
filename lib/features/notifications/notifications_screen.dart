@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/async_value.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/load_more.dart';
 import '../../state/auth_controller.dart';
 import '../../state/notifications_controller.dart';
 import '../auth/login_screen.dart';
@@ -19,9 +21,15 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  final _scroll = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    attachLoadMore(
+      _scroll,
+      () => context.read<NotificationsController>().paged.loadMore(),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       // Kirmagan odamda bildirishnoma bo'lmaydi — so'rov ham yubormaymiz
@@ -29,6 +37,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         context.read<NotificationsController>().load();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
   }
 
   @override
@@ -58,15 +72,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ),
                       ),
                     )
-                  : controller.isLoading && items.isEmpty
+                  : controller.paged.state.isLoading && items.isEmpty
                   ? const Center(
                       child: CircularProgressIndicator(color: OtColors.accent),
                     )
-                  : controller.error != null && items.isEmpty
+                  : controller.paged.state is AsyncError && items.isEmpty
                   ? EmptyState(
                       icon: Icons.cloud_off,
                       title: 'Yuklab boʻlmadi',
-                      body: controller.error!,
+                      body: (controller.paged.state as AsyncError).message,
                       actionLabel: 'Qaytadan',
                       onAction: controller.load,
                     )
@@ -78,13 +92,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           'chiqqanda birinchi boʻlib xabar beramiz.',
                     )
                   : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                          14, OtSize.x12, 14, OtSize.x24),
-                      itemCount: items.length,
-                      itemBuilder: (_, i) => NotificationTile(
-                        item: items[i],
-                        onTap: () => controller.markRead(items[i].id),
-                      ),
+                      controller: _scroll,
+                      padding: const EdgeInsets.fromLTRB(14, OtSize.x12, 14, 0),
+                      itemCount: items.length + 1,
+                      itemBuilder: (_, i) => i == items.length
+                          ? LoadMoreFooter(paged: controller.paged)
+                          : NotificationTile(
+                              item: items[i],
+                              onTap: () => controller.markRead(items[i].id),
+                            ),
                     ),
             ),
           ],

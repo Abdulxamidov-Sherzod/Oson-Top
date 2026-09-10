@@ -5,10 +5,11 @@ import '../../core/format.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
-import '../../core/async_value.dart';
+import '../../core/paged_list.dart';
 import '../../data/models/listing.dart';
 import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/load_more.dart';
 import '../../shared/widgets/ot_photo_placeholder.dart';
 import '../listing_detail/listing_detail_screen.dart';
 
@@ -22,24 +23,38 @@ class MyListingsScreen extends StatefulWidget {
 }
 
 class _MyListingsScreenState extends State<MyListingsScreen> {
-  Async<List<Listing>> _state = const Async.loading();
+  final _scroll = ScrollController();
+  late final PagedList<Listing> _paged = PagedList(fetch: _fetch);
 
   @override
   void initState() {
     super.initState();
-    _load();
+    _paged.addListener(_onChange);
+    attachLoadMore(_scroll, _paged.loadMore);
+    _paged.load();
   }
 
-  Future<void> _load() async {
-    setState(() => _state = const Async.loading());
-    try {
-      final page = await context.read<ListingRepository>().myListings();
-      if (!mounted) return;
-      setState(() => _state = Async.data(page.items));
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _state = Async.error('$e'));
-    }
+  @override
+  void dispose() {
+    _paged
+      ..removeListener(_onChange)
+      ..dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _onChange() {
+    if (mounted) setState(() {});
+  }
+
+  Future<PageResult<Listing>> _fetch({
+    required int limit,
+    required int offset,
+  }) async {
+    final page = await context
+        .read<ListingRepository>()
+        .myListings(limit: limit, offset: offset);
+    return PageResult(items: page.items, total: page.total);
   }
 
   @override
@@ -79,7 +94,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
               ),
             ),
             Expanded(
-              child: _state.when(
+              child: _paged.state.when(
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: OtColors.accent),
                 ),
@@ -88,7 +103,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                   title: 'Yuklab boʻlmadi',
                   body: message,
                   actionLabel: 'Qaytadan',
-                  onAction: _load,
+                  onAction: _paged.load,
                 ),
                 data: (items) => items.isEmpty
                     ? const EmptyState(
@@ -98,11 +113,14 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                             '2 daqiqa vaqt oladi.',
                       )
                     : ListView.separated(
+                        controller: _scroll,
                         padding: const EdgeInsets.all(OtSize.screenPad),
-                        itemCount: items.length,
+                        itemCount: items.length + 1,
                         separatorBuilder: (_, _) =>
                             const SizedBox(height: OtSize.x12),
-                        itemBuilder: (_, i) => _row(context, items[i]),
+                        itemBuilder: (_, i) => i == items.length
+                            ? LoadMoreFooter(paged: _paged)
+                            : _row(context, items[i]),
                       ),
               ),
             ),

@@ -58,7 +58,7 @@ async def counts(session: Session, _: Moderator) -> ModerationCounts:
     )
 
 
-@router.get("/listings", response_model=Page[ListingCard])
+@router.get("/listings", response_model=Page[ListingOut])
 async def by_status(
     session: Session,
     _: Moderator,
@@ -66,9 +66,13 @@ async def by_status(
         ListingStatus.moderation,
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
     offset: Annotated[int, Query(ge=0)] = 0,
-) -> Page[ListingCard]:
-    """Holat bo'yicha ro'yxat. Moderatsiyadagilar eng eskisidan,
-    qolganlari eng yangisidan boshlanadi."""
+) -> Page[ListingOut]:
+    """Holat bo'yicha ro'yxat, to'liq ma'lumot bilan.
+
+    Moderator har bir e'lonning rasmlarini va tavsifini baribir ko'radi,
+    shuning uchun ro'yxat qisqartirilmagan holda beriladi — panel har bir
+    element uchun alohida so'rov yubormasin.
+    """
     where = Listing.status == status_filter
     total = await session.scalar(
         select(func.count()).select_from(Listing).where(where)
@@ -83,8 +87,26 @@ async def by_status(
             select(Listing).where(where).order_by(order).limit(limit).offset(offset)
         )
     )
+
+    # Egalarining aktiv e'lonlari soni — har biri uchun alohida emas,
+    # bitta so'rovda
+    owner_ids = {i.owner_id for i in items}
+    counts: dict[int, int] = {}
+    if owner_ids:
+        rows = await session.execute(
+            select(Listing.owner_id, func.count())
+            .where(
+                Listing.owner_id.in_(owner_ids),
+                Listing.status == ListingStatus.active,
+            )
+            .group_by(Listing.owner_id)
+        )
+        counts = dict(rows.all())
+
     return Page(
-        items=[to_card(i, set()) for i in items],
+        items=[
+            to_detail(i, i.owner, counts.get(i.owner_id, 0), False) for i in items
+        ],
         total=total or 0,
         limit=limit,
         offset=offset,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/async_value.dart';
+import '../../core/paged_list.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
@@ -9,6 +9,7 @@ import '../../data/models/listing.dart';
 import '../../data/repositories/favorites_repository.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/listing_grid.dart';
+import '../../shared/widgets/load_more.dart';
 import '../../state/favorites_controller.dart';
 import '../listing_detail/listing_detail_screen.dart';
 
@@ -20,27 +21,43 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  Async<List<Listing>> _state = const Async.loading();
+  final _scroll = ScrollController();
+  late final PagedList<Listing> _paged = PagedList(fetch: _fetch);
 
   @override
   void initState() {
     super.initState();
-    _load();
+    _paged.addListener(_onChange);
+    attachLoadMore(_scroll, _paged.loadMore);
+    _paged.load();
   }
 
-  Future<void> _load() async {
-    setState(() => _state = const Async.loading());
-    try {
-      final page = await context.read<FavoritesRepository>().list();
-      if (!mounted) return;
-      setState(() => _state = Async.data(page.items));
+  @override
+  void dispose() {
+    _paged
+      ..removeListener(_onChange)
+      ..dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _onChange() {
+    if (mounted) setState(() {});
+  }
+
+  Future<PageResult<Listing>> _fetch({
+    required int limit,
+    required int offset,
+  }) async {
+    final page = await context
+        .read<FavoritesRepository>()
+        .list(limit: limit, offset: offset);
+    if (mounted) {
       context.read<FavoritesController>().syncFrom({
         for (final item in page.items) item.id: true,
       });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _state = Async.error('$e'));
     }
+    return PageResult(items: page.items, total: page.total);
   }
 
   @override
@@ -53,7 +70,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           children: [
             _header(),
             Expanded(
-              child: _state.when(
+              child: _paged.state.when(
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: OtColors.accent),
                 ),
@@ -62,7 +79,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   title: 'Yuklab boʻlmadi',
                   body: message,
                   actionLabel: 'Qaytadan',
-                  onAction: _load,
+                  onAction: _paged.load,
                 ),
                 data: (items) => items.isEmpty
                     ? EmptyState(
@@ -74,6 +91,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         onAction: () => Navigator.of(context).pop(),
                       )
                     : CustomScrollView(
+                        controller: _scroll,
                         slivers: [
                           const SliverToBoxAdapter(
                               child: SizedBox(height: OtSize.x16)),
@@ -85,6 +103,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                     ListingDetailScreen(listingId: l.id),
                               ),
                             ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: LoadMoreFooter(paged: _paged),
                           ),
                         ],
                       ),

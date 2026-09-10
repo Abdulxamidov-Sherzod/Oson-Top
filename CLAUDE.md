@@ -79,6 +79,10 @@ lib/
   `dio` ni to'g'ridan-to'g'ri ishlatmaydi.
 - **Yuklanadigan ma'lumot** `Async<T>` bilan uzatiladi (`lib/core/async_value.dart`) —
   uchala holat ham (yuklanmoqda / xato / tayyor) ekranda ko'rsatilishi shart.
+- **Uzun ro'yxat** `PagedList<T>` orqali (`lib/core/paged_list.dart`): 20 tadan
+  yuklanadi, `attachLoadMore` scroll'ni kuzatadi, `LoadMoreFooter` tagida
+  ko'rsatkich chiqaradi. Yangi ro'yxat qo'shsangiz, `limit`/`offset` siz
+  yozmang — server hamma joyda `total` qaytaradi.
 - **Token** `flutter_secure_storage` da. Eskirganda `ApiClient` o'zi yangilaydi.
 - **Nom berish:** fayllar `snake_case.dart`, klasslar `PascalCase`.
   Umumiy widgetlar `Ot` prefiksi bilan: `OtButton`, `OtChip`, `OtTextField`.

@@ -8,14 +8,24 @@ class NotificationsRepository {
 
   final ApiClient _api;
 
-  Future<List<AppNotification>> list() async {
+  Future<({List<AppNotification> items, int total})> list({
+    int limit = 20,
+    int offset = 0,
+  }) async {
     try {
-      final resp = await _api.dio.get<dynamic>('/notifications');
+      final resp = await _api.dio.get<dynamic>(
+        '/notifications',
+        queryParameters: {'limit': limit, 'offset': offset},
+      );
       if (resp.statusCode != 200) throw ApiException.from(resp);
-      return (resp.data as Map<String, dynamic>)['items']
-          .cast<Map<String, dynamic>>()
-          .map<AppNotification>(AppNotification.fromJson)
-          .toList();
+      final body = resp.data as Map<String, dynamic>;
+      return (
+        items: (body['items'] as List<dynamic>)
+            .cast<Map<String, dynamic>>()
+            .map(AppNotification.fromJson)
+            .toList(),
+        total: body['total'] as int,
+      );
     } on DioException catch (e) {
       throw ApiException.network(e);
     }

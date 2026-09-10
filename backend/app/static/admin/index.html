@@ -138,6 +138,14 @@ kbd{
 }
 .card.busy{opacity:.5;pointer-events:none}
 .card.focused{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.more{
+  display:block;width:100%;margin:6px 0 0;padding:13px;border-radius:13px;
+  border:1px solid var(--line);background:var(--surface);
+  font-size:14.5px;font-weight:600;color:var(--ink-2);
+}
+.more:hover{border-color:var(--accent-line);color:var(--accent-dark)}
+.more:disabled{opacity:.6;cursor:default}
+.tail{text-align:center;color:var(--ink-3);font-size:13px;padding:14px 0 0}
 
 /* ---------- holatlar ---------- */
 .empty{
@@ -207,6 +215,9 @@ let token = localStorage.getItem('ot_admin_token');
 let items = [];
 let focused = 0;
 let tab = 'moderation';
+let total = 0;
+let loadingMore = false;
+const PAGE = 20;
 
 const $ = (id) => document.getElementById(id);
 
@@ -394,7 +405,20 @@ function render() {
           <div class="actions">${actionsFor(it)}</div>
         </div>
       </article>`;
-  }).join('');
+  }).join('') + tailHtml();
+}
+
+function tailHtml() {
+  if (items.length >= total) {
+    return items.length > 6
+      ? `<p class="tail">Hammasi shu — ${total} ta</p>`
+      : '';
+  }
+  return `<button class="more" id="more" ${loadingMore ? 'disabled' : ''}>${
+    loadingMore
+      ? 'Yuklanmoqda…'
+      : `Yana yuklash (${items.length} / ${total})`
+  }</button>`;
 }
 
 function escapeHtml(text) {
@@ -412,15 +436,21 @@ async function loadCounts() {
   } catch { /* sonlar muhim emas — ro'yxat baribir yuklanadi */ }
 }
 
+async function fetchPage(offset) {
+  // Ro'yxat to'liq ma'lumot bilan keladi — har bir e'lon uchun alohida
+  // so'rov yubormaymiz
+  return api(
+    `/moderation/listings?status=${tab}&limit=${PAGE}&offset=${offset}`
+  );
+}
+
 async function load() {
   try {
     $('error').hidden = true;
     $('list').innerHTML = '<div class="empty">Yuklanmoqda…</div>';
-    const page = await api('/moderation/listings?status=' + tab + '&limit=50');
-    // Ro'yxat qisqa ma'lumot beradi — har biri uchun to'lasini olamiz
-    items = await Promise.all(
-      page.items.map((row) => api('/moderation/listings/' + row.id))
-    );
+    const page = await fetchPage(0);
+    items = page.items;
+    total = page.total;
     focused = 0;
     render();
     loadCounts();
@@ -429,6 +459,21 @@ async function load() {
     $('error').textContent = error.message;
     $('list').innerHTML = '';
   }
+}
+
+async function loadMore() {
+  if (loadingMore || items.length >= total) return;
+  loadingMore = true;
+  render();
+  try {
+    const page = await fetchPage(items.length);
+    items = items.concat(page.items);
+    total = page.total;
+  } catch (error) {
+    toast(error.message);
+  }
+  loadingMore = false;
+  render();
 }
 
 $('tabs').addEventListener('click', (event) => {
@@ -451,6 +496,7 @@ async function decide(id, action, reason) {
     });
     // E'lon boshqa bo'limga o'tdi — shu ro'yxatdan olib tashlaymiz
     items = items.filter((i) => i.id !== id);
+    total = Math.max(0, total - 1);
     if (focused >= items.length) focused = Math.max(0, items.length - 1);
     render();
     loadCounts();
@@ -483,6 +529,7 @@ document.addEventListener('click', (event) => {
     document.body.appendChild(box);
     return;
   }
+  if (event.target.id === 'more') { loadMore(); return; }
   const act = event.target.dataset?.act;
   if (!act) return;
   const id = Number(event.target.dataset.id);

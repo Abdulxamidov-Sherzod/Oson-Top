@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../../shared/widgets/district_sheet.dart';
 import '../../data/models/listing.dart';
 import '../../data/recent_searches_store.dart';
-import '../../core/async_value.dart';
+import '../../core/paged_list.dart';
 import '../../data/repositories/listing_repository.dart';
 import '../../state/favorites_controller.dart';
 
@@ -36,6 +36,7 @@ class PriceRange {
 
 class SearchScreenController extends ChangeNotifier {
   SearchScreenController(this._repo, this._favorites) {
+    paged = PagedList<Listing>(fetch: _fetch)..addListener(notifyListeners);
     _store.load().then((v) {
       _recent = v;
       notifyListeners();
@@ -141,10 +142,11 @@ class SearchScreenController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Async<List<Listing>> results = const Async.data(<Listing>[]);
-  int total = 0;
+  late final PagedList<Listing> paged;
 
   Timer? _debounce;
+
+  int get total => paged.total;
 
   /// Har harfda so'rov ketmasin — 350 ms kutamiz
   void _scheduleSearch() {
@@ -152,50 +154,49 @@ class SearchScreenController extends ChangeNotifier {
     _debounce = Timer(const Duration(milliseconds: 350), search);
   }
 
+  Future<PageResult<Listing>> _fetch({
+    required int limit,
+    required int offset,
+  }) async {
+    final page = await _repo.search(
+      query: _query,
+      categoryId: _categoryId,
+      district: _district == allDistrictsLabel ? null : _district,
+      priceMin: _price.min,
+      priceMax: _price.max,
+      condition: switch (_condition) {
+        ListingCondition.fresh => 'fresh',
+        ListingCondition.used => 'used',
+        _ => null,
+      },
+      sort: switch (_sort) {
+        SortOrder.newest => 'new',
+        SortOrder.cheapest => 'cheap',
+        SortOrder.priciest => 'expensive',
+      },
+      limit: limit,
+      offset: offset,
+    );
+    _favorites.syncFrom({
+      for (final item in page.items) item.id: _favorites.isFavorite(item.id),
+    });
+    return PageResult(items: page.items, total: page.total);
+  }
+
   Future<void> search() async {
     if (showSuggestions) {
-      results = const Async.data(<Listing>[]);
-      total = 0;
-      notifyListeners();
+      paged.replaceAll(const []);
       return;
     }
-
-    results = const Async.loading();
-    notifyListeners();
-
-    try {
-      final page = await _repo.search(
-        query: _query,
-        categoryId: _categoryId,
-        district: _district == allDistrictsLabel ? null : _district,
-        priceMin: _price.min,
-        priceMax: _price.max,
-        condition: switch (_condition) {
-          ListingCondition.fresh => 'fresh',
-          ListingCondition.used => 'used',
-          _ => null,
-        },
-        sort: switch (_sort) {
-          SortOrder.newest => 'new',
-          SortOrder.cheapest => 'cheap',
-          SortOrder.priciest => 'expensive',
-        },
-        limit: 40,
-      );
-      total = page.total;
-      results = Async.data(page.items);
-      _favorites.syncFrom({
-        for (final item in page.items) item.id: _favorites.isFavorite(item.id),
-      });
-    } catch (e) {
-      results = Async.error('$e');
-    }
-    notifyListeners();
+    await paged.load();
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
+    paged
+      ..removeListener(notifyListeners)
+      ..dispose();
     super.dispose();
   }
 }
