@@ -7,6 +7,7 @@ import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../data/geo/geocoding.dart';
+import '../../data/geo/user_location.dart';
 import '../../shared/widgets/ot_button.dart';
 
 /// Xaritada tanlangan nuqta
@@ -45,6 +46,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
 
   String? _address;
   bool _resolving = false;
+  bool _locating = false;
   Timer? _debounce;
 
   /// Xarita boshlangʻich nuqtaga kelgunicha kamera hodisalarini eʼtiborsiz
@@ -83,18 +85,63 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     });
   }
 
+  /// "Turgan joyim" tugmasi.
+  ///
+  /// MapKit'ning `getUserCameraPosition` usuli bu yerda ishlamaydi: u ruxsat
+  /// allaqachon berilgan boʻlishini talab qiladi va soʻramaydi. Koordinatani
+  /// geolocator beradi, MapKit'ga esa faqat koʻk nuqta uchun xabar qilamiz.
   Future<void> _locateMe() async {
-    final controller = _controller;
-    if (controller == null) return;
-    // Ruxsat so'ralishi tizim tomonidan boshqariladi
-    await controller.toggleUserLayer(visible: true);
-    final position = await controller.getUserCameraPosition();
-    if (position == null || !mounted) return;
-    await controller.moveCamera(
-      CameraUpdate.newCameraPosition(
-        position.copyWith(zoom: 16),
+    if (_locating) return;
+    setState(() => _locating = true);
+
+    final outcome = await UserLocation.current();
+    if (!mounted) return;
+    setState(() => _locating = false);
+
+    switch (outcome) {
+      case LocateFailed(:final reason):
+        _showProblem(reason);
+      case LocateOk(:final point):
+        _center = point;
+        // Ruxsat endi bor — foydalanuvchi joyi koʻk nuqta bilan koʻrinsin
+        await _controller?.toggleUserLayer(visible: true);
+        // Manzil kamera toʻxtagach yangilanadi — surib tanlagandagi kabi
+        await _controller?.moveCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: point, zoom: 16),
+          ),
+          animation: const MapAnimation(duration: 0.4),
+        );
+    }
+  }
+
+  void _showProblem(LocateProblem reason) {
+    final (message, settings) = switch (reason) {
+      LocateProblem.serviceOff => (
+          'Qurilmada joylashuv xizmati oʻchiq',
+          false,
+        ),
+      LocateProblem.denied => ('Joylashuvga ruxsat berilmadi', false),
+      LocateProblem.deniedForever => (
+          'Joylashuvga ruxsat yopiq — Sozlamalardan oching',
+          true,
+        ),
+      LocateProblem.notFound => (
+          'Joylashuv aniqlanmadi, qaytadan urinib koʻring',
+          false,
+        ),
+    };
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: settings
+            ? SnackBarAction(
+                label: 'Sozlamalar',
+                onPressed: UserLocation.openSettings,
+              )
+            : null,
       ),
-      animation: const MapAnimation(duration: 0.4),
     );
   }
 
@@ -204,13 +251,18 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       padding: const EdgeInsets.fromLTRB(0, 0, OtSize.screenPad, 12),
       child: Align(
         alignment: Alignment.centerRight,
-        child: _floating(Icons.my_location, onTap: _locateMe, size: 44),
+        child: _floating(
+          Icons.my_location,
+          onTap: _locateMe,
+          size: 44,
+          busy: _locating,
+        ),
       ),
     );
   }
 
   Widget _floating(IconData icon,
-      {required VoidCallback onTap, double size = 40}) {
+      {required VoidCallback onTap, double size = 40, bool busy = false}) {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -228,7 +280,18 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
             ),
           ],
         ),
-        child: Icon(icon, size: 19, color: OtColors.ink),
+        child: busy
+            ? const Center(
+                child: SizedBox(
+                  width: 17,
+                  height: 17,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: OtColors.accent,
+                  ),
+                ),
+              )
+            : Icon(icon, size: 19, color: OtColors.ink),
       ),
     );
   }

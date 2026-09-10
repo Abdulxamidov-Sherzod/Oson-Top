@@ -41,10 +41,14 @@ Backend: `backend/` (FastAPI + PostgreSQL). O'z README'si bor.
 Kirish **Telegram bot orqali** — SMS yo'q. Bot foydalanuvchidan tasdiqlangan
 telefon raqamini so'raydi, shuning uchun "✓ Raqam tasdiqlangan" haqiqiy.
 
-**Tugallanmagan bitta joy:** haqiqiy Yandex MapKit ulanmagan. E'lon sahifasidagi
-xarita — `StaticMapCard`, ya'ni chizma. E'lon berish formasidagi "Xaritada belgilash"
-hozircha manzilni qo'lda qo'yadi. Ikkalasi ham MapKit kelganda almashtiriladi;
-API kalit kerak.
+Yandex MapKit ulangan: e'lon sahifasidagi xarita `LocationMapCard`, e'lon berish
+formasidagi "Xaritada belgilash" esa `MapPickerScreen` — ikkalasi ham haqiqiy
+`YandexMap`. Nuqtadan manzil topish `Geocoding.addressOf` orqali.
+
+Joylashuv ruxsati `geolocator` bilan so'raladi (`lib/data/geo/user_location.dart`).
+MapKit'ning `toggleUserLayer`/`getUserCameraPosition` usullari ruxsatni **o'zi
+so'ramaydi** — ruxsat yo'q bo'lsa jimgina hech nima qilmaydi, shuning uchun
+"turgan joyim" tugmasi ular bilan emas, geolocator bilan ishlaydi.
 
 ## Dizayn
 
@@ -186,7 +190,7 @@ relizga chiqishdan oldin olib tashlanadi.
 
 ## Testlar
 
-`test/` ichida 13 ta test (formatlash va server javobini o'qish).
+`test/` ichida 14 ta test (formatlash va server javobini o'qish).
 Backend testlari: `cd backend && ./.venv/bin/pytest` — 25 ta. Widget testlarda ekran o'lchamini shunday bering:
 
 ```dart
