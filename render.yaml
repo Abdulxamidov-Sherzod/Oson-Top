@@ -1,0 +1,58 @@
+# Render.com uchun sozlama.
+#
+# Bepul reja 15 daqiqa harakatsizlikdan keyin serverni to'xtatadi.
+# Buni chetlab o'tish uchun cron-job.org da har 10 daqiqada
+# https://<manzil>/health ga so'rov qo'ying — server uyg'oq qoladi.
+services:
+  - type: web
+    name: oson-top-api
+    runtime: python
+    plan: free
+    region: frankfurt          # Oʻzbekistonga eng yaqin variant
+    rootDir: backend
+    buildCommand: pip install -e .
+    # Har chiqarishda migratsiyalar ham yuritiladi
+    startCommand: >-
+      alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+
+      # Supabase Postgres — Connection string (URI), lekin
+      # "postgresql://" oʻrniga "postgresql+asyncpg://" yoziladi
+      - key: DATABASE_URL
+        sync: false
+
+      # Tasodifiy uzun satr. Render oʻzi yaratib beradi.
+      - key: JWT_SECRET
+        generateValue: true
+
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        value: oson_topp_bot
+      # Domen paydo boʻlgach toʻldiriladi:
+      # https://<manzil>/api/v1/auth/telegram/webhook
+      - key: TELEGRAM_WEBHOOK_URL
+        sync: false
+      - key: TELEGRAM_WEBHOOK_SECRET
+        generateValue: true
+
+      # Rasmlar Supabase Storage'da — Render diskidagi fayllar
+      # har chiqarishda oʻchib ketadi
+      - key: STORAGE_BACKEND
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: listing-photos
+
+      # Ishlab chiqarishda parolsiz kirish YOPIQ boʻlishi shart
+      - key: ALLOW_DEV_LOGIN
+        value: "false"
+      - key: AUTO_APPROVE
+        value: "false"

@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     # Telegramsiz kirish — faqat ishlab chiqishda. Ishlab chiqarishda false!
     allow_dev_login: bool = False
 
+    # local | supabase
+    storage_backend: str = "local"
+    supabase_url: str = ""
+    supabase_service_key: str = ""
+    supabase_bucket: str = "listing-photos"
+
     media_dir: Path = Path("./media")
     media_url: str = "/media"
     max_photo_mb: int = 8

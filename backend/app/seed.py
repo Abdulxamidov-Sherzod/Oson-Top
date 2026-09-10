@@ -225,7 +225,7 @@ async def main() -> None:
             await session.flush()
 
             for p in range(random.randint(2, 4)):
-                name, w, h = save_photo(_placeholder(f"{title} — {p + 1}", i + p))
+                name, w, h = await save_photo(_placeholder(f"{title} — {p + 1}", i + p))
                 session.add(
                     ListingPhoto(
                         listing_id=listing.id,
@@ -249,7 +249,7 @@ async def main() -> None:
         )
         session.add(pending)
         await session.flush()
-        name, w, h = save_photo(_placeholder("Velosiped", 3))
+        name, w, h = await save_photo(_placeholder("Velosiped", 3))
         session.add(
             ListingPhoto(listing_id=pending.id, filename=name, width=w, height=h)
         )

@@ -33,9 +33,16 @@ async def lifespan(app: FastAPI):
     poller: asyncio.Task | None = None
     if settings.telegram_bot_token:
         if settings.telegram_webhook_url:
-            await telegram.setup_webhook()
+            # Serverda: Telegram yangilanishlarni oʻzi yuboradi
+            try:
+                await telegram.setup_webhook()
+            except Exception:
+                # Bot ishlamasa ham lenta ochilishi kerak
+                logging.getLogger("oson.telegram").exception(
+                    "Webhook oʻrnatilmadi — kirish ishlamaydi"
+                )
         else:
-            # Domen yo'q — long polling. Ishlab chiqishda shu ishlaydi.
+            # Domen yoʻq — long polling. Ishlab chiqishda shu ishlaydi.
             poller = asyncio.create_task(telegram.poll_forever())
 
     yield

@@ -19,7 +19,7 @@ async def upload(
     serverga chiqib bo'ladi."""
     raw = await file.read()
     try:
-        name, width, height = save_photo(raw)
+        name, width, height = await save_photo(raw)
     except ImageTooLarge as exc:
         raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, str(exc)) from exc
     except NotAnImage as exc:
