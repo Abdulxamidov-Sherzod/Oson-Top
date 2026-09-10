@@ -78,6 +78,7 @@ const ruDictionary = <String, String>{
   'Xaritada taxminiy hudud koʻrsatilgan.':
       'На карте показан примерный район.',
   'Xaritada ochish': 'Открыть на карте',
+  'Xaritani ochadigan ilova topilmadi': 'Не найдено приложение для открытия карты',
 
   // --- Eʼlon berish ---
   '1-qadam / 2': 'Шаг 1 / 2',

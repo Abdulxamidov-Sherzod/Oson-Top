@@ -40,7 +40,31 @@
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <!--
+        Android 11 dan boshlab ilova boshqa ilovalarni "ko'rmaydi": shu yerda
+        e'lon qilinmagan intent uchun canLaunchUrl() har doim false qaytaradi
+        va url_launcher jimgina hech nima qilmaydi. Shuning uchun ochadigan
+        har bir turdagi havola alohida yoziladi.
+    -->
     <queries>
+        <!-- Xaritani Yandex Maps ilovasida ochish -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="yandexmaps"/>
+        </intent>
+        <!-- Xarita brauzerda, Telegram havolasi (https://t.me/…) -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+        <!-- Sotuvchiga qo'ng'iroq qilish -->
+        <intent>
+            <action android:name="android.intent.action.DIAL"/>
+            <data android:scheme="tel"/>
+        </intent>
+
+        <!-- Don't delete the intent below.
+             This is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

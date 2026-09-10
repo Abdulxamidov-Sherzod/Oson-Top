@@ -33,7 +33,7 @@ class LocationMapCard extends StatelessWidget {
   /// Berilmasa — Yandex Maps ochiladi
   final VoidCallback? onTap;
 
-  Future<void> _openInMaps() async {
+  Future<void> _openInMaps(BuildContext context) async {
     // Avval ilova, bo'lmasa brauzer
     final app = Uri.parse('yandexmaps://maps.yandex.ru/?pt=$lng,$lat&z=16');
     if (await canLaunchUrl(app)) {
@@ -43,13 +43,20 @@ class LocationMapCard extends StatelessWidget {
     final web = Uri.parse('https://yandex.uz/maps/?pt=$lng,$lat&z=16&l=map');
     if (await canLaunchUrl(web)) {
       await launchUrl(web, mode: LaunchMode.externalApplication);
+      return;
     }
+    // Ikkalasi ham ochilmasa jim qolmaymiz — foydalanuvchi tugma buzuq deb
+    // o'ylaydi, aslida ochadigan ilova topilmagan
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr('Xaritani ochadigan ilova topilmadi'))),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap ?? _openInMaps,
+      onTap: onTap ?? () => _openInMaps(context),
       behavior: HitTestBehavior.opaque,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(OtSize.rCard),

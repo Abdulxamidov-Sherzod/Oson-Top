@@ -1,11 +1,11 @@
 {
   "pins" : [
     {
-      "identity" : "mapkit-ios",
+      "identity" : "mapkit-ios-lite",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/yandex/mapkit-ios",
+      "location" : "https://github.com/yandex/mapkit-ios-lite",
       "state" : {
-        "revision" : "7dde3deed785d0cbb375cd2b7d8b69e6b8075f48",
+        "revision" : "268cf0d17b075248302f8d576288e3627a26c633",
         "version" : "4.39.1"
       }
     }
