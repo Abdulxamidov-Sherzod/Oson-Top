@@ -74,9 +74,15 @@ class SupabaseStorage:
             )
         self._base = settings.supabase_url.rstrip("/")
         self._bucket = settings.supabase_bucket
-        self._headers = {
-            "Authorization": f"Bearer {settings.supabase_service_key}",
-        }
+
+        key = settings.supabase_service_key
+        # Supabase'da ikki xil kalit formati bor:
+        #   eyJ...        — eski service_role (JWT), Bearer sifatida yuboriladi
+        #   sb_secret_... — yangi format, faqat apikey sarlavhasida ishlaydi
+        #                   (Bearer bilan "Invalid Compact JWS" deydi)
+        self._headers = {"apikey": key}
+        if key.startswith("eyJ"):
+            self._headers["Authorization"] = f"Bearer {key}"
 
     async def save(self, name: str, data: bytes) -> None:
         async with httpx.AsyncClient(timeout=30) as client:
