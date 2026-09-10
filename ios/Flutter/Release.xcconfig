@@ -1,1 +1,3 @@
 #include "Generated.xcconfig"
+// Kalitlar — git'ga tushmaydi. Fayl yo'q bo'lsa build to'xtamaydi.
+#include? "Secrets.xcconfig"

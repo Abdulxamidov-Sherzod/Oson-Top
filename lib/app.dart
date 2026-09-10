@@ -12,6 +12,7 @@ import 'data/repositories/reference_repository.dart';
 import 'features/auth/login_screen.dart';
 import 'features/create_listing/create_listing_screen.dart';
 import 'features/listing_detail/listing_detail_screen.dart';
+import 'features/map_picker/map_picker_screen.dart';
 import 'features/notifications/notifications_screen.dart';
 import 'features/search/search_screen.dart';
 import 'features/shell/app_shell.dart';
@@ -105,6 +106,7 @@ Widget _startScreen() => switch (_start) {
       'create' => const CreateListingScreen(),
       'notifications' => const NotificationsScreen(),
       'login' => const LoginScreen(),
+      'map' => const MapPickerScreen(),
       'profile' => const AppShell(initialTab: 2),
       _ => const AppShell(),
     };

@@ -10,7 +10,7 @@ import '../../data/repositories/listing_repository.dart';
 import '../../data/repositories/reference_repository.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/listing_card.dart';
-import '../../shared/widgets/static_map_card.dart';
+import '../../shared/widgets/location_map_card.dart';
 import '../../state/favorites_controller.dart';
 import 'widgets/contact_bar.dart';
 import 'widgets/photo_gallery.dart';
@@ -35,6 +35,7 @@ class ListingDetailScreen extends StatefulWidget {
 }
 
 class _ListingDetailScreenState extends State<ListingDetailScreen> {
+  final _scroll = ScrollController();
   ListingDetail? _detail;
   List<Listing> _similar = const [];
   String? _error;
@@ -56,10 +57,27 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       final similar = await repo.similarTo(detail.listing);
       if (!mounted) return;
       setState(() => _similar = similar);
+
+      // Ishlab chiqish uchun: kerakli joyga aylantirib qo'yamiz
+      final target = widget.debugScrollTo;
+      if (target != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!_scroll.hasClients) return;
+          _scroll.jumpTo(
+            target.clamp(0, _scroll.position.maxScrollExtent),
+          );
+        });
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _error = '$e');
     }
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
   }
 
   @override
@@ -107,9 +125,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return Stack(
       children: [
         CustomScrollView(
-          controller: widget.debugScrollTo == null
-              ? null
-              : ScrollController(initialScrollOffset: widget.debugScrollTo!),
+          controller: _scroll,
           slivers: [
             _appBar(listing),
             SliverToBoxAdapter(child: _head(listing)),
@@ -132,7 +148,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                       const SizedBox(height: OtSize.x24),
                       Text('Joylashuv', style: OtText.section),
                       const SizedBox(height: OtSize.x12),
-                      StaticMapCard(
+                      LocationMapCard(
                         lat: listing.lat!,
                         lng: listing.lng!,
                         district: listing.district,

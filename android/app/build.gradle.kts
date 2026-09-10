@@ -1,3 +1,12 @@
+import java.util.Properties
+
+// Kalitlar local.properties dan olinadi — u git'ga tushmaydi
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val mapkitApiKey: String = localProps.getProperty("mapkit.apiKey") ?: ""
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -9,6 +18,10 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -19,7 +32,7 @@ android {
         applicationId = "uz.osontop.oson_top"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = maxOf(flutter.minSdkVersion, 26) // Yandex MapKit talabi
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
@@ -27,6 +40,7 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        buildConfigField("String", "MAPKIT_API_KEY", "\"$mapkitApiKey\"")
     }
 
     buildTypes {
@@ -46,4 +60,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("com.yandex.android:maps.mobile:4.39.1-full")
 }

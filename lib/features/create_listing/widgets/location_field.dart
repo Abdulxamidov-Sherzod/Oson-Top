@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/ot_colors.dart';
 import '../../../core/theme/ot_sizes.dart';
 import '../../../core/theme/ot_text.dart';
-import '../../../shared/widgets/static_map_card.dart';
+import '../../../shared/widgets/location_map_card.dart';
 
 /// Joylashuv: tuman (majburiy) + xaritada aniq nuqta (ixtiyoriy).
 ///
@@ -68,19 +68,14 @@ class LocationField extends StatelessWidget {
         if (_hasPoint)
           Stack(
             children: [
-              StaticMapCard(
+              LocationMapCard(
                 lat: lat!,
                 lng: lng!,
                 district: district,
                 address: address,
                 height: 110,
-              ),
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: onMapTap,
-                  behavior: HitTestBehavior.opaque,
-                  child: const SizedBox.expand(),
-                ),
+                zoom: 16,
+                onTap: onMapTap,
               ),
               Positioned(
                 right: 8,

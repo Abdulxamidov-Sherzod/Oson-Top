@@ -104,6 +104,25 @@ flutter test                     # testlar
 open -a Simulator                # iOS simulyatorini ochish
 ```
 
+### Xarita — Yandex MapKit
+
+Ikkita narsa muhim:
+
+1. **Kalit git'ga tushmaydi.** iOS uchun `ios/Flutter/Secrets.xcconfig`
+   (namuna: `Secrets.example.xcconfig`), Android uchun `android/local.properties`
+   ichida `mapkit.apiKey=...`. Ikkalasi ham `.gitignore` da.
+2. **`full` variant kerak.** MapKit'ning `lite` varianti faqat xaritani
+   ko'rsatadi — teskari geokodlash (nuqtadan manzil topish) unda yo'q.
+   Variant muhit o'zgaruvchisi orqali tanlanadi, shuning uchun flutter'ni
+   to'g'ridan-to'g'ri emas, `tool/run.sh` orqali chaqiring:
+
+```bash
+./tool/run.sh run                      # flutter run o'rniga
+./tool/run.sh build ios --simulator    # flutter build o'rniga
+```
+
+Variantni o'zgartirgandan keyin: `flutter clean` va DerivedData'ni tozalash.
+
 ### Server manzili
 
 Standart: `http://127.0.0.1:8000` (iOS simulyatori uchun). Boshqasi kerak bo'lsa:
@@ -151,10 +170,10 @@ kichrayib ketadi.
 
 ## Qolgan ish
 
-1. **Yandex MapKit** — hozir xarita chizma (`static_map_card.dart`), e'lon berishda
-   nuqta qo'lda qo'yiladi. API kalit kerak.
-2. **Serverga chiqarish** — backend hozir faqat shu Mac'da ishlaydi.
-3. **Moderatsiya paneli** — API tayyor, veb-interfeys yo'q.
-4. **Push bildirishnoma** — hozir ilova ochilganda so'rab oladi.
+1. **Serverga chiqarish** — backend hozir faqat shu Mac'da ishlaydi.
+2. **Moderatsiya paneli** — API tayyor, veb-interfeys yo'q.
+3. **Push bildirishnoma** — hozir ilova ochilganda so'rab oladi.
+4. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish hali yo'q,
+   faqat surib tanlash ishlaydi.
 
 To'liq reja: `docs/ish-rejasi.html`.

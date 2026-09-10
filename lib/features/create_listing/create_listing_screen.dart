@@ -11,6 +11,7 @@ import '../../shared/widgets/district_sheet.dart';
 import '../../shared/widgets/ot_button.dart';
 import '../../shared/widgets/ot_segmented.dart';
 import '../../shared/widgets/ot_text_field.dart';
+import '../map_picker/map_picker_screen.dart';
 import '../search/widgets/filter_sheets.dart';
 import 'create_listing_form.dart';
 import 'review_step.dart';
@@ -282,23 +283,26 @@ class _FormViewState extends State<_FormView> {
     );
   }
 
-  /// Haqiqiy Yandex xaritasi keyingi bosqichda ulanadi. Hozircha tuman
-  /// markazini nuqta sifatida qo'yamiz — oqim to'liq ishlab tursin.
-  void _openMapPicker(CreateListingForm form) {
-    if (form.lat != null) {
-      form.setPoint();
-      return;
-    }
-    form.setPoint(
-      address: 'Markaz',
-      lat: 40.3894,
-      lng: 71.7864,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Xarita tanlash keyingi bosqichda ulanadi'),
-        duration: Duration(seconds: 2),
+  /// Xaritada nuqta tanlash. Nuqta ixtiyoriy — tuman ham yetarli.
+  Future<void> _openMapPicker(CreateListingForm form) async {
+    final picked = await Navigator.of(context).push<PickedPoint>(
+      MaterialPageRoute(
+        builder: (_) => MapPickerScreen(
+          initial: form.lat == null
+              ? null
+              : PickedPoint(
+                  lat: form.lat!,
+                  lng: form.lng!,
+                  address: form.address,
+                ),
+        ),
       ),
+    );
+    if (picked == null) return;
+    form.setPoint(
+      address: picked.address,
+      lat: picked.lat,
+      lng: picked.lng,
     );
   }
 }
