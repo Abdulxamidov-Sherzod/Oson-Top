@@ -2,7 +2,7 @@
 
 Farg'ona viloyati uchun e'lonlar ilovasi (OLX'ga o'xshash, soddaroq). Flutter, mobil.
 
-**Til:** butun interfeys o'zbek lotin alifbosida. `oʻ` (U+02BB) va `ʼ` (U+02BC) belgilaridan foydalaniladi: `Fargʻona`, `eʼlon`, `koʻrish`. Kod, fayl nomlari va commit'lar inglizcha.
+**Til:** butun interfeys o'zbek lotin alifbosida. `oʻ` (U+02BB) va `ʼ` (U+02BC) belgilaridan foydalaniladi: `Fargʻona`, `eʼlon`, `koʻrish`. Kod va fayl nomlari inglizcha, commit xabarlari esa o'zbekcha.
 
 **Valyuta:** so'm, uch xonali bo'shliq bilan — `3 200 000 soʻm`.
 
@@ -156,6 +156,12 @@ Ikkita narsa muhim:
 ```
 
 Variantni o'zgartirgandan keyin: `flutter clean` va DerivedData'ni tozalash.
+
+`Package.swift` da variant `?? "lite"` bilan tanlanadi, ya'ni muhit o'zgaruvchisi
+yetib bormasa **jimgina lite** olinadi. Shu sababli `flutter` ni to'g'ridan-to'g'ri
+chaqirganda `ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved` ichida
+`mapkit-ios-lite` paydo bo'lib qolishi mumkin. Commit qilishdan oldin `git status`
+ga qarang — u yerda `mapkit-ios` turishi kerak, `-lite` emas.
 
 ### Server manzili
 
