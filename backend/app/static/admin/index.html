@@ -43,6 +43,9 @@ h1{font-size:19px;font-weight:700;margin:0;letter-spacing:-.01em}
 }
 .spacer{flex:1}
 .tabs{display:flex;gap:6px;padding:0 20px 12px;max-width:1080px;margin:0 auto}
+/* display:flex `hidden` atributini bosib ketadi — kirish oynasida
+   tab'lar koʻrinib qolmasin */
+.tabs[hidden]{display:none}
 .tab{
   border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
   padding:8px 14px;border-radius:11px;font-size:14px;font-weight:600;
@@ -270,6 +273,9 @@ kbd{
 <script>
 const API = location.origin + '/api/v1';
 let token = localStorage.getItem('ot_admin_token');
+let refreshToken = localStorage.getItem('ot_admin_refresh');
+// Bir vaqtda bir nechta so'rov 401 olsa, yangilash bir marta ketsin
+let refreshing = null;
 let items = [];
 let focused = 0;
 let tab = 'moderation';
@@ -303,7 +309,41 @@ function toast(text) {
   setTimeout(() => el.remove(), 2600);
 }
 
-async function api(path, options = {}) {
+/// Kirish tokeni 30 daqiqada eskiradi. Uzoq token bilan yangilab olamiz —
+/// aks holda moderator har yarim soatda qaytadan Telegram orqali kirardi.
+async function renewToken() {
+  if (!refreshToken) return false;
+  if (refreshing) return refreshing;
+
+  refreshing = (async () => {
+    try {
+      const resp = await fetch(API + '/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      if (!resp.ok) return false;
+      const body = await resp.json();
+      saveTokens(body.access_token, body.refresh_token);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshing = null;
+    }
+  })();
+
+  return refreshing;
+}
+
+function saveTokens(access, refresh) {
+  token = access;
+  refreshToken = refresh;
+  localStorage.setItem('ot_admin_token', access);
+  localStorage.setItem('ot_admin_refresh', refresh);
+}
+
+async function api(path, options = {}, allowRenew = true) {
   const resp = await fetch(API + path, {
     ...options,
     headers: {
@@ -312,7 +352,12 @@ async function api(path, options = {}) {
       ...(options.headers || {}),
     },
   });
-  if (resp.status === 401) { signOut(); throw new Error('Kirish muddati tugadi'); }
+  if (resp.status === 401) {
+    // Bir marta yangilab ko'ramiz; bo'lmasa endi haqiqatan chiqarib yuboramiz
+    if (allowRenew && (await renewToken())) return api(path, options, false);
+    signOut();
+    throw new Error('Kirish muddati tugadi');
+  }
   if (resp.status === 403) throw new Error('Sizda moderator huquqi yoʻq');
   if (!resp.ok) {
     let detail = 'Xatolik ' + resp.status;
@@ -336,7 +381,9 @@ function showGate(message) {
 
 function signOut() {
   token = null;
+  refreshToken = null;
   localStorage.removeItem('ot_admin_token');
+  localStorage.removeItem('ot_admin_refresh');
   showGate('');
 }
 
@@ -365,8 +412,7 @@ $('login').onclick = async () => {
       ).catch(() => null);
       if (status && status.status === 'ready') {
         clearInterval(timer);
-        token = status.access_token;
-        localStorage.setItem('ot_admin_token', token);
+        saveTokens(status.access_token, status.refresh_token);
         button.disabled = false;
         $('gate-msg').textContent = '';
         boot();
