@@ -6,6 +6,32 @@ Farg'ona viloyati uchun e'lonlar ilovasi (OLX'ga o'xshash, soddaroq). Flutter, m
 
 **Valyuta:** so'm, uch xonali bo'shliq bilan — `3 200 000 soʻm`.
 
+## Serverda ishlayapti
+
+| Nima | Qayerda |
+|---|---|
+| Backend + admin panel | `https://oson-top-api.onrender.com` (Render, Frankfurt) |
+| Baza va rasmlar | Supabase (Frankfurt) — pooler orqali, `db.*` emas |
+| Moderatsiya paneli | `https://oson-top-api.onrender.com/admin/` |
+| Bot | `@oson_topp_bot`, webhook rejimida |
+| Kod | `github.com/Abdulxamidov-Sherzod/Oson-Top` |
+
+`/health` sozlamalar yetib kelganini koʻrsatadi — loglarni titkilash shart emas:
+
+```json
+{"status":"ok","telegram":"webhook","storage":"supabase","dev_login":"closed"}
+```
+
+Ilovani serverga ulab qurish:
+
+```bash
+./tool/run.sh build ios --release \
+  --dart-define=api=https://oson-top-api.onrender.com
+```
+
+Render bepul rejasi 15 daqiqada uxlaydi — cron-job.org har 10 daqiqada
+`/health` ga soʻrov yuborib turadi.
+
 ## Hozirgi holat
 
 **Frontend va backend tayyor va bir-biriga ulangan.** Mock ma'lumot yo'q —
@@ -174,10 +200,30 @@ kichrayib ketadi.
 
 ## Qolgan ish
 
-1. **Serverga chiqarish** — backend hozir faqat shu Mac'da ishlaydi.
-2. **Moderatsiya paneli** — API tayyor, veb-interfeys yo'q.
-3. **Push bildirishnoma** — hozir ilova ochilganda so'rab oladi.
-4. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish hali yo'q,
+1. **Android** — kod tayyor, hali qurilib sinalmagan.
+2. **Push bildirishnoma** — hozir ilova ochilganda soʻrab oladi (Firebase kerak).
+3. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
+   tepaga chiqadi, lekin toʻlov oqimi yoʻq.
+4. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish yoʻq,
    faqat surib tanlash ishlaydi.
+5. **Xabarlar** — profilda menyu qatori bor, ekrani yoʻq. Hozir sotuvchiga
+   Telegram orqali oʻtiladi.
+
+## Sirlar qayerda
+
+Uchalasi ham gitʼga tushmaydi. Yangi kompyuterda qoʻlda yaratiladi:
+
+| Nima | Fayl | Namuna |
+|---|---|---|
+| Bot tokeni, baza, Supabase | `backend/.env` | `.env.example` |
+| MapKit (iOS) | `ios/Flutter/Secrets.xcconfig` | `Secrets.example.xcconfig` |
+| MapKit (Android) | `android/local.properties` | `mapkit.apiKey=...` |
+
+Serverdagi qiymatlar Render → Environment boʻlimida.
+
+**Diqqat:** `.env` dan nusxa olmang. Bir marta shunday qilinganda
+`.env.local-backup` gitʼga tushib, bot tokeni GitHub'ga chiqib ketgan —
+token almashtirilib, tarix tozalangan. `.gitignore` endi har qanday
+`.env*` ni ushlaydi, lekin ehtiyot boʻlgan maʼqul.
 
 To'liq reja: `docs/ish-rejasi.html`.
