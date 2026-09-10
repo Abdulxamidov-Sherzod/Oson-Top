@@ -15,7 +15,12 @@ plugins {
 
 android {
     namespace = "uz.osontop.oson_top"
-    compileSdk = flutter.compileSdkVersion
+    // flutter_secure_storage o'ziga bog'liq modullardan 37 ga qarshi
+    // kompilyatsiyani talab qiladi, Flutter esa hozircha 36 ni beradi.
+    // `android-37` degan paket yo'q — Google kichik versiyaga o'tgan,
+    // shuning uchun 37.0 aniq ko'rsatiladi.
+    compileSdk = 37
+    compileSdkMinor = 0
     ndkVersion = flutter.ndkVersion
 
     buildFeatures {
@@ -23,8 +28,10 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        // Yandex MapKit 4.39.1 ning AAR fayli Java 21 bilan qurilgan
+        // (class file 65.0), shuning uchun undan pastini qo'yib bo'lmaydi
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     defaultConfig {
@@ -54,7 +61,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
     }
 }
 

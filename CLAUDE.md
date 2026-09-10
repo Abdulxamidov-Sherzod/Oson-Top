@@ -163,6 +163,32 @@ chaqirganda `ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved` ichid
 `mapkit-ios-lite` paydo bo'lib qolishi mumkin. Commit qilishdan oldin `git status`
 ga qarang — u yerda `mapkit-ios` turishi kerak, `-lite` emas.
 
+### Android
+
+Java **21** kerak — Yandex MapKit'ning AAR fayli shu bilan qurilgan
+(`class file has wrong version 65.0`). JDK 17 da build toʻxtaydi.
+
+```bash
+brew install openjdk@21 android-commandlinetools   # ikkinchisi cask
+flutter config --jdk-dir /opt/homebrew/opt/openjdk@21
+flutter config --android-sdk /opt/homebrew/share/android-commandlinetools
+sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+```
+
+`compileSdk = 37` va `compileSdkMinor = 0` — `flutter_secure_storage` 37 ni
+talab qiladi, Google esa `android-37` degan paketni chiqarmaydi, faqat
+`android-37.0`. Shu sababli ildizdagi `build.gradle.kts` plaginlarga ham
+kichik versiyani va Java 21 ni oʻrnatib beradi.
+
+APK:
+
+```bash
+./tool/run.sh build apk --release --split-per-abi \
+  --dart-define=api=https://oson-top-api.onrender.com
+```
+
+`--split-per-abi` siz APK 144 MB chiqadi; arm64 nusxasi 52 MB.
+
 ### Server manzili
 
 Standart: `http://127.0.0.1:8000` (iOS simulyatori uchun). Boshqasi kerak bo'lsa:
@@ -210,7 +236,8 @@ kichrayib ketadi.
 
 ## Qolgan ish
 
-1. **Android** — kod tayyor, hali qurilib sinalmagan.
+1. **Android** — APK quriladi, lekin haqiqiy qurilmada hali ochib koʻrilmagan.
+   Reliz kaliti ham yoʻq: hozir debug kalit bilan imzolanadi.
 2. **Push bildirishnoma** — hozir ilova ochilganda soʻrab oladi (Firebase kerak).
 3. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
    tepaga chiqadi, lekin toʻlov oqimi yoʻq.
