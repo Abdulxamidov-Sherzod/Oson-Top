@@ -15,7 +15,13 @@ android/local.properties
 backend/.venv/
 backend/media/
 backend/.test-media/
+# Har qanday .env — nusxa va zaxira fayllar ham
+.env
+.env.*
+!.env.example
 backend/.env
+backend/.env.*
+!backend/.env.example
 backend/__pycache__/
 **/__pycache__/
 *.pyc
