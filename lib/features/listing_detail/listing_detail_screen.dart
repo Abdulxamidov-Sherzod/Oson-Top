@@ -18,9 +18,17 @@ import 'widgets/safety_note.dart';
 import 'widgets/seller_card.dart';
 
 class ListingDetailScreen extends StatefulWidget {
-  const ListingDetailScreen({super.key, required this.listingId});
+  const ListingDetailScreen({
+    super.key,
+    required this.listingId,
+    this.debugScrollTo,
+  });
 
   final String listingId;
+
+  /// Faqat ishlab chiqish uchun: ekranni shu joygacha aylantirib ochadi
+  /// (`--dart-define=scroll=900`). Ilovada ishlatilmaydi.
+  final double? debugScrollTo;
 
   @override
   State<ListingDetailScreen> createState() => _ListingDetailScreenState();
@@ -99,6 +107,9 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return Stack(
       children: [
         CustomScrollView(
+          controller: widget.debugScrollTo == null
+              ? null
+              : ScrollController(initialScrollOffset: widget.debugScrollTo!),
           slivers: [
             _appBar(listing),
             SliverToBoxAdapter(child: _head(listing)),
@@ -116,12 +127,6 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                       Text('Tavsif', style: OtText.section),
                       const SizedBox(height: OtSize.x8),
                       Text(listing.description, style: OtText.body),
-                    ],
-                    if (listing.specs.isNotEmpty) ...[
-                      const SizedBox(height: OtSize.x24),
-                      Text('Maʼlumotlar', style: OtText.section),
-                      const SizedBox(height: OtSize.x4),
-                      _specs(listing),
                     ],
                     if (listing.hasLocation) ...[
                       const SizedBox(height: OtSize.x24),
@@ -277,38 +282,6 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
           Text(text, style: OtText.metaMd),
         ],
       );
-
-  Widget _specs(Listing listing) {
-    return Column(
-      children: [
-        for (var i = 0; i < listing.specs.length; i++)
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 11),
-            decoration: BoxDecoration(
-              border: i == listing.specs.length - 1
-                  ? null
-                  : const Border(
-                      bottom: BorderSide(color: OtColors.lineFaint)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(listing.specs[i].label, style: OtText.metaMd),
-                const Spacer(),
-                const SizedBox(width: 16),
-                Flexible(
-                  child: Text(
-                    listing.specs[i].value,
-                    textAlign: TextAlign.right,
-                    style: OtText.bodyStrong.copyWith(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
 
   Widget _similarSection() {
     final favorites = context.watch<FavoritesController>();

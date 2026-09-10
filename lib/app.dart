@@ -9,6 +9,11 @@ import 'data/repositories/favorites_repository.dart';
 import 'data/repositories/listing_repository.dart';
 import 'data/repositories/notifications_repository.dart';
 import 'data/repositories/reference_repository.dart';
+import 'features/auth/login_screen.dart';
+import 'features/create_listing/create_listing_screen.dart';
+import 'features/listing_detail/listing_detail_screen.dart';
+import 'features/notifications/notifications_screen.dart';
+import 'features/search/search_screen.dart';
 import 'features/shell/app_shell.dart';
 import 'state/auth_controller.dart';
 import 'state/favorites_controller.dart';
@@ -76,11 +81,33 @@ class _RootState extends State<_Root> {
         if (snapshot.hasError) {
           return _ConnectionError(onRetry: () => setState(() {}));
         }
-        return const AppShell();
+        return _startScreen();
       },
     );
   }
 }
+
+/// Ishlab chiqish uchun: ilovani to'g'ridan-to'g'ri kerakli ekranda ochish.
+///
+///     flutter run --dart-define=start=detail --dart-define=listing=14
+///
+/// Bo'sh bo'lsa odatdagidek bosh sahifadan boshlanadi.
+const _start = String.fromEnvironment('start');
+const _listingId = String.fromEnvironment('listing', defaultValue: '14');
+const _scroll = int.fromEnvironment('scroll');
+
+Widget _startScreen() => switch (_start) {
+      'search' => const SearchScreen(initialQuery: 'iphone'),
+      'detail' => ListingDetailScreen(
+          listingId: _listingId,
+          debugScrollTo: _scroll == 0 ? null : _scroll.toDouble(),
+        ),
+      'create' => const CreateListingScreen(),
+      'notifications' => const NotificationsScreen(),
+      'login' => const LoginScreen(),
+      'profile' => const AppShell(initialTab: 2),
+      _ => const AppShell(),
+    };
 
 class _Splash extends StatelessWidget {
   const _Splash();

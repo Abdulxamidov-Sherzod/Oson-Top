@@ -41,7 +41,7 @@ SELLERS = [
     ("Dilnoza Toʻxtasinova", "+998943307105"),
 ]
 
-# (sarlavha, narx, birlik, kategoriya, tuman, holat, tavsif, [(spec)], (lat,lng)|None)
+# (sarlavha, narx, birlik, kategoriya, tuman, holat, tavsif, (lat,lng)|None)
 LISTINGS = [
     (
         "iPhone 13 128GB, ideal holat, quti bilan", 4_500_000, None, "phones",
@@ -50,7 +50,6 @@ LISTINGS = [
             "Telefon 1 yil ishlatilgan, hech qanday nuqsoni yoʻq. Batareya holati 92%. "
             "Quti, original kabel va himoya gʻilofi bilan beriladi."
         ),
-        [("Model", "iPhone 13"), ("Xotira", "128 GB"), ("Batareya", "92%")],
         (40.3894, 71.7864),
     ),
     (
@@ -60,7 +59,6 @@ LISTINGS = [
             "2019-yil, avtomat korobka. Yurgani 78 000 km. Bir qoʻlda yurgan, "
             "servis kitobchasi bor. Hujjatlar toza, kredit yoʻq."
         ),
-        [("Yili", "2019"), ("Yurgani", "78 000 km"), ("Uzatma", "Avtomat")],
         (40.5286, 70.9425),
     ),
     (
@@ -70,7 +68,6 @@ LISTINGS = [
             "5 qavatli uyning 2-qavati, 3 xona, 68 m². Yevro taʼmir qilingan, "
             "konditsioner va mebel qoladi. Maktab va bozor yaqin."
         ),
-        [("Xonalar", "3"), ("Maydoni", "68 m²"), ("Qavat", "2 / 5")],
         (40.4711, 71.7244),
     ),
     (
@@ -80,7 +77,6 @@ LISTINGS = [
             "Rishton ustalari qoʻlida ishlangan toʻplam. Anʼanaviy koʻk-oq naqsh, "
             "barchasi qoʻlda chizilgan. Pochta orqali ham joʻnatamiz."
         ),
-        [("Buyumlar", "26 dona"), ("Ishlanishi", "Qoʻlda")],
         (40.3567, 71.2842),
     ),
     (
@@ -90,7 +86,6 @@ LISTINGS = [
             "2 yil ishlatilgan, toza holatda. Ochiladi — 2 kishilik yotoq boʻladi. "
             "Ichida choyshab uchun quti bor. Olib ketish oʻzingizdan."
         ),
-        [("Oʻlchami", "280 × 180 sm"), ("Yoshi", "2 yil")],
         (40.3908, 71.2200),
     ),
     (
@@ -100,14 +95,12 @@ LISTINGS = [
             "Tabiiy Margʻilon atlasidan tikilgan koʻylak. Razmerlar 42 dan 52 gacha. "
             "Buyurtma 3–5 kunda tayyor."
         ),
-        [("Mato", "Tabiiy atlas"), ("Razmer", "42–52")],
         None,
     ),
     (
         "Samsung kir yuvish mashinasi 7 kg", 2_850_000, None, "household",
         "Quva", ListingCondition.used,
         "7 kg, 3 yil ishlatilgan. Hamma rejimi ishlaydi, suv oqizmaydi.",
-        [("Sigʻimi", "7 kg"), ("Yoshi", "3 yil")],
         None,
     ),
     (
@@ -117,7 +110,6 @@ LISTINGS = [
             "Viloyat ichida va tashqarisiga yuk tashiymiz. Labo (1 t) va Isuzu (5 t). "
             "Narx masofaga qarab hisoblanadi."
         ),
-        [("Transport", "Labo, Isuzu"), ("Yuk sigʻimi", "1 t / 5 t")],
         None,
     ),
     (
@@ -127,7 +119,6 @@ LISTINGS = [
             "Markaziy bozor yonidagi kiyim doʻkoniga sotuvchi kerak. "
             "Ish vaqti 09:00–18:00, yakshanba dam. Tajriba shart emas."
         ),
-        [("Ish vaqti", "09:00–18:00"), ("Dam olish", "Yakshanba")],
         None,
     ),
     (
@@ -137,7 +128,6 @@ LISTINGS = [
             "Qora-oq sigir, 4 yoshda, 3-tugʻishi. Kuniga 18–20 litr sut beradi. "
             "Buzogʻi 2 oylik. Veterinar hujjatlari bor."
         ),
-        [("Yoshi", "4 yosh"), ("Sut", "18–20 l / kun")],
         None,
     ),
     (
@@ -147,14 +137,12 @@ LISTINGS = [
             "Ryzen 5 5500U, 16 GB operativ, 512 GB SSD. Ekran 15.6\" Full HD. "
             "1.5 yil ishlatilgan, faqat oʻqish uchun."
         ),
-        [("Operativ", "16 GB"), ("Xotira", "512 GB SSD")],
         None,
     ),
     (
         "iPhone 12 64GB", 3_400_000, None, "phones",
         "Margʻilon", ListingCondition.used,
         "64 GB, oq rang. Batareya 84%, almashtirilgan detali yoʻq.",
-        [("Model", "iPhone 12"), ("Batareya", "84%")],
         None,
     ),
 ]
@@ -210,7 +198,7 @@ async def main() -> None:
 
         for i, row in enumerate(LISTINGS):
             (title, price, unit, category, district, condition,
-             description, specs, point) = row
+             description, point) = row
 
             owner = users[i % len(users)]
             created = now - timedelta(hours=random.randint(1, 24 * 6))
@@ -245,16 +233,6 @@ async def main() -> None:
                         width=w,
                         height=h,
                         position=p,
-                    )
-                )
-
-            for pos, (label, value) in enumerate(specs):
-                session.add(
-                    ListingSpec(
-                        listing_id=listing.id,
-                        label=label,
-                        value=value,
-                        position=pos,
                     )
                 )
 
