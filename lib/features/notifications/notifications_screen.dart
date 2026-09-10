@@ -5,7 +5,9 @@ import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../state/auth_controller.dart';
 import '../../state/notifications_controller.dart';
+import '../auth/login_screen.dart';
 import 'widgets/notification_tile.dart';
 
 /// Bosh sahifadagi qo'ng'iroqchadan ochiladi — tab emas.
@@ -20,14 +22,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => context.read<NotificationsController>().load(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      // Kirmagan odamda bildirishnoma bo'lmaydi — so'rov ham yubormaymiz
+      if (context.read<AuthController>().isSignedIn) {
+        context.read<NotificationsController>().load();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<NotificationsController>();
+    final signedIn = context.watch<AuthController>().isSignedIn;
     final items = controller.items;
 
     return Scaffold(
@@ -38,7 +45,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           children: [
             _header(context, controller),
             Expanded(
-              child: controller.isLoading && items.isEmpty
+              child: !signedIn
+                  ? EmptyState(
+                      icon: Icons.notifications_none,
+                      title: 'Kirmagansiz',
+                      body: 'Eʼloningiz tasdiqlanganda yoki xaridor '
+                          'bogʻlanganda shu yerda xabar chiqadi.',
+                      actionLabel: 'Telegram orqali kirish',
+                      onAction: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const LoginScreen(),
+                        ),
+                      ),
+                    )
+                  : controller.isLoading && items.isEmpty
                   ? const Center(
                       child: CircularProgressIndicator(color: OtColors.accent),
                     )

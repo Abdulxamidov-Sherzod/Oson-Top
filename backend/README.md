@@ -104,11 +104,30 @@ createdb -O oson oson_top_test
 Kirish ixtiyoriy bo'lgan joylarda token bo'lsa "saqlangan" belgisi to'g'ri
 ko'rsatiladi, bo'lmasa hammasi `false`.
 
-## Moderatsiya
+## Moderatsiya paneli
+
+Brauzerda: **`/admin/`** (masalan `http://127.0.0.1:8000/admin/`).
+
+Kirish Telegram orqali — ilovadagi bilan bir xil oqim. Faqat `moderator`
+yoki `admin` roli bor hisob kira oladi.
+
+Uch bo'lim:
+
+| Bo'lim | Nima ko'rinadi | Amallar |
+|---|---|---|
+| Kutmoqda | `moderation` | Tasdiqlash · Qaytarish (sabab bilan) |
+| Tasdiqlangan | `active` | Tasdiqni bekor qilish → navbatga qaytaradi |
+| Qaytarilgan | `rejected` | Qayta tasdiqlash |
+
+Navbatda klaviatura ishlaydi: `A` tasdiqlash, `R` qaytarish, `J`/`K` keyingi.
+
+Panel — bitta HTML fayl (`app/static/admin/index.html`), qurish bosqichi yo'q.
+
+## Moderatsiya qoidasi
 
 E'lon `moderation` holatida yaratiladi va lentada ko'rinmaydi. Moderator
 tasdiqlaydi yoki sababini yozib qaytaradi — ikkalasida ham egasiga
-bildirishnoma boradi.
+bildirishnoma boradi. Tasdiq bekor qilinsa ham xabar boradi.
 
 Odamni moderator qilish:
 

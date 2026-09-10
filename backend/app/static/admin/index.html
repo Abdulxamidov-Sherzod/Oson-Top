@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oson Top — moderatsiya</title>
+<style>
+:root{
+  --accent:#16A45C; --accent-dark:#0E8C4C; --accent-soft:#EFF7F2; --accent-line:#C9E5D6;
+  --ink:#14201A; --ink-2:#5C6A62; --ink-3:#8D9A93;
+  --bg:#F4F6F5; --surface:#FFFFFF; --field:#F6F8F7;
+  --line:#E3E8E5; --line-soft:#EDF0EE;
+  --danger:#E5484D; --danger-soft:#FDECEC;
+  --warn:#B7791F; --warn-soft:#FFF8E8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 -apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 80px}
+
+/* ---------- sarlavha ---------- */
+header{
+  position:sticky;top:0;z-index:20;background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+.head-in{
+  max-width:1080px;margin:0 auto;padding:14px 20px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.mark{
+  width:32px;height:32px;border-radius:10px;background:var(--accent);
+  color:#fff;display:grid;place-items:center;font-weight:800;flex:none;
+}
+h1{font-size:19px;font-weight:700;margin:0;letter-spacing:-.01em}
+.count{
+  padding:3px 10px;border-radius:999px;background:var(--accent-soft);
+  border:1px solid var(--accent-line);color:var(--accent-dark);
+  font-size:13px;font-weight:600;
+}
+.spacer{flex:1}
+.tabs{display:flex;gap:6px;padding:0 20px 12px;max-width:1080px;margin:0 auto}
+.tab{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+  padding:8px 14px;border-radius:11px;font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:7px;
+}
+.tab:hover{border-color:var(--accent-line)}
+.tab[aria-selected="true"]{
+  background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-dark);
+}
+.tab .n{
+  min-width:20px;padding:0 6px;height:19px;border-radius:10px;
+  background:var(--field);color:var(--ink-3);font-size:11.5px;font-weight:700;
+  display:grid;place-items:center;
+}
+.tab[aria-selected="true"] .n{background:var(--accent);color:#fff}
+.who{font-size:13px;color:var(--ink-3)}
+.ghost{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  padding:7px 13px;border-radius:10px;font-size:13.5px;font-weight:500;
+}
+.ghost:hover{border-color:var(--accent-line);color:var(--accent-dark)}
+
+/* ---------- kirish ---------- */
+.gate{
+  max-width:420px;margin:80px auto;background:var(--surface);
+  border:1px solid var(--line);border-radius:18px;padding:32px 28px;text-align:center;
+}
+.gate h2{margin:16px 0 8px;font-size:20px}
+.gate p{margin:0 0 22px;color:var(--ink-2);font-size:14.5px}
+.primary{
+  background:var(--accent);color:#fff;border:0;border-radius:13px;
+  padding:13px 20px;font-size:15px;font-weight:600;width:100%;
+}
+.primary:hover{background:var(--accent-dark)}
+.primary:disabled{opacity:.5;cursor:default}
+
+/* ---------- kartalar ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:16px;margin-bottom:14px;display:grid;
+  grid-template-columns:200px minmax(0,1fr);gap:18px;
+}
+@media (max-width:720px){ .card{grid-template-columns:1fr} }
+.shots{display:flex;flex-direction:column;gap:8px}
+.shot-main{
+  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;
+  background:var(--field);border:1px solid var(--line-soft);cursor:zoom-in;
+}
+.shot-row{display:flex;gap:6px}
+.shot-row img{
+  width:44px;height:44px;object-fit:cover;border-radius:8px;
+  border:1px solid var(--line-soft);cursor:zoom-in;
+}
+.title{font-size:17px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.price{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+.price.free{color:var(--ink-2);font-size:16px;font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tag{
+  font-size:12px;font-weight:600;padding:4px 9px;border-radius:8px;
+  background:var(--field);border:1px solid var(--line);color:var(--ink-2);
+}
+.tag.cat{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-dark)}
+.desc{
+  font-size:14px;line-height:1.6;color:var(--ink-2);margin:0 0 12px;
+  white-space:pre-wrap;max-height:8.5em;overflow:auto;
+}
+.desc.empty{color:var(--warn);background:var(--warn-soft);padding:8px 11px;border-radius:9px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 14px;font-size:13.5px}
+dt{color:var(--ink-3)}
+dd{margin:0;font-weight:500}
+dd a{color:var(--accent-dark)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.approve{
+  background:var(--accent);color:#fff;border:0;border-radius:11px;
+  padding:11px 20px;font-weight:600;font-size:14.5px;
+}
+.approve:hover{background:var(--accent-dark)}
+.reject{
+  background:var(--surface);color:var(--danger);border:1px solid var(--danger);
+  border-radius:11px;padding:11px 18px;font-weight:600;font-size:14.5px;
+}
+.reject:hover{background:var(--danger-soft)}
+.revoke{
+  background:var(--surface);color:var(--warn);border:1px solid #E4C88A;
+  border-radius:11px;padding:11px 18px;font-weight:600;font-size:14.5px;
+}
+.revoke:hover{background:var(--warn-soft)}
+.status-note{font-size:13px;color:var(--ink-3)}
+.hint{font-size:12.5px;color:var(--ink-3)}
+kbd{
+  font:inherit;font-size:11.5px;background:var(--field);border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink-2);
+}
+.card.busy{opacity:.5;pointer-events:none}
+.card.focused{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+/* ---------- holatlar ---------- */
+.empty{
+  text-align:center;padding:70px 20px;color:var(--ink-3);
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+}
+.empty strong{display:block;color:var(--ink);font-size:17px;font-weight:600;margin-bottom:6px}
+.err{
+  background:var(--danger-soft);border:1px solid var(--danger);color:#8B2226;
+  padding:12px 15px;border-radius:12px;margin-bottom:14px;font-size:14px;
+}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+  background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;
+  font-size:14px;box-shadow:0 8px 24px rgba(16,34,26,.28);z-index:60;
+}
+/* rasm kattalashtirilganda */
+.lightbox{
+  position:fixed;inset:0;background:rgba(16,26,20,.86);z-index:80;
+  display:grid;place-items:center;cursor:zoom-out;padding:24px;
+}
+.lightbox img{max-width:100%;max-height:100%;border-radius:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <span class="mark">O</span>
+    <h1>Moderatsiya</h1>
+    <span class="spacer"></span>
+    <span class="who" id="who"></span>
+    <button class="ghost" id="refresh" hidden>Yangilash</button>
+    <button class="ghost" id="signout" hidden>Chiqish</button>
+  </div>
+  <div class="tabs" id="tabs" hidden>
+    <button class="tab" data-tab="moderation" aria-selected="true">
+      Kutmoqda <span class="n" id="n-moderation">0</span>
+    </button>
+    <button class="tab" data-tab="active" aria-selected="false">
+      Tasdiqlangan <span class="n" id="n-active">0</span>
+    </button>
+    <button class="tab" data-tab="rejected" aria-selected="false">
+      Qaytarilgan <span class="n" id="n-rejected">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="gate" class="gate" hidden>
+    <span class="mark" style="margin:0 auto">O</span>
+    <h2>Moderatsiya paneli</h2>
+    <p>Kirish uchun Telegram kerak. Faqat moderator huquqi bor hisoblar kira oladi.</p>
+    <button class="primary" id="login">Telegram orqali kirish</button>
+    <p id="gate-msg" style="margin:16px 0 0;font-size:13.5px"></p>
+  </div>
+
+  <div id="app" hidden>
+    <div id="error" class="err" hidden></div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<script>
+const API = location.origin + '/api/v1';
+let token = localStorage.getItem('ot_admin_token');
+let items = [];
+let focused = 0;
+let tab = 'moderation';
+
+const $ = (id) => document.getElementById(id);
+
+function money(n) {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function timeAgo(iso) {
+  const then = new Date(iso), now = new Date();
+  const min = Math.round((now - then) / 60000);
+  if (min < 1) return 'hozir';
+  if (min < 60) return min + ' daqiqa oldin';
+  const hrs = Math.round(min / 60);
+  if (hrs < 24) return hrs + ' soat oldin';
+  return Math.round(hrs / 24) + ' kun oldin';
+}
+
+function toast(text) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+
+async function api(path, options = {}) {
+  const resp = await fetch(API + path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: 'Bearer ' + token } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  if (resp.status === 401) { signOut(); throw new Error('Kirish muddati tugadi'); }
+  if (resp.status === 403) throw new Error('Sizda moderator huquqi yoʻq');
+  if (!resp.ok) {
+    let detail = 'Xatolik ' + resp.status;
+    try { const b = await resp.json(); if (b.detail) detail = b.detail; } catch {}
+    throw new Error(detail);
+  }
+  return resp.status === 204 ? null : resp.json();
+}
+
+// ---------- kirish ----------
+
+function showGate(message) {
+  $('gate').hidden = false;
+  $('app').hidden = true;
+  $('refresh').hidden = true;
+  $('signout').hidden = true;
+  $('tabs').hidden = true;
+  $('who').textContent = '';
+  if (message) $('gate-msg').textContent = message;
+}
+
+function signOut() {
+  token = null;
+  localStorage.removeItem('ot_admin_token');
+  showGate('');
+}
+
+$('signout').onclick = signOut;
+
+$('login').onclick = async () => {
+  const button = $('login');
+  button.disabled = true;
+  $('gate-msg').textContent = 'Telegram ochilmoqda…';
+  try {
+    const start = await api('/auth/telegram/start', { method: 'POST' });
+    window.open(start.deep_link, '_blank');
+    $('gate-msg').textContent =
+      'Telegramda «Raqamni ulashish» tugmasini bosing — shu sahifa oʻzi ochiladi.';
+
+    const deadline = Date.now() + start.expires_in * 1000;
+    const timer = setInterval(async () => {
+      if (Date.now() > deadline) {
+        clearInterval(timer);
+        button.disabled = false;
+        $('gate-msg').textContent = 'Havola eskirdi. Qaytadan urinib koʻring.';
+        return;
+      }
+      const status = await api(
+        '/auth/telegram/status?token=' + encodeURIComponent(start.token)
+      ).catch(() => null);
+      if (status && status.status === 'ready') {
+        clearInterval(timer);
+        token = status.access_token;
+        localStorage.setItem('ot_admin_token', token);
+        button.disabled = false;
+        $('gate-msg').textContent = '';
+        boot();
+      }
+    }, 2000);
+  } catch (error) {
+    button.disabled = false;
+    $('gate-msg').textContent = error.message;
+  }
+};
+
+// ---------- navbat ----------
+
+const EMPTY = {
+  moderation: ['Navbat boʻsh', 'Hamma eʼlon koʻrib chiqilgan.'],
+  active: ['Tasdiqlangan eʼlon yoʻq', 'Tasdiqlanganlar shu yerda koʻrinadi.'],
+  rejected: ['Qaytarilgan eʼlon yoʻq', 'Qaytarilganlar shu yerda koʻrinadi.'],
+};
+
+function actionsFor(it) {
+  if (tab === 'moderation') {
+    return `
+      <button class="approve" data-act="approve" data-id="${it.id}">Tasdiqlash</button>
+      <button class="reject" data-act="reject" data-id="${it.id}">Qaytarish…</button>
+      <span class="hint"><kbd>A</kbd> tasdiqlash · <kbd>R</kbd> qaytarish · <kbd>J</kbd>/<kbd>K</kbd> keyingi</span>`;
+  }
+  if (tab === 'active') {
+    return `
+      <button class="revoke" data-act="revoke" data-id="${it.id}">Tasdiqni bekor qilish</button>
+      <span class="status-note">Lentada koʻrinib turibdi · ${it.views} koʻrish</span>`;
+  }
+  return `
+    <button class="approve" data-act="approve" data-id="${it.id}">Qayta tasdiqlash</button>
+    <span class="status-note">${
+      it.reject_reason ? 'Sabab: ' + escapeHtml(it.reject_reason) : 'Sabab yozilmagan'
+    }</span>`;
+}
+
+function render() {
+  const list = $('list');
+
+  if (!items.length) {
+    const [title, body] = EMPTY[tab];
+    list.innerHTML =
+      `<div class="empty"><strong>${title}</strong>${body}</div>`;
+    return;
+  }
+
+  list.innerHTML = items.map((it, index) => {
+    const photos = it.photos || [];
+    const cover = photos[0];
+    const rest = photos.slice(1);
+    const price = it.price
+      ? '<p class="price">' + money(it.price) + ' soʻm' +
+        (it.price_unit ? ' / ' + it.price_unit : '') + '</p>'
+      : '<p class="price free">Kelishiladi</p>';
+    const desc = (it.description || '').trim();
+
+    return `
+      <article class="card ${tab === 'moderation' && index === focused ? 'focused' : ''}" data-id="${it.id}">
+        <div class="shots">
+          ${cover
+            ? `<img class="shot-main" src="${cover.url}" alt="" data-full="${cover.url}">`
+            : '<div class="shot-main"></div>'}
+          ${rest.length
+            ? `<div class="shot-row">${rest
+                .map((p) => `<img src="${p.thumb_url}" alt="" data-full="${p.url}">`)
+                .join('')}</div>`
+            : ''}
+        </div>
+        <div>
+          <h2 class="title">${escapeHtml(it.title)}</h2>
+          ${price}
+          <div class="tags">
+            <span class="tag cat">${it.category_id}</span>
+            <span class="tag">${it.condition}</span>
+            <span class="tag">${escapeHtml(it.district)}</span>
+            ${it.lat ? '<span class="tag">xaritada belgilangan</span>' : ''}
+            <span class="tag">${photos.length} rasm</span>
+          </div>
+          <p class="desc ${desc ? '' : 'empty'}">${
+            desc ? escapeHtml(desc) : 'Tavsif yozilmagan'
+          }</p>
+          <dl>
+            <dt>Egasi</dt><dd>${escapeHtml(it.seller.name || '—')} · ${
+              it.seller.phone_verified ? 'raqam tasdiqlangan' : 'raqam tasdiqlanmagan'
+            } · ${it.seller.listing_count} ta eʼloni</dd>
+            <dt>Joylandi</dt><dd>${timeAgo(it.created_at)}</dd>
+            ${it.address ? `<dt>Manzil</dt><dd>${escapeHtml(it.address)}</dd>` : ''}
+            ${it.lat
+              ? `<dt>Nuqta</dt><dd><a target="_blank" rel="noopener"
+                   href="https://yandex.uz/maps/?pt=${it.lng},${it.lat}&z=16&l=map"
+                   >${it.lat.toFixed(5)}, ${it.lng.toFixed(5)}</a></dd>`
+              : ''}
+          </dl>
+          <div class="actions">${actionsFor(it)}</div>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+async function loadCounts() {
+  try {
+    const counts = await api('/moderation/counts');
+    for (const key of ['moderation', 'active', 'rejected']) {
+      $('n-' + key).textContent = counts[key];
+    }
+  } catch { /* sonlar muhim emas — ro'yxat baribir yuklanadi */ }
+}
+
+async function load() {
+  try {
+    $('error').hidden = true;
+    $('list').innerHTML = '<div class="empty">Yuklanmoqda…</div>';
+    const page = await api('/moderation/listings?status=' + tab + '&limit=50');
+    // Ro'yxat qisqa ma'lumot beradi — har biri uchun to'lasini olamiz
+    items = await Promise.all(
+      page.items.map((row) => api('/moderation/listings/' + row.id))
+    );
+    focused = 0;
+    render();
+    loadCounts();
+  } catch (error) {
+    $('error').hidden = false;
+    $('error').textContent = error.message;
+    $('list').innerHTML = '';
+  }
+}
+
+$('tabs').addEventListener('click', (event) => {
+  const button = event.target.closest('.tab');
+  if (!button || button.dataset.tab === tab) return;
+  tab = button.dataset.tab;
+  for (const el of document.querySelectorAll('.tab')) {
+    el.setAttribute('aria-selected', String(el.dataset.tab === tab));
+  }
+  load();
+});
+
+async function decide(id, action, reason) {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (card) card.classList.add('busy');
+  try {
+    await api(`/moderation/listings/${id}/${action}`, {
+      method: 'POST',
+      body: action === 'reject' ? JSON.stringify({ reason }) : undefined,
+    });
+    // E'lon boshqa bo'limga o'tdi — shu ro'yxatdan olib tashlaymiz
+    items = items.filter((i) => i.id !== id);
+    if (focused >= items.length) focused = Math.max(0, items.length - 1);
+    render();
+    loadCounts();
+    toast({
+      approve: 'Tasdiqlandi',
+      reject: 'Qaytarildi',
+      revoke: 'Tasdiq bekor qilindi — navbatga qaytdi',
+    }[action]);
+  } catch (error) {
+    if (card) card.classList.remove('busy');
+    toast(error.message);
+  }
+}
+
+function rejectFlow(id) {
+  const reason = prompt(
+    'Nima uchun qaytarilyapti?\nSabab eʼlon egasiga koʻrinadi.',
+    'Rasm sifati past, qaytadan suratga oling'
+  );
+  if (reason && reason.trim().length >= 3) decide(id, 'reject', reason.trim());
+}
+
+document.addEventListener('click', (event) => {
+  const full = event.target.dataset?.full;
+  if (full) {
+    const box = document.createElement('div');
+    box.className = 'lightbox';
+    box.innerHTML = `<img src="${full}" alt="">`;
+    box.onclick = () => box.remove();
+    document.body.appendChild(box);
+    return;
+  }
+  const act = event.target.dataset?.act;
+  if (!act) return;
+  const id = Number(event.target.dataset.id);
+  if (act === 'reject') rejectFlow(id);
+  else decide(id, act);
+});
+
+// Klaviatura — navbat uzun boʻlganda tez ishlash uchun
+document.addEventListener('keydown', (event) => {
+  if ($('app').hidden || !items.length || tab !== 'moderation') return;
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+  const key = event.key.toLowerCase();
+  if (key === 'j') { focused = Math.min(focused + 1, items.length - 1); render(); }
+  else if (key === 'k') { focused = Math.max(focused - 1, 0); render(); }
+  else if (key === 'a') decide(items[focused].id, 'approve');
+  else if (key === 'r') rejectFlow(items[focused].id);
+});
+
+$('refresh').onclick = load;
+
+async function boot() {
+  if (!token) return showGate('');
+  try {
+    const me = await api('/me');
+    $('who').textContent = (me.user.name || me.user.phone);
+    $('gate').hidden = true;
+    $('app').hidden = false;
+    $('refresh').hidden = false;
+    $('signout').hidden = false;
+    $('tabs').hidden = false;
+    await load();
+  } catch (error) {
+    showGate(error.message);
+  }
+}
+
+boot();
+</script>
+</body>
+</html>

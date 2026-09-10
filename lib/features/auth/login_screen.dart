@@ -9,15 +9,33 @@ import '../../shared/widgets/ot_button.dart';
 import '../../state/auth_controller.dart';
 
 /// Kirish. SMS yo'q — Telegram bot raqamni o'zi tasdiqlab beradi.
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, this.onSkip});
 
   /// "Keyinroq" — kirmasdan lentani ko'rish
   final VoidCallback? onSkip;
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _closed = false;
+
+  @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
+
+    // Telegram'da tugatilgach ekran o'zini yopadi — foydalanuvchi
+    // qo'lda "orqaga" bosishi kerak bo'lmasin
+    if (auth.isSignedIn && !_closed) {
+      _closed = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      });
+    }
 
     return Scaffold(
       backgroundColor: OtColors.surface,
@@ -108,10 +126,10 @@ class LoginScreen extends StatelessWidget {
             onPressed: () => _openTelegram(context, auth),
           ),
         ),
-        if (onSkip != null) ...[
+        if (widget.onSkip != null) ...[
           const SizedBox(height: OtSize.x12),
           TextButton(
-            onPressed: onSkip,
+            onPressed: widget.onSkip,
             child: Text(
               'Keyinroq — avval eʼlonlarni koʻraman',
               style: OtText.bodyStrong.copyWith(color: OtColors.inkMuted),

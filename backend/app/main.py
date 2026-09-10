@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager, suppress
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -65,6 +66,17 @@ app.mount(
     settings.media_url,
     StaticFiles(directory=settings.media_dir, check_dir=False),
     name="media",
+)
+
+# Moderatsiya paneli — oddiy statik sahifa, qurish bosqichi kerak emas
+app.mount(
+    "/admin",
+    StaticFiles(
+        directory=Path(__file__).parent / "static" / "admin",
+        html=True,
+        check_dir=False,
+    ),
+    name="admin",
 )
 
 for router in (

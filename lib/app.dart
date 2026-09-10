@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import 'core/theme/ot_colors.dart';
 import 'core/theme/ot_theme.dart';
 import 'data/api/api_client.dart';
 import 'data/api/token_store.dart';
+import 'data/repositories/create_listing_repository.dart';
 import 'data/repositories/favorites_repository.dart';
 import 'data/repositories/listing_repository.dart';
 import 'data/repositories/notifications_repository.dart';
@@ -20,6 +22,25 @@ import 'state/auth_controller.dart';
 import 'state/favorites_controller.dart';
 import 'state/notifications_controller.dart';
 
+/// Ilovaning barcha provayderlari. Alohida funksiya — testda butun
+/// ilovani ko'tarmasdan tekshirib ko'rish mumkin.
+List<SingleChildWidget> appProviders(ApiClient api, TokenStore tokens) => [
+      Provider.value(value: api),
+      Provider(create: (_) => ListingRepository(api)),
+      Provider(create: (_) => ReferenceRepository(api)),
+      Provider(create: (_) => FavoritesRepository(api)),
+      Provider(create: (_) => CreateListingRepository(api)),
+      Provider(create: (_) => NotificationsRepository(api)),
+      ChangeNotifierProvider(create: (_) => AuthController(api, tokens)),
+      ChangeNotifierProvider(
+        create: (ctx) => FavoritesController(ctx.read<FavoritesRepository>()),
+      ),
+      ChangeNotifierProvider(
+        create: (ctx) =>
+            NotificationsController(ctx.read<NotificationsRepository>()),
+      ),
+    ];
+
 class OsonTopApp extends StatelessWidget {
   const OsonTopApp({super.key});
 
@@ -29,21 +50,7 @@ class OsonTopApp extends StatelessWidget {
     final api = ApiClient(tokens);
 
     return MultiProvider(
-      providers: [
-        Provider.value(value: api),
-        Provider(create: (_) => ListingRepository(api)),
-        Provider(create: (_) => ReferenceRepository(api)),
-        Provider(create: (_) => FavoritesRepository(api)),
-        Provider(create: (_) => NotificationsRepository(api)),
-        ChangeNotifierProvider(create: (_) => AuthController(api, tokens)),
-        ChangeNotifierProvider(
-          create: (ctx) => FavoritesController(ctx.read<FavoritesRepository>()),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) =>
-              NotificationsController(ctx.read<NotificationsRepository>()),
-        ),
-      ],
+      providers: appProviders(api, tokens),
       child: MaterialApp(
         title: 'Oson Top',
         debugShowCheckedModeBanner: false,

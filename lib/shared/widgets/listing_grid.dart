@@ -5,6 +5,7 @@ import '../../core/theme/ot_sizes.dart';
 import '../../data/models/listing.dart';
 import 'listing_card.dart';
 import '../../state/favorites_controller.dart';
+import '../favorite_action.dart';
 
 /// 2 ustunli e'lonlar lentasi. Saqlanganlar va qidiruv natijalari ham
 /// shu widgetdan foydalanadi.
@@ -44,7 +45,7 @@ class ListingGrid extends StatelessWidget {
             return ListingCard(
               listing: l,
               isFavorite: favorites.isFavorite(l.id),
-              onFavoriteTap: () => favorites.toggle(l.id),
+              onFavoriteTap: () => FavoriteAction.toggle(context, l.id),
               onTap: onTap == null ? null : () => onTap!(l),
             );
           },

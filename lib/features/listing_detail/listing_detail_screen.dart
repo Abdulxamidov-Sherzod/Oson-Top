@@ -9,6 +9,7 @@ import '../../data/models/listing.dart';
 import '../../data/repositories/listing_repository.dart';
 import '../../data/repositories/reference_repository.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/favorite_action.dart';
 import '../../shared/widgets/listing_card.dart';
 import '../../shared/widgets/location_map_card.dart';
 import '../../state/favorites_controller.dart';
@@ -213,16 +214,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     );
   }
 
-  Future<void> _toggleFavorite(String id) async {
-    try {
-      await context.read<FavoritesController>().toggle(id);
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saqlash uchun avval kiring')),
-      );
-    }
-  }
+  Future<void> _toggleFavorite(String id) =>
+      FavoriteAction.toggle(context, id);
 
   Widget _head(Listing listing) {
     final reference = context.read<ReferenceRepository>();

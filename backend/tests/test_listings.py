@@ -203,3 +203,78 @@ async def test_rad_etilganda_sabab_yoziladi(client: AsyncClient):
 async def test_moderator_boshqa_odam_bola_olmaydi(client: AsyncClient):
     buyer = await login(client, BUYER)
     assert (await client.get(f"{API}/moderation/queue", headers=buyer)).status_code == 403
+
+
+async def test_moderator_holat_boyicha_royxat_koradi(client: AsyncClient):
+    listing_id = await publish(client)
+    seller = await login(client, SELLER)
+
+    active = await client.get(
+        f"{API}/moderation/listings", headers=seller, params={"status": "active"}
+    )
+    assert active.json()["total"] == 1
+
+    pending = await client.get(
+        f"{API}/moderation/listings", headers=seller, params={"status": "moderation"}
+    )
+    assert pending.json()["total"] == 0
+
+    counts = (await client.get(f"{API}/moderation/counts", headers=seller)).json()
+    assert counts == {"moderation": 0, "active": 1, "rejected": 0}
+    assert listing_id
+
+
+async def test_tasdiqni_bekor_qilish_elonni_navbatga_qaytaradi(client: AsyncClient):
+    listing_id = await publish(client)
+    seller = await login(client, SELLER)
+
+    assert (await client.get(f"{API}/listings")).json()["total"] == 1
+
+    resp = await client.post(
+        f"{API}/moderation/listings/{listing_id}/revoke", headers=seller
+    )
+    assert resp.status_code == 200
+
+    # Lentadan chiqdi, navbatga qaytdi
+    assert (await client.get(f"{API}/listings")).json()["total"] == 0
+    counts = (await client.get(f"{API}/moderation/counts", headers=seller)).json()
+    assert counts["moderation"] == 1
+    assert counts["active"] == 0
+
+    # Egasiga xabar bordi
+    notes = (await client.get(f"{API}/notifications", headers=seller)).json()
+    assert notes["items"][0]["title"] == "Eʼlon tekshiruvga qaytarildi"
+
+
+async def test_qaytarilgan_elonni_qayta_tasdiqlash(client: AsyncClient):
+    seller = await login(client, SELLER)
+    listing = await create_listing(client, seller)
+    await make_moderator(SELLER)
+
+    await client.post(
+        f"{API}/moderation/listings/{listing['id']}/reject",
+        headers=seller,
+        json={"reason": "Rasm sifati past"},
+    )
+    counts = (await client.get(f"{API}/moderation/counts", headers=seller)).json()
+    assert counts["rejected"] == 1
+
+    # Qayta tasdiqlanadi va sabab tozalanadi
+    await client.post(
+        f"{API}/moderation/listings/{listing['id']}/approve", headers=seller
+    )
+    detail = (
+        await client.get(f"{API}/listings/{listing['id']}", headers=seller)
+    ).json()
+    assert detail["status"] == "active"
+    assert detail["reject_reason"] is None
+
+
+async def test_oddiy_foydalanuvchi_royxatni_kormaydi(client: AsyncClient):
+    buyer = await login(client, BUYER)
+    assert (
+        await client.get(f"{API}/moderation/listings", headers=buyer)
+    ).status_code == 403
+    assert (
+        await client.get(f"{API}/moderation/counts", headers=buyer)
+    ).status_code == 403

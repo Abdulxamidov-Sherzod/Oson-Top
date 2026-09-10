@@ -8,6 +8,7 @@ from ..deps import Moderator, Session
 from ..models import Listing, ListingStatus, Notification, NotificationKind, User
 from ..schemas.common import Ok, Page
 from ..schemas.listing import ListingCard, ListingOut, RejectIn
+from ..schemas.moderation import ModerationCounts
 from ._convert import to_card, to_detail
 from .listings import LISTING_TTL_DAYS
 
@@ -33,6 +34,53 @@ async def queue(
             .order_by(Listing.created_at.asc())
             .limit(limit)
             .offset(offset)
+        )
+    )
+    return Page(
+        items=[to_card(i, set()) for i in items],
+        total=total or 0,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get("/counts", response_model=ModerationCounts)
+async def counts(session: Session, _: Moderator) -> ModerationCounts:
+    """Bo'limlar ustidagi sonlar."""
+    rows = await session.execute(
+        select(Listing.status, func.count()).group_by(Listing.status)
+    )
+    by_status = {status: total for status, total in rows}
+    return ModerationCounts(
+        moderation=by_status.get(ListingStatus.moderation, 0),
+        active=by_status.get(ListingStatus.active, 0),
+        rejected=by_status.get(ListingStatus.rejected, 0),
+    )
+
+
+@router.get("/listings", response_model=Page[ListingCard])
+async def by_status(
+    session: Session,
+    _: Moderator,
+    status_filter: Annotated[ListingStatus, Query(alias="status")] =
+        ListingStatus.moderation,
+    limit: Annotated[int, Query(ge=1, le=50)] = 20,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> Page[ListingCard]:
+    """Holat bo'yicha ro'yxat. Moderatsiyadagilar eng eskisidan,
+    qolganlari eng yangisidan boshlanadi."""
+    where = Listing.status == status_filter
+    total = await session.scalar(
+        select(func.count()).select_from(Listing).where(where)
+    )
+    order = (
+        Listing.created_at.asc()
+        if status_filter == ListingStatus.moderation
+        else Listing.created_at.desc()
+    )
+    items = list(
+        await session.scalars(
+            select(Listing).where(where).order_by(order).limit(limit).offset(offset)
         )
     )
     return Page(
@@ -70,6 +118,31 @@ async def approve(listing_id: int, session: Session, _: Moderator) -> Ok:
             kind=NotificationKind.approved,
             title="Eʼloningiz tasdiqlandi",
             body=listing.title,
+            listing_id=listing.id,
+        )
+    )
+    await session.commit()
+    return Ok()
+
+
+@router.post("/listings/{listing_id}/revoke", response_model=Ok)
+async def revoke(listing_id: int, session: Session, _: Moderator) -> Ok:
+    """Tasdiqni bekor qiladi — e'lon lentadan chiqib, navbatga qaytadi.
+    Xato tasdiqlangan yoki keyin muammo topilgan e'lonlar uchun."""
+    listing = await session.get(Listing, listing_id)
+    if listing is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Eʼlon topilmadi")
+
+    listing.status = ListingStatus.moderation
+    listing.published_at = None
+    listing.expires_at = None
+
+    session.add(
+        Notification(
+            user_id=listing.owner_id,
+            kind=NotificationKind.rejected,
+            title="Eʼlon tekshiruvga qaytarildi",
+            body=f"{listing.title} — vaqtincha lentadan olib turildi",
             listing_id=listing.id,
         )
     )

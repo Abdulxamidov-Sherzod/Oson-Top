@@ -28,6 +28,13 @@
 	<true/>
 	<key>MapKitApiKey</key>
 	<string>$(MAPKIT_API_KEY)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Ishlab chiqish paytida ilova shu Mac’dagi serverga ulanadi.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Eʼlon joyini xaritada belgilash va yaqin atrofdagi eʼlonlarni koʻrsatish uchun joylashuvingiz kerak.</string>
 	<key>UIApplicationSceneManifest</key>
