@@ -101,4 +101,20 @@ for router in (
 
 @app.get("/health", tags=["service"])
 async def health() -> dict[str, str]:
-    return {"status": "ok"}
+    """Serverning holati.
+
+    `telegram` maydoni sozlamalar yetib kelganini ko'rsatadi —
+    sirlar ochilmaydi, faqat rejim nomi.
+    """
+    if not settings.telegram_bot_token:
+        telegram_mode = "off"          # token yo'q
+    elif settings.telegram_webhook_url:
+        telegram_mode = "webhook"      # serverda bo'lishi kerak
+    else:
+        telegram_mode = "polling"      # ishlab chiqish rejimi
+    return {
+        "status": "ok",
+        "telegram": telegram_mode,
+        "storage": settings.storage_backend,
+        "dev_login": "open" if settings.allow_dev_login else "closed",
+    }
