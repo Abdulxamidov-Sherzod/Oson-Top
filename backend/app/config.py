@@ -45,6 +45,11 @@ class Settings(BaseSettings):
     # true bo'lsa e'lon moderatorsiz darhol chiqadi (faqat test uchun)
     auto_approve: bool = False
 
+    # Render har chiqarishda RENDER_GIT_COMMIT ni o'zi qo'yadi. /health
+    # shundan qaysi versiya ishlayotganini aytadi — Events sahifasini
+    # ochmasdan bilib olinadi. Lokalda bo'sh bo'ladi.
+    render_git_commit: str = ""
+
     @property
     def max_photo_bytes(self) -> int:
         return self.max_photo_mb * 1024 * 1024

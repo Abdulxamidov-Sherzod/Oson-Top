@@ -104,7 +104,8 @@ async def health() -> dict[str, str]:
     """Serverning holati.
 
     `telegram` maydoni sozlamalar yetib kelganini ko'rsatadi —
-    sirlar ochilmaydi, faqat rejim nomi.
+    sirlar ochilmaydi, faqat rejim nomi. `commit` esa qaysi versiya
+    ishlayotganini: deploy tugaganini shundan bilish mumkin.
     """
     if not settings.telegram_bot_token:
         telegram_mode = "off"          # token yo'q
@@ -117,4 +118,6 @@ async def health() -> dict[str, str]:
         "telegram": telegram_mode,
         "storage": settings.storage_backend,
         "dev_login": "open" if settings.allow_dev_login else "closed",
+        # Qisqa shakl — GitHub'dagi commit havolasi uchun yetarli
+        "commit": settings.render_git_commit[:7] or "local",
     }

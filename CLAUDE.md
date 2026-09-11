@@ -19,8 +19,13 @@ Farg'ona viloyati uchun e'lonlar ilovasi (OLX'ga o'xshash, soddaroq). Flutter, m
 `/health` sozlamalar yetib kelganini koʻrsatadi — loglarni titkilash shart emas:
 
 ```json
-{"status":"ok","telegram":"webhook","storage":"supabase","dev_login":"closed"}
+{"status":"ok","telegram":"webhook","storage":"supabase","dev_login":"closed","commit":"25393f5"}
 ```
+
+`commit` — serverda qaysi versiya ishlayotgani (Render `RENDER_GIT_COMMIT`
+ni oʻzi qoʻyadi, lokalda `local` chiqadi). Deploy tugaganini shundan
+bilasiz: qiymat push qilingan commit bilan bir xil boʻlsa, yangi versiya
+chiqqan.
 
 Ilovani serverga ulab qurish:
 

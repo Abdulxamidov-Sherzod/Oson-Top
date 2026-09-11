@@ -51,3 +51,13 @@ async def test_telegram_start_havola_beradi(client: AsyncClient):
     # Hali botda tugatilmagan
     resp = await client.get(f"{API}/auth/telegram/status", params={"token": body["token"]})
     assert resp.json()["status"] == "pending"
+
+
+async def test_health_commitni_aytadi(client: AsyncClient):
+    """Deploy tugaganini shu maydondan bilamiz. Render'da
+    RENDER_GIT_COMMIT boʻladi, lokalda esa "local"."""
+    resp = await client.get("/health")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "ok"
+    assert body["commit"] == "local"
