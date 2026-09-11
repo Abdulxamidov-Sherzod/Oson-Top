@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -88,6 +89,17 @@ class _RootState extends State<_Root> {
     final reference = context.read<ReferenceRepository>();
     // Kategoriyalar va tumanlar ekranlarda sinxron kerak bo'ladi
     await Future.wait([reference.categories(), reference.districts()]);
+    await _devSignIn();
+  }
+
+  /// Ishlab chiqishda kirib olish uchun: `--dart-define=devphone=+998...`.
+  /// Server `ALLOW_DEV_LOGIN=true` bilan ishlayotgan boʻlishi kerak.
+  /// Reliz qurilmasida umuman ishlamaydi.
+  Future<void> _devSignIn() async {
+    if (!kDebugMode || _devPhone.isEmpty) return;
+    final auth = context.read<AuthController>();
+    if (auth.isSignedIn) return;
+    await auth.devLogin(_devPhone);
   }
 
   @override
@@ -115,6 +127,7 @@ class _RootState extends State<_Root> {
 const _start = String.fromEnvironment('start');
 const _listingId = String.fromEnvironment('listing', defaultValue: '14');
 const _scroll = int.fromEnvironment('scroll');
+const _devPhone = String.fromEnvironment('devphone');
 
 Widget _startScreen() => switch (_start) {
       'search' => const SearchScreen(initialQuery: 'iphone'),

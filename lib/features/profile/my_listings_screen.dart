@@ -72,13 +72,9 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
         bottom: false,
         child: Column(
           children: [
-            Container(
+            Padding(
               padding: const EdgeInsets.fromLTRB(
                   OtSize.screenPad, 10, OtSize.screenPad, 12),
-              decoration: const BoxDecoration(
-                color: OtColors.surface,
-                border: Border(bottom: BorderSide(color: OtColors.lineFaint)),
-              ),
               child: Row(
                 children: [
                   GestureDetector(

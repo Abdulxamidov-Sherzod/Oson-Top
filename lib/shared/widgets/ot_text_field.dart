@@ -4,6 +4,11 @@ import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../core/lang.dart';
 
+/// Kulrang sahifada turgan maydon shu soya bilan koʻtariladi
+const otFieldShadow = <BoxShadow>[
+  BoxShadow(color: OtColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
+];
+
 /// Formadagi maydon: yorliq + input + ixtiyoriy izoh yoki xato.
 class OtTextField extends StatelessWidget {
   const OtTextField({
@@ -19,6 +24,7 @@ class OtTextField extends StatelessWidget {
     this.maxLength,
     this.suffix,
     this.onChanged,
+    this.raised = false,
   });
 
   final String label;
@@ -35,6 +41,10 @@ class OtTextField extends StatelessWidget {
   final int? maxLength;
   final Widget? suffix;
   final ValueChanged<String>? onChanged;
+
+  /// Oq fon va soya. Oq sahifada maydon kulrang boʻlib ajralib turadi,
+  /// kulrang sahifada esa fonga qoʻshilib ketadi — oʻsha yerda shu kerak.
+  final bool raised;
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +75,10 @@ class OtTextField extends StatelessWidget {
             minHeight: multiline ? 82 : OtSize.field,
           ),
           decoration: BoxDecoration(
-            color: OtColors.field,
+            color: raised ? OtColors.surface : OtColors.field,
             borderRadius: BorderRadius.circular(OtSize.rMd),
             border: hasError ? Border.all(color: OtColors.danger) : null,
+            boxShadow: raised ? otFieldShadow : null,
           ),
           padding: EdgeInsets.symmetric(
             horizontal: 14,

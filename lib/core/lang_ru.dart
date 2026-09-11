@@ -170,6 +170,20 @@ const ruDictionary = <String, String>{
   'Aktiv eʼlon': 'Активных',
   'Koʻrishlar': 'Просмотры',
   'Saqlanganlar': 'Сохранённые',
+  'Foydalanuvchi': 'Пользователь',
+
+  // --- Profilni tahrirlash ---
+  'Profilni tahrirlash': 'Редактировать профиль',
+  'Ism': 'Имя',
+  'Ismingiz': 'Ваше имя',
+  'Ismingizni yozing': 'Введите имя',
+  'Eʼlonlaringizda shu ism koʻrinadi': 'Это имя увидят в ваших объявлениях',
+  'Tanlanmagan': 'Не выбрано',
+  'Telefon raqami': 'Номер телефона',
+  'Raqam Telegram orqali tasdiqlangan — uni ilovadan oʻzgartirib boʻlmaydi.':
+      'Номер подтверждён через Telegram — изменить его в приложении нельзя.',
+  'Profil saqlandi': 'Профиль сохранён',
+  'Avval tizimga kiring': 'Сначала войдите',
 
   // --- Bildirishnomalar ---
   'Bildirishnomalar': 'Уведомления',

@@ -64,6 +64,42 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Profilni saqlaydi. Xato boʻlsa xabarni qaytaradi, hammasi joyida
+  /// boʻlsa — null.
+  ///
+  /// Server faqat profilni qaytaradi, sanoqlarni emas: shuning uchun `/me`
+  /// qayta soʻralmaydi, mavjud holat ustiga ism va tuman yoziladi.
+  Future<String?> updateProfile({
+    required String name,
+    required String district,
+  }) async {
+    final current = user;
+    if (current == null) return tr('Avval tizimga kiring');
+
+    try {
+      final resp = await _api.dio.patch<dynamic>(
+        '/me',
+        data: {
+          'name': name.trim(),
+          // Boʻsh satr — tumanni oʻchirish. null yuborilsa server maydonni
+          // umuman tegilmagan deb hisoblaydi va eskisi qolib ketadi.
+          'district': district,
+        },
+      );
+      if (resp.statusCode != 200) return ApiException.from(resp).message;
+
+      final json = resp.data as Map<String, dynamic>;
+      user = current.copyWith(
+        name: (json['name'] as String?) ?? '',
+        district: (json['district'] as String?) ?? '',
+      );
+      notifyListeners();
+      return null;
+    } on DioException catch (e) {
+      return ApiException.network(e).message;
+    }
+  }
+
   /// Telegram orqali kirishni boshlaydi. Ochiladigan havolani qaytaradi.
   Future<String?> startTelegramLogin() async {
     error = null;

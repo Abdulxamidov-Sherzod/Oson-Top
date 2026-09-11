@@ -13,6 +13,7 @@ import '../../state/notifications_controller.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/ot_button.dart';
 import '../auth/login_screen.dart';
+import 'edit_profile_screen.dart';
 import 'favorites_screen.dart';
 import 'my_listings_screen.dart';
 
@@ -37,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Text(tr('Profil'), style: OtText.display),
             const SizedBox(height: OtSize.x20),
-            _identity(user),
+            _identity(context, user),
             const SizedBox(height: OtSize.x16),
             _stats(user, favorites.count),
             const SizedBox(height: OtSize.x20),
@@ -58,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _identity(AppUser user) {
+  Widget _identity(BuildContext context, AppUser user) {
     return Row(
       children: [
         Container(
@@ -83,16 +84,39 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(user.name,
+              Text(user.displayName,
                   style: OtText.titleSm.copyWith(fontSize: 18)),
               const SizedBox(height: 3),
               Text(user.phone, style: OtText.metaMd),
               const SizedBox(height: 2),
               Text(
-                tr('${user.district} · ${OtFormat.memberSince(user.memberSince)}'),
+                tr(user.district.isEmpty
+                    ? OtFormat.memberSince(user.memberSince)
+                    : '${user.district} · ${OtFormat.memberSince(user.memberSince)}'),
                 style: OtText.metaSm,
               ),
             ],
+          ),
+        ),
+        // Dizayndagi qalam tugmasi — bosish maydoni 44px
+        GestureDetector(
+          onTap: () => _openEdit(context),
+          behavior: HitTestBehavior.opaque,
+          child: SizedBox(
+            width: OtSize.minTap,
+            height: OtSize.minTap,
+            child: Center(
+              child: Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: OtColors.field,
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: const Icon(Icons.edit_outlined,
+                    size: 16, color: OtColors.ink),
+              ),
+            ),
           ),
         ),
       ],
@@ -164,6 +188,17 @@ class ProfileScreen extends StatelessWidget {
 
   void _push(BuildContext context, Widget screen) => Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => screen));
+
+  /// Saqlanganini tahrirlash ekrani emas, shu ekran aytadi — aks holda
+  /// xabar yopilayotgan oyna bilan birga yoʻqoladi.
+  Future<void> _openEdit(BuildContext context) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+    );
+    if (saved != true || !context.mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(tr('Profil saqlandi'))));
+  }
 
 
   Future<void> _signOut(BuildContext context) async {

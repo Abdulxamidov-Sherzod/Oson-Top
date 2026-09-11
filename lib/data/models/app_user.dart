@@ -1,4 +1,4 @@
-/// Foydalanuvchi. Hozircha mock — ro'yxatdan o'tish backend bilan keladi.
+/// Kirgan foydalanuvchi: `/me` javobidagi profil va sanoqlar.
 class AppUser {
   const AppUser({
     required this.name,
@@ -15,7 +15,7 @@ class AppUser {
     final user = json['user'] as Map<String, dynamic>;
     final stats = json['stats'] as Map<String, dynamic>? ?? const {};
     return AppUser(
-      name: (user['name'] as String?) ?? 'Foydalanuvchi',
+      name: (user['name'] as String?) ?? '',
       phone: (user['phone'] as String?) ?? '',
       district: (user['district'] as String?) ?? '',
       memberSince: user['member_since'] as int,
@@ -29,6 +29,8 @@ class AppUser {
     );
   }
 
+  /// Foydalanuvchi yozgan ism. Boʻsh boʻlishi mumkin — kirish Telegram
+  /// orqali, ism esa faqat profilda qoʻlda kiritiladi.
   final String name;
   final String phone;
   final String district;
@@ -39,6 +41,23 @@ class AppUser {
   final int totalListings;
   final int totalViews;
   final int favorites;
+
+  /// Ekranda koʻrsatiladigan nom. Ism kiritilmagan boʻlsa ham ekran boʻsh
+  /// qolmaydi.
+  String get displayName => name.isEmpty ? 'Foydalanuvchi' : name;
+
+  /// `PATCH /me` faqat profilni qaytaradi — sanoqlar oʻzgarmaydi, shuning
+  /// uchun ular shu yerda saqlanib qoladi.
+  AppUser copyWith({String? name, String? district}) => AppUser(
+        name: name ?? this.name,
+        phone: phone,
+        district: district ?? this.district,
+        memberSince: memberSince,
+        activeListings: activeListings,
+        totalListings: totalListings,
+        totalViews: totalViews,
+        favorites: favorites,
+      );
 
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+'));

@@ -89,6 +89,15 @@ async def test_profilni_tahrirlash(client: AsyncClient):
     assert resp.json()["name"] == "Nodira Karimova"
     assert resp.json()["district"] == "Margʻilon"
 
+    # Boʻsh satr — tumanni oʻchirish. Ilova aynan shuni yuboradi.
+    resp = await client.patch(
+        f"{API}/me", headers=headers, json={"district": ""}
+    )
+    assert resp.status_code == 200
+    assert resp.json()["district"] is None
+    # Yuborilmagan maydon tegilmaydi
+    assert resp.json()["name"] == "Nodira Karimova"
+
 
 async def test_bildirishnomalarni_oqilgan_qilish(client: AsyncClient):
     await publish(client)

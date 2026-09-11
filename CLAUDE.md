@@ -72,6 +72,11 @@ chiqarmang — aniq qiymatlar `lib/core/theme/` da.
   N ta eʼlon` bor, yulduzcha yo'q — bizda sharh tizimi yo'q.
 - **Xavfsizlik ogohlantirishi** e'lon sahifasida majburiy (sariq blok).
 - **Moderatsiya** — e'lon darhol chiqmaydi, foydalanuvchiga shu aytiladi.
+- **Kulrang sahifada oq yoʻlak boʻlmaydi.** Ichki ekranlarning sarlavhasi
+  (`<` va nom) sahifaning oʻz fonida turadi — oq yoʻlak va ostidagi chiziq
+  tepada boshqa ekran turganday koʻrsatadi. Oq boʻladigan narsa — kartalar
+  va maydonlar. Maydon kulrang sahifada boʻlsa `OtTextField(raised: true)`
+  bilan oq fon va soya oladi, aks holda fonga qoʻshilib ketadi.
 - **Pastda faqat 3 ta tab:** Bosh sahifa · E'lon berish · Profil. Qidiruv va Bildirishnoma
   tab EMAS — ular bosh sahifadan ochiladi.
 
@@ -261,9 +266,19 @@ flutter run --dart-define=start=profile         # profil
 Bo'sh bo'lsa odatdagidek bosh sahifadan boshlanadi. Bu faqat ishlab chiqish uchun —
 relizga chiqishdan oldin olib tashlanadi.
 
+Kirishni talab qiladigan ekranni (profil, mening e'lonlarim) sinash uchun
+Telegram bilan ovora bo'lmasdan kirib olish mumkin — server `ALLOW_DEV_LOGIN=true`
+bilan ishlayotgan bo'lsa:
+
+```bash
+flutter run --dart-define=devphone=+998901234567
+```
+
+`kDebugMode` bilan o'ralgan, shuning uchun reliz qurilmasida umuman ishlamaydi.
+
 ## Testlar
 
-`test/` ichida 26 ta test (formatlash, server javobini o'qish, til o'girish).
+`test/` ichida 29 ta test (formatlash, server javobini o'qish, til o'girish).
 Backend testlari: `cd backend && ./.venv/bin/pytest` — 48 ta. Widget testlarda ekran o'lchamini shunday bering:
 
 ```dart
@@ -279,15 +294,14 @@ kichrayib ketadi.
 
 1. **Android reliz kaliti** — hozir debug kalit bilan imzolanadi, Google
    Play uchun yaramaydi. APK haqiqiy qurilmada sinalgan, ishlaydi.
-2. **Profilni tahrirlash** — `PATCH /me` serverda tayyor, ilovada yoʻq.
-3. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish yoʻq,
+2. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish yoʻq,
    faqat surib tanlash ishlaydi. MapKit'ning `YandexSuggest` xizmati kerak.
-4. **Xabarlar** — ichki xabar almashish yoʻq, sotuvchiga Telegram orqali
+3. **Xabarlar** — ichki xabar almashish yoʻq, sotuvchiga Telegram orqali
    oʻtiladi. Profildagi menyu qatori olib tashlangan. Qilinsa: conversations
    va messages jadvallari, beshta endpoint, ikkita ekran.
-5. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
+4. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
    tepaga chiqadi, lekin toʻlov oqimi yoʻq.
-6. **Ruscha tarjimani koʻrib chiqish** — `lib/core/lang_ru.dart` dagi
+5. **Ruscha tarjimani koʻrib chiqish** — `lib/core/lang_ru.dart` dagi
    atamalarni egasi tasdiqlashi kerak.
 
 **Push bildirishnoma ataylab yoʻq.** Bir marta toʻliq yozilgan edi (FCM,
