@@ -102,6 +102,47 @@ lib/
     widgets/             — bir necha ekranda ishlatiladigan widgetlar
 ```
 
+## Interfeys tili
+
+Uchta til: lotin (asos), kirill va ruscha. Matn `tr()` orqali o'tadi
+(`lib/core/lang.dart`), til `LangController` da saqlanadi.
+
+- **Kirillcha** lotinchadan harfma-harf o'giriladi, lug'at yo'q — yangi matn
+  qo'shsangiz kirillchasi o'zi paydo bo'ladi.
+- **Ruscha** `lib/core/lang_ru.dart` lug'atidan. Lug'atda yo'q matn ' · '
+  bo'yicha bo'laklanadi, keyin naqshlar (sana, narx, sonli iboralar)
+  sinaladi. Hech biri topmasa matn lotincha qoladi.
+- **Yangi matn qo'shsangiz** ruschasini lug'atga ham qo'shing.
+
+Matn **ko'rsatish joyida** o'raladi, ta'rif joyida emas. Shu tufayli
+`OtChip`, `OtButton`, `OtSegmented`, `EmptyState` orqali o'tadigan hamma
+matn o'zi qamrab olinadi.
+
+**Serverdan kelgan mazmunga tegilmaydi:** e'lon sarlavhasi, tavsifi va
+sotuvchi ismi hech qachon o'girilmaydi — aks holda "iPhone 13 Pro" →
+"иПҳоне 13 Про" bo'lib ketardi. Qidiruv namunalari ham lotincha qoladi,
+ular bosilganda qidiruvga yoziladi va bazadagi ma'lumotga mos kelishi kerak.
+
+Til almashganda `MaterialApp` ning kaliti o'zgaradi va daraxt yangidan
+quriladi. Oddiy qayta qurish yetmaydi: `tr()` hech qanday provayderga obuna
+bo'lmaydi, yo'ldagi `const` widget'lar esa o'zgarmagani uchun Flutter
+ularning ostini chetlab o'tadi.
+
+## Yuklanish va bo'sh holatlar
+
+- **Yuklanayotganda** aylanma ko'rsatkich emas, shakl ko'rsatiladi —
+  `OtShimmer` va `OtSkeleton` (`lib/shared/widgets/ot_shimmer.dart`).
+  Shakl o'sha ekrandagi haqiqiy joylashuvni takrorlasin, shunda ma'lumot
+  kelganda sakramaydi.
+- **Bo'sh ro'yxatda** jonli tasvir — `OtEmptyArt` (kodda chizilgan, Lottie
+  emas). Qoida: shakl har lahzada to'liq va tanib olinadigan bo'lsin,
+  harakat ustiga qo'shilsin. Bo'sh ekranga odam bir soniya qaraydi, o'sha
+  soniyada chala shakl xatoga o'xshaydi.
+- **Xato holatlariga** o'ynoqi tasvir qo'yilmaydi, oddiy ikonka qoladi.
+
+Aylanma ko'rsatkich faqat shu joylarda qoladi: ilova ochilishi, tugma
+ichidagi kutish, rasm yuklash va ro'yxat tagidagi sahifa.
+
 ## Kelishuvlar
 
 - **State:** `provider` + `ChangeNotifier`. Boshqa kutubxona qo'shmang.
@@ -222,8 +263,8 @@ relizga chiqishdan oldin olib tashlanadi.
 
 ## Testlar
 
-`test/` ichida 14 ta test (formatlash va server javobini o'qish).
-Backend testlari: `cd backend && ./.venv/bin/pytest` — 43 ta. Widget testlarda ekran o'lchamini shunday bering:
+`test/` ichida 26 ta test (formatlash, server javobini o'qish, til o'girish).
+Backend testlari: `cd backend && ./.venv/bin/pytest` — 48 ta. Widget testlarda ekran o'lchamini shunday bering:
 
 ```dart
 tester.view.physicalSize = const Size(390, 844);
@@ -236,15 +277,35 @@ kichrayib ketadi.
 
 ## Qolgan ish
 
-1. **Android** — APK quriladi, lekin haqiqiy qurilmada hali ochib koʻrilmagan.
-   Reliz kaliti ham yoʻq: hozir debug kalit bilan imzolanadi.
-2. **Push bildirishnoma** — hozir ilova ochilganda soʻrab oladi (Firebase kerak).
-3. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
+1. **Android reliz kaliti** — hozir debug kalit bilan imzolanadi, Google
+   Play uchun yaramaydi. APK haqiqiy qurilmada sinalgan, ishlaydi.
+2. **Profilni tahrirlash** — `PATCH /me` serverda tayyor, ilovada yoʻq.
+3. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish yoʻq,
+   faqat surib tanlash ishlaydi. MapKit'ning `YandexSuggest` xizmati kerak.
+4. **Xabarlar** — ichki xabar almashish yoʻq, sotuvchiga Telegram orqali
+   oʻtiladi. Profildagi menyu qatori olib tashlangan. Qilinsa: conversations
+   va messages jadvallari, beshta endpoint, ikkita ekran.
+5. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
    tepaga chiqadi, lekin toʻlov oqimi yoʻq.
-4. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish yoʻq,
-   faqat surib tanlash ishlaydi.
-5. **Xabarlar** — profilda menyu qatori bor, ekrani yoʻq. Hozir sotuvchiga
-   Telegram orqali oʻtiladi.
+6. **Ruscha tarjimani koʻrib chiqish** — `lib/core/lang_ru.dart` dagi
+   atamalarni egasi tasdiqlashi kerak.
+
+**Push bildirishnoma ataylab yoʻq.** Bir marta toʻliq yozilgan edi (FCM,
+qurilma tokenlari, adminkadan yuborish), keyin egasining qarori bilan olib
+tashlandi — commit `3605647`. Qaytadan qoʻshish kerak boʻlsa oʻsha
+commit'dan tiklash mumkin. Bazadagi `notification_kind` enum'ida
+`announcement` qiymati oʻshandan qolgan, ishlatilmaydi.
+
+## E'lonni tahrirlash
+
+`PUT /listings/{id}` — faqat egasi. Matn yoki rasmlar o'zgarsa e'lon
+qaytadan moderatsiyaga tushadi: aks holda zararsiz e'lon joylab,
+tasdiqlatib, keyin uni boshqa narsaga aylantirish mumkin bo'lardi. Narx,
+tuman va holat o'zgarishi lentadan olib tashlamaydi.
+
+Ilovada e'lon berish formasi qayta ishlatiladi —
+`CreateListingScreen(editing: listing)`. Mavjud rasmlar serverda turadi,
+lokal fayli yo'q, shuning uchun `PickedPhoto` ikki xil bo'ladi.
 
 ## Sirlar qayerda
 
