@@ -21,10 +21,13 @@ import 'widgets/photo_picker.dart';
 import '../../core/lang.dart';
 
 class CreateListingScreen extends StatelessWidget {
-  const CreateListingScreen({super.key, this.onClose});
+  const CreateListingScreen({super.key, this.onClose, this.editing});
 
   /// Tab sifatida ochilganda X bosh sahifaga qaytaradi
   final VoidCallback? onClose;
+
+  /// Berilsa — yangi e'lon emas, shuni tahrirlaymiz
+  final Listing? editing;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,7 @@ class CreateListingScreen extends StatelessWidget {
       create: (ctx) => CreateListingForm(
         ctx.read<CreateListingRepository>(),
         districts: ctx.read<ReferenceRepository>().cachedDistricts,
+        editing: editing,
       ),
       child: _FormView(onClose: onClose),
     );
@@ -50,8 +54,23 @@ class _FormViewState extends State<_FormView> {
   final _title = TextEditingController();
   final _description = TextEditingController();
 
+  /// Formadagi maydonlarni bitta qamrovga yig'amiz: qaysidir biri
+  /// tanlanganda klaviatura ustida "Tayyor" chiqadi va shu qamrovni
+  /// bir harakatda bo'shatadi.
+  final _fields = FocusScopeNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _fields.addListener(_onFocusChanged);
+  }
+
+  void _onFocusChanged() => setState(() {});
+
   @override
   void dispose() {
+    _fields.removeListener(_onFocusChanged);
+    _fields.dispose();
     _title.dispose();
     _description.dispose();
     super.dispose();
@@ -65,7 +84,13 @@ class _FormViewState extends State<_FormView> {
       color: OtColors.surface,
       child: SafeArea(
         bottom: false,
-        child: Column(
+        child: FocusScope(
+          node: _fields,
+          child: GestureDetector(
+            // Bo'sh joyga bosilganda klaviatura yopiladi — raqam
+            // klaviaturasida boshqa yo'l yo'q
+            onTap: _fields.unfocus,
+            child: Column(
           children: [
             _header(),
             Expanded(
@@ -167,6 +192,8 @@ class _FormViewState extends State<_FormView> {
             ),
             _footer(form),
           ],
+            ),
+          ),
         ),
       ),
     );
@@ -208,7 +235,14 @@ class _FormViewState extends State<_FormView> {
         children: [
           Row(
             children: [
-              Expanded(child: Text(tr('Eʼlon berish'), style: OtText.display)),
+              Expanded(
+                child: Text(
+                  tr(context.read<CreateListingForm>().isEditing
+                      ? 'Eʼlonni tahrirlash'
+                      : 'Eʼlon berish'),
+                  style: OtText.display,
+                ),
+              ),
               if (widget.onClose != null)
                 GestureDetector(
                   onTap: widget.onClose,
@@ -261,11 +295,42 @@ class _FormViewState extends State<_FormView> {
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: OtColors.line)),
       ),
-      child: OtButton(
-        label: tr('Davom etish'),
-        trailingIcon: Icons.arrow_forward,
-        large: true,
-        onPressed: () => _next(form),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Klaviatura ochiq turganda — uni yopish uchun. iOS'ning raqam
+          // klaviaturasida "return" tugmasi yo'q, ya'ni boshqa yo'li yo'q.
+          if (_fields.hasFocus)
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: _fields.unfocus,
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: SizedBox(
+                    height: 32,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(tr('Tayyor'),
+                            style: OtText.link.copyWith(fontSize: 15)),
+                        const SizedBox(width: 5),
+                        const Icon(Icons.keyboard_hide_outlined,
+                            size: 18, color: OtColors.accent),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          OtButton(
+            label: tr('Davom etish'),
+            trailingIcon: Icons.arrow_forward,
+            large: true,
+            onPressed: () => _next(form),
+          ),
+        ],
       ),
     );
   }

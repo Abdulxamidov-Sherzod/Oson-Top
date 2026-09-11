@@ -89,9 +89,14 @@ class ListingRepository {
     }
   }
 
+  /// E'lonni butunlay o'chirish. Faqat egasi.
   Future<void> remove(String id) async {
-    final resp = await _api.dio.delete<dynamic>('/listings/$id');
-    if (resp.statusCode != 200) _fail(resp);
+    try {
+      final resp = await _api.dio.delete<dynamic>('/listings/$id');
+      if (resp.statusCode != 200) _fail(resp);
+    } on DioException catch (e) {
+      throw ApiException.network(e);
+    }
   }
 }
 

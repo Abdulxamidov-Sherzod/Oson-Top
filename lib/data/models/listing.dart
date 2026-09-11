@@ -46,6 +46,7 @@ class Listing {
     this.photoCount = 1,
     this.photoLabel = 'rasm',
     this.photoUrls = const [],
+    this.photoIds = const [],
     this.thumbUrl,
     this.address,
     this.lat,
@@ -91,6 +92,10 @@ class Listing {
 
   /// To'liq o'lchamdagi rasmlar — galereya uchun
   final List<String> photoUrls;
+
+  /// Serverdagi rasm id'lari — tahrirlashda qaytadan yuboriladi.
+  /// Faqat e'lon sahifasi javobida to'ladi.
+  final List<int> photoIds;
 
   /// Lentadagi karta uchun kichik rasm
   final String? thumbUrl;
@@ -139,6 +144,7 @@ class Listing {
           .map((s) => ListingSpec(s['label'] as String, s['value'] as String))
           .toList(),
       photoUrls: photos.map((p) => _media(p['url'] as String)!).toList(),
+      photoIds: photos.map((p) => p['id'] as int).toList(),
       thumbUrl: photos.isEmpty ? null : _media(photos.first['thumb_url'] as String),
       photoCount: photos.length,
     );

@@ -63,4 +63,46 @@ class CreateListingRepository {
       throw ApiException.network(e);
     }
   }
+
+  /// Tahrirlash. Matn yoki rasmlar o'zgarsa server e'lonni qaytadan
+  /// moderatsiyaga qo'yadi — javobdagi `status` shuni ko'rsatadi.
+  Future<Listing> update(
+    String id, {
+    required String title,
+    required String description,
+    required int price,
+    String? priceUnit,
+    required String categoryId,
+    required String condition,
+    required String district,
+    String? address,
+    double? lat,
+    double? lng,
+    required List<int> photoIds,
+    List<(String, String)> specs = const [],
+  }) async {
+    try {
+      final resp = await _api.dio.put<dynamic>('/listings/$id', data: {
+        'title': title,
+        'description': description,
+        'price': price,
+        'price_unit': ?priceUnit,
+        'category_id': categoryId,
+        'condition': condition,
+        'district': district,
+        'address': ?address,
+        'lat': ?lat,
+        'lng': ?lng,
+        'photo_ids': photoIds,
+        'specs': [
+          for (final (label, value) in specs)
+            {'label': label, 'value': value},
+        ],
+      });
+      if (resp.statusCode != 200) throw ApiException.from(resp);
+      return Listing.fromDetailJson(resp.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.network(e);
+    }
+  }
 }

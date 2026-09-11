@@ -11,6 +11,7 @@ import '../../data/repositories/listing_repository.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/load_more.dart';
 import '../../shared/widgets/ot_photo_placeholder.dart';
+import '../create_listing/create_listing_screen.dart';
 import '../listing_detail/listing_detail_screen.dart';
 import '../../core/lang.dart';
 import '../../shared/widgets/ot_shimmer.dart';
@@ -27,6 +28,9 @@ class MyListingsScreen extends StatefulWidget {
 class _MyListingsScreenState extends State<MyListingsScreen> {
   final _scroll = ScrollController();
   late final PagedList<Listing> _paged = PagedList(fetch: _fetch);
+
+  /// Amal bajarilayotgan eʼlon — qator xira boʻlib, bosilmay turadi
+  String? _busyId;
 
   @override
   void initState() {
@@ -130,6 +134,17 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
   }
 
   Widget _row(BuildContext context, Listing l) {
+    final busy = _busyId == l.id;
+    return IgnorePointer(
+      ignoring: busy,
+      child: Opacity(
+        opacity: busy ? 0.5 : 1,
+        child: _rowBody(context, l),
+      ),
+    );
+  }
+
+  Widget _rowBody(BuildContext context, Listing l) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => ListingDetailScreen(listingId: l.id)),
@@ -178,10 +193,132 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                 ],
               ),
             ),
+            GestureDetector(
+              onTap: () => _actions(context, l),
+              behavior: HitTestBehavior.opaque,
+              child: const SizedBox(
+                width: OtSize.minTap,
+                height: OtSize.minTap,
+                child: Icon(Icons.more_horiz,
+                    size: 20, color: OtColors.inkMuted),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  /// Tahrirlash va o'chirish — qator toza qolishi uchun pastdan chiqadi
+  Future<void> _actions(BuildContext context, Listing l) async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: OtColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(OtSize.rSheet)),
+      ),
+      builder: (sheet) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: OtSize.x12),
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: OtColors.lineField,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            const SizedBox(height: OtSize.x8),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined, color: OtColors.ink),
+              title: Text(tr('Tahrirlash'), style: OtText.body),
+              onTap: () => Navigator.of(sheet).pop('edit'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: OtColors.danger),
+              title: Text(tr('Oʻchirish'),
+                  style: OtText.body.copyWith(color: OtColors.danger)),
+              onTap: () => Navigator.of(sheet).pop('delete'),
+            ),
+            const SizedBox(height: OtSize.x8),
+          ],
+        ),
+      ),
+    );
+
+    if (!context.mounted || picked == null) return;
+    if (picked == 'edit') {
+      await _edit(context, l);
+    } else if (picked == 'delete') {
+      await _delete(context, l);
+    }
+  }
+
+  Future<void> _edit(BuildContext context, Listing l) async {
+    final repo = context.read<ListingRepository>();
+    setState(() => _busyId = l.id);
+    try {
+      // Ro'yxatdagi karta to'liq emas — tahrirlash uchun rasm id'lari va
+      // tavsif kerak, ular faqat e'lon sahifasi javobida keladi
+      final detail = await repo.byId(l.id);
+      if (!context.mounted) return;
+      final saved = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => CreateListingScreen(editing: detail.listing),
+        ),
+      );
+      if (saved == true) _paged.load();
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(tr('$e'))));
+    } finally {
+      if (mounted) setState(() => _busyId = null);
+    }
+  }
+
+  Future<void> _delete(BuildContext context, Listing l) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        backgroundColor: OtColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OtSize.rLg),
+        ),
+        title: Text(tr('Eʼlon oʻchirilsinmi?'), style: OtText.titleSm),
+        content: Text(
+          tr('Bu amalni orqaga qaytarib boʻlmaydi.'),
+          style: OtText.body.copyWith(color: OtColors.inkMuted),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop(false),
+            child: Text(tr('Bekor qilish'),
+                style: OtText.body.copyWith(color: OtColors.inkMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop(true),
+            child: Text(tr('Oʻchirish'),
+                style: OtText.bodyStrong.copyWith(color: OtColors.danger)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    setState(() => _busyId = l.id);
+    try {
+      await context.read<ListingRepository>().remove(l.id);
+      _paged.load();
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(tr('$e'))));
+    } finally {
+      if (mounted) setState(() => _busyId = null);
+    }
   }
 
   Widget _statusChip(ListingStatus status) {

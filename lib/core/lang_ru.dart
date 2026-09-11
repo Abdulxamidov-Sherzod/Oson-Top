@@ -10,6 +10,7 @@ const ruDictionary = <String, String>{
   'Davom etish': 'Продолжить',
   'Qaytadan': 'Ещё раз',
   'Tozalash': 'Очистить',
+  'Tayyor': 'Готово',
   'Qoʻllash': 'Применить',
   'Olib tashlash': 'Удалить',
   'Oʻzgartirish': 'Изменить',
@@ -116,6 +117,19 @@ const ruDictionary = <String, String>{
   'Moderator tekshirgach eʼloningiz saytda paydo boʻladi. Tayyor boʻlganda bildirishnoma keladi.':
       'После проверки модератором объявление появится на сайте. Когда всё будет готово, придёт уведомление.',
   'Asosiy sahifaga': 'На главную',
+
+  'Eʼlonni tahrirlash': 'Редактировать объявление',
+  'Tahrirlash': 'Редактировать',
+  'Saqlash': 'Сохранить',
+  'Saqlanmoqda…': 'Сохраняем…',
+  'Oʻzgarishlar saqlandi': 'Изменения сохранены',
+  'Eʼlon lentada yangilandi.': 'Объявление обновлено в ленте.',
+  'Matn yoki rasm oʻzgargani uchun eʼlon qaytadan tekshiruvga yuborildi.':
+      'Текст или фото изменились, поэтому объявление отправлено на повторную проверку.',
+  'Eʼlonlarimga qaytish': 'К моим объявлениям',
+  'Oʻchirish': 'Удалить',
+  'Eʼlon oʻchirilsinmi?': 'Удалить объявление?',
+  'Bu amalni orqaga qaytarib boʻlmaydi.': 'Это действие нельзя отменить.',
 
   // --- Xarita ---
   'Xaritani suring': 'Двигайте карту',

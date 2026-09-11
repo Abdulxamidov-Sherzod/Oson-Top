@@ -5,24 +5,65 @@ import '../../data/models/listing.dart';
 import '../../data/repositories/create_listing_repository.dart';
 import '../../core/lang.dart';
 
-/// Bitta tanlangan rasm: fayl + serverdagi id (yuklangandan keyin).
+/// Bitta rasm. Yangi tanlangani — telefondagi fayl, tahrirlashda kelgani esa
+/// allaqachon serverda turgan rasm (fayli yo'q, faqat havolasi bor).
 class PickedPhoto {
-  PickedPhoto(this.file);
+  PickedPhoto(XFile this.file)
+      : url = null,
+        uploading = true;
 
-  final XFile file;
+  /// Tahrirlashda: e'londa allaqachon turgan rasm
+  PickedPhoto.uploaded({required int id, required this.url})
+      : file = null,
+        uploading = false {
+    remoteId = id;
+  }
+
+  final XFile? file;
+  final String? url;
   int? remoteId;
-  bool uploading = true;
+  bool uploading;
   String? error;
 
   bool get isReady => remoteId != null;
 }
 
 /// E'lon berish formasining holati, tekshiruvi va serverga yuborilishi.
+///
+/// Tahrirlashda ham shu forma ishlatiladi — `editing` berilsa maydonlar
+/// to'ldirilgan holda ochiladi va yuborilganda yangi e'lon yaratilmaydi.
 class CreateListingForm extends ChangeNotifier {
-  CreateListingForm(this._repo, {required this.districts});
+  CreateListingForm(this._repo, {required this.districts, Listing? editing})
+      : editingId = editing?.id {
+    if (editing != null) _seed(editing);
+  }
 
   final CreateListingRepository _repo;
   final List<String> districts;
+
+  /// null bo'lsa — yangi e'lon
+  final String? editingId;
+
+  bool get isEditing => editingId != null;
+
+  void _seed(Listing l) {
+    title = l.title;
+    categoryId = l.categoryId;
+    condition = l.condition;
+    negotiable = l.price == 0;
+    price = l.price == 0 ? null : l.price;
+    district = l.district;
+    address = l.address;
+    lat = l.lat;
+    lng = l.lng;
+    description = l.description;
+    for (var i = 0; i < l.photoIds.length; i++) {
+      photos.add(PickedPhoto.uploaded(
+        id: l.photoIds[i],
+        url: i < l.photoUrls.length ? l.photoUrls[i] : null,
+      ));
+    }
+  }
 
   static const maxPhotos = 8;
 
@@ -42,6 +83,10 @@ class CreateListingForm extends ChangeNotifier {
   bool _submitted = false;
   bool submitting = false;
   String? submitError;
+
+  /// Yuborilgandan keyin serverdagi holat. Tahrirlashda muhim: matn yoki
+  /// rasm oʻzgargan boʻlsa eʼlon qaytadan moderatsiyaga tushadi.
+  ListingStatus? resultStatus;
 
   // ---- tekshiruv ----
   // Xato matnlari faqat "Davom etish" bosilgandan keyin ko'rinadi
@@ -92,7 +137,7 @@ class CreateListingForm extends ChangeNotifier {
 
   Future<void> _upload(PickedPhoto photo) async {
     try {
-      photo.remoteId = await _repo.uploadPhoto(photo.file);
+      photo.remoteId = await _repo.uploadPhoto(photo.file!);
       photo.error = null;
     } catch (e) {
       photo.error = '$e';
@@ -182,31 +227,56 @@ class CreateListingForm extends ChangeNotifier {
         status: ListingStatus.moderation,
       );
 
+  String get _conditionCode => switch (condition) {
+        ListingCondition.fresh => 'fresh',
+        ListingCondition.used => 'used',
+        ListingCondition.none => 'none',
+      };
+
   Future<bool> submit() async {
     submitting = true;
     submitError = null;
     notifyListeners();
 
+    final photoIds = [
+      for (final p in photos)
+        if (p.remoteId != null) p.remoteId!,
+    ];
+
     try {
-      await _repo.create(
+      if (isEditing) {
+        final saved = await _repo.update(
+          editingId!,
+          title: title.trim(),
+          description: description.trim(),
+          price: negotiable ? 0 : (price ?? 0),
+          categoryId: categoryId,
+          condition: _conditionCode,
+          district: district,
+          address: address,
+          lat: lat,
+          lng: lng,
+          photoIds: photoIds,
+        );
+        resultStatus = saved.status;
+        submitting = false;
+        notifyListeners();
+        return true;
+      }
+
+      final created = await _repo.create(
         title: title.trim(),
         description: description.trim(),
         price: negotiable ? 0 : (price ?? 0),
         categoryId: categoryId,
-        condition: switch (condition) {
-          ListingCondition.fresh => 'fresh',
-          ListingCondition.used => 'used',
-          ListingCondition.none => 'none',
-        },
+        condition: _conditionCode,
         district: district,
         address: address,
         lat: lat,
         lng: lng,
-        photoIds: [
-          for (final p in photos)
-            if (p.remoteId != null) p.remoteId!,
-        ],
+        photoIds: photoIds,
       );
+      resultStatus = created.status;
       submitting = false;
       notifyListeners();
       return true;

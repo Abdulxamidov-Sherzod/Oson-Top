@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
+import '../../data/models/listing.dart';
 import '../../data/repositories/reference_repository.dart';
 import '../../shared/widgets/listing_card.dart';
 import '../../shared/widgets/ot_button.dart';
@@ -44,7 +45,7 @@ class _ReviewStepState extends State<ReviewStep> {
       backgroundColor: OtColors.surface,
       body: SafeArea(
         bottom: false,
-        child: _posted ? _success() : _review(form),
+        child: _posted ? _success(form) : _review(form),
       ),
     );
   }
@@ -218,7 +219,14 @@ class _ReviewStepState extends State<ReviewStep> {
                   ),
                 ),
               ),
-              Expanded(child: Text(tr('Eʼlon berish'), style: OtText.display)),
+              Expanded(
+                child: Text(
+                  tr(context.read<CreateListingForm>().isEditing
+                      ? 'Eʼlonni tahrirlash'
+                      : 'Eʼlon berish'),
+                  style: OtText.display,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: OtSize.x12),
@@ -270,7 +278,9 @@ class _ReviewStepState extends State<ReviewStep> {
           Expanded(
             flex: 16,
             child: OtButton(
-              label: form.submitting ? 'Joylanmoqda…' : tr('Tasdiqlab joylash'),
+              label: form.submitting
+                  ? tr('Saqlanmoqda…')
+                  : tr(form.isEditing ? 'Saqlash' : 'Tasdiqlab joylash'),
               large: true,
               onPressed: form.submitting ? null : () => _submit(form),
             ),
@@ -282,7 +292,7 @@ class _ReviewStepState extends State<ReviewStep> {
 
   // ---------- muvaffaqiyat ----------
 
-  Widget _success() {
+  Widget _success(CreateListingForm form) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
@@ -300,20 +310,38 @@ class _ReviewStepState extends State<ReviewStep> {
                 size: 38, color: OtColors.accent),
           ),
           const SizedBox(height: OtSize.x20),
-          Text(tr('Eʼlon yuborildi'), style: OtText.titleSm.copyWith(fontSize: 23)),
+          Text(
+            tr(form.isEditing ? 'Oʻzgarishlar saqlandi' : 'Eʼlon yuborildi'),
+            style: OtText.titleSm.copyWith(fontSize: 23),
+          ),
           const SizedBox(height: OtSize.x8),
           Text(
-            tr('Moderator tekshirgach eʼloningiz saytda paydo boʻladi. Tayyor boʻlganda bildirishnoma keladi.'),
+            tr(switch ((form.isEditing, form.resultStatus)) {
+              // Tahrirlangan eʼlon lentada qolgan — faqat narx yoki tuman
+              // oʻzgargan boʻlsa shunday boʻladi
+              (true, ListingStatus.active) => 'Eʼlon lentada yangilandi.',
+              (true, _) =>
+                'Matn yoki rasm oʻzgargani uchun eʼlon qaytadan tekshiruvga yuborildi.',
+              _ =>
+                'Moderator tekshirgach eʼloningiz saytda paydo boʻladi. Tayyor boʻlganda bildirishnoma keladi.',
+            }),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14.5, height: 1.6, color: OtColors.inkMuted),
           ),
           const SizedBox(height: OtSize.x24),
           OtButton(
-            label: tr('Asosiy sahifaga'),
+            label: tr(form.isEditing ? 'Eʼlonlarimga qaytish' : 'Asosiy sahifaga'),
             kind: OtButtonKind.secondary,
             onPressed: () {
-              Navigator.of(context).pop();
+              final nav = Navigator.of(context);
+              nav.pop();
+              if (form.isEditing) {
+                // Ikkinchisi — tahrirlash ekranining o'zi. true qaytsa
+                // "mening e'lonlarim" ro'yxatni yangilaydi.
+                nav.pop(true);
+                return;
+              }
               widget.onDone?.call();
             },
           ),

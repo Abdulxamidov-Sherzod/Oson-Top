@@ -126,13 +126,23 @@ class PhotoPicker extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(OtSize.rCard),
-            child: Image.file(
-              File(photo.file.path),
-              width: 86,
-              height: 86,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(color: OtColors.field),
-            ),
+            // Tahrirlashda rasm serverdan keladi, yangi tanlangani esa
+            // telefondagi fayl
+            child: photo.file != null
+                ? Image.file(
+                    File(photo.file!.path),
+                    width: 86,
+                    height: 86,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Container(color: OtColors.field),
+                  )
+                : Image.network(
+                    photo.url ?? '',
+                    width: 86,
+                    height: 86,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Container(color: OtColors.field),
+                  ),
           ),
           // Yuklanmoqda — ustiga xira parda va aylana
           if (photo.uploading)
