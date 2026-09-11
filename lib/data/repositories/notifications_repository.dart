@@ -48,17 +48,4 @@ class NotificationsRepository {
   Future<void> read(String id) async {
     await _api.dio.post<dynamic>('/notifications/$id/read');
   }
-
-  /// Push uchun qurilma tokenini serverga saqlash
-  Future<void> registerDevice(String token, String platform) async {
-    await _api.dio.put<dynamic>(
-      '/me/devices',
-      data: {'token': token, 'platform': platform},
-    );
-  }
-
-  /// Chiqishda — bu qurilmaga endi push kelmasin
-  Future<void> forgetDevice(String token) async {
-    await _api.dio.delete<dynamic>('/me/devices/$token');
-  }
 }

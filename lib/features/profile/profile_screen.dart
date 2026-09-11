@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../core/format.dart';
 import '../../core/lang.dart';
-import '../../data/push/push_service.dart';
-import '../../data/repositories/notifications_repository.dart';
 import '../../core/theme/ot_colors.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
@@ -201,9 +199,6 @@ class ProfileScreen extends StatelessWidget {
     final auth = context.read<AuthController>();
     final favorites = context.read<FavoritesController>();
     final notifications = context.read<NotificationsController>();
-
-    // Chiqishdan oldin: bu qurilmaga boshqa push kelmasin
-    await PushService.unregister(context.read<NotificationsRepository>());
 
     await auth.signOut();
     favorites.clear();

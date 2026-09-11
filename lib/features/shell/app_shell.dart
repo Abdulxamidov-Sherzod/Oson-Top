@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/ot_colors.dart';
-import '../../data/push/push_service.dart';
-import '../../data/repositories/notifications_repository.dart';
 import '../../state/auth_controller.dart';
 import '../../state/favorites_controller.dart';
 import '../../state/notifications_controller.dart';
 import '../auth/login_screen.dart';
 import '../create_listing/create_listing_screen.dart';
 import '../home/home_screen.dart';
-import '../listing_detail/listing_detail_screen.dart';
 import '../profile/profile_screen.dart';
 import 'widgets/ot_tab_bar.dart';
 
@@ -48,32 +45,9 @@ class _AppShellState extends State<AppShell> {
       _loadedForUser = true;
       context.read<FavoritesController>().load();
       context.read<NotificationsController>().refreshBadge();
-      _startPush();
     } else if (!auth.isSignedIn) {
       _loadedForUser = false;
     }
-  }
-
-  void _startPush() {
-    final repo = context.read<NotificationsRepository>();
-    final notifications = context.read<NotificationsController>();
-
-    PushService.register(repo);
-
-    // Ilova ochiq turganda push ekranda ko'rinmaydi — hech bo'lmasa
-    // qo'ng'iroqchadagi son yangilanadi
-    PushService.onMessage(notifications.refreshBadge);
-
-    PushService.onOpened((listingId) {
-      if (!mounted) return;
-      notifications.refreshBadge();
-      if (listingId == null) return;
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => ListingDetailScreen(listingId: listingId),
-        ),
-      );
-    });
   }
 
   @override

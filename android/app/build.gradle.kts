@@ -13,16 +13,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Push uchun Firebase. google-services.json git'ga tushmaydi, shuning uchun
-// fayl yo'q bo'lsa plagin ham qo'llanmaydi — ilova avvalgidek quriladi,
-// faqat push ishlamaydi. Fayl qo'yilsa o'zi yonadi.
-val firebaseConfig = file("google-services.json")
-if (firebaseConfig.exists()) {
-    apply(plugin = "com.google.gms.google-services")
-} else {
-    logger.lifecycle("google-services.json yo'q — push o'chiq holda quriladi")
-}
-
 android {
     namespace = "uz.osontop.oson_top"
     // flutter_secure_storage o'ziga bog'liq modullardan 37 ga qarshi

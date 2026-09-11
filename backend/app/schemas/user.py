@@ -51,8 +51,3 @@ class MeOut(BaseModel):
 
 class PhoneOut(BaseModel):
     phone: str
-
-
-class DeviceIn(BaseModel):
-    token: str = Field(..., min_length=10, max_length=255)
-    platform: str = Field(..., pattern="^(ios|android)$")

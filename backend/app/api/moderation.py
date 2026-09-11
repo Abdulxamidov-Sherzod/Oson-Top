@@ -18,13 +18,10 @@ from ..schemas.listing import ListingCard, ListingOut, RejectIn
 from ..schemas.moderation import (
     BlockIn,
     ModerationCounts,
-    PushIn,
-    PushOut,
     RoleIn,
     UserCounts,
     UserRow,
 )
-from ..services import notify
 from ._convert import to_card, to_detail
 from .listings import LISTING_TTL_DAYS
 
@@ -160,14 +157,6 @@ async def approve(listing_id: int, session: Session, _: Moderator) -> Ok:
         )
     )
     await session.commit()
-
-    await notify.to_user(
-        session,
-        listing.owner_id,
-        title="Eʼloningiz tasdiqlandi",
-        body=listing.title,
-        data={"listing_id": str(listing.id)},
-    )
     return Ok()
 
 
@@ -193,14 +182,6 @@ async def revoke(listing_id: int, session: Session, _: Moderator) -> Ok:
         )
     )
     await session.commit()
-
-    await notify.to_user(
-        session,
-        listing.owner_id,
-        title="Eʼlon tekshiruvga qaytarildi",
-        body=f"{listing.title} — vaqtincha lentadan olib turildi",
-        data={"listing_id": str(listing.id)},
-    )
     return Ok()
 
 
@@ -226,14 +207,6 @@ async def reject(
         )
     )
     await session.commit()
-
-    await notify.to_user(
-        session,
-        listing.owner_id,
-        title="Eʼlon qaytarildi",
-        body=f"{listing.title} — {payload.reason}",
-        data={"listing_id": str(listing.id)},
-    )
     return Ok()
 
 
@@ -381,54 +354,3 @@ async def set_blocked(
         .where(Listing.owner_id == user.id)
     )
     return _row(user, count or 0)
-
-
-# ---------------------------------------------------------------------------
-# Push xabar
-# ---------------------------------------------------------------------------
-
-
-@router.post("/push", response_model=PushOut)
-async def send_push(payload: PushIn, session: Session, _: Admin) -> PushOut:
-    """Adminkadan xabar yuborish.
-
-    Xabar ikki joyga tushadi: ilovadagi bildirishnomalar ro'yxatiga (bazadagi
-    yozuv) va qurilma ekraniga (push). Ilovani o'chirib qo'ygan yoki push'ga
-    ruxsat bermagan foydalanuvchi ham keyin ochganda xabarni ko'radi — shuning
-    uchun yozuv har doim yoziladi.
-    """
-    title = payload.title.strip()
-    body = payload.body.strip()
-
-    if payload.user_id is not None:
-        target = await session.get(User, payload.user_id)
-        if target is None:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, "Foydalanuvchi topilmadi"
-            )
-        user_ids = [target.id]
-    else:
-        user_ids = list(
-            await session.scalars(select(User.id).where(User.is_blocked.is_(False)))
-        )
-
-    for user_id in user_ids:
-        session.add(
-            Notification(
-                user_id=user_id,
-                kind=NotificationKind.announcement,
-                title=title,
-                body=body,
-            )
-        )
-    await session.commit()
-
-    # Push commit'dan keyin — tarmoq so'rovi tranzaksiyani ushlab turmasin
-    if payload.user_id is not None:
-        devices = await notify.to_user(
-            session, payload.user_id, title=title, body=body
-        )
-    else:
-        devices = await notify.to_all(session, title=title, body=body)
-
-    return PushOut(users=len(user_ids), devices=devices)

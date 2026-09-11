@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from ..models.enums import UserRole
 
@@ -44,18 +44,3 @@ class RoleIn(BaseModel):
 
 class BlockIn(BaseModel):
     blocked: bool
-
-
-class PushIn(BaseModel):
-    title: str = Field(..., min_length=2, max_length=120)
-    body: str = Field("", max_length=240)
-
-    # Bo'sh bo'lsa — hamma foydalanuvchiga
-    user_id: int | None = None
-
-
-class PushOut(BaseModel):
-    """Yuborilgandan keyingi hisobot."""
-
-    users: int
-    devices: int

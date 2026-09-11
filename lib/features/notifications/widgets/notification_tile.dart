@@ -27,8 +27,6 @@ class NotificationTile extends StatelessWidget {
           (Icons.call_outlined, OtColors.inkMuted, OtColors.field),
         NotificationKind.expiring =>
           (Icons.schedule, OtColors.warnIcon, OtColors.warnBg),
-        NotificationKind.announcement =>
-          (Icons.campaign_outlined, OtColors.accentPressed, OtColors.accentTint),
       };
 
   @override
