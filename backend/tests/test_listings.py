@@ -278,3 +278,72 @@ async def test_oddiy_foydalanuvchi_royxatni_kormaydi(client: AsyncClient):
     assert (
         await client.get(f"{API}/moderation/counts", headers=buyer)
     ).status_code == 403
+
+
+async def test_tahrirlashda_matn_ozgarsa_moderatsiyaga_qaytadi(client: AsyncClient):
+    listing_id = await publish(client)
+    seller = await login(client, SELLER)
+
+    photo_id = (await client.get(f"{API}/listings/{listing_id}")).json()["photos"][0]["id"]
+    resp = await client.put(
+        f"{API}/listings/{listing_id}",
+        headers=seller,
+        json={
+            "title": "Butunlay boshqa narsa",
+            "description": "2 yil ishlatilgan, toza holatda.",
+            "price": 3_200_000,
+            "category_id": "furniture",
+            "district": "Oltiariq",
+            "photo_ids": [photo_id],
+        },
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["status"] == "moderation"
+
+
+async def test_faqat_narx_ozgarsa_lentada_qoladi(client: AsyncClient):
+    listing_id = await publish(client)
+    seller = await login(client, SELLER)
+
+    detail = (await client.get(f"{API}/listings/{listing_id}")).json()
+    resp = await client.put(
+        f"{API}/listings/{listing_id}",
+        headers=seller,
+        json={
+            "title": detail["title"],
+            "description": detail["description"],
+            "price": 2_900_000,
+            "category_id": detail["category_id"],
+            "district": detail["district"],
+            "photo_ids": [p["id"] for p in detail["photos"]],
+        },
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["status"] == "active"
+    assert resp.json()["price"] == 2_900_000
+
+
+async def test_begonaning_elonini_tahrirlab_bolmaydi(client: AsyncClient):
+    listing_id = await publish(client)
+    stranger = await login(client, "+998907776655")
+
+    resp = await client.put(
+        f"{API}/listings/{listing_id}",
+        headers=stranger,
+        json={
+            "title": "Meniki emas",
+            "category_id": "furniture",
+            "district": "Oltiariq",
+            "photo_ids": [1],
+        },
+    )
+    assert resp.status_code == 404
+
+
+async def test_egasi_elonini_ochiradi(client: AsyncClient):
+    listing_id = await publish(client)
+    seller = await login(client, SELLER)
+
+    assert (await client.delete(f"{API}/listings/{listing_id}",
+                                headers=seller)).status_code == 200
+    assert (await client.get(f"{API}/listings/{listing_id}")).status_code == 404

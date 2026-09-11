@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query, status
-from sqlalchemy import func, or_, select
+from sqlalchemy import delete, func, or_, select
 
 from ..config import settings
 from ..deps import CurrentUser, OptionalUser, Session
@@ -200,6 +200,102 @@ async def create(payload: ListingIn, session: Session, user: CurrentUser) -> Lis
         photo.listing_id = listing.id
         photo.position = order[photo.id]
 
+    for i, spec in enumerate(payload.specs):
+        session.add(
+            ListingSpec(
+                listing_id=listing.id,
+                label=spec.label,
+                value=spec.value,
+                position=i,
+            )
+        )
+
+    await session.commit()
+    await session.refresh(listing)
+    return to_detail(listing, user, 0, False)
+
+
+@router.put("/{listing_id}", response_model=ListingOut)
+async def update(
+    listing_id: int, payload: ListingIn, session: Session, user: CurrentUser
+) -> ListingOut:
+    """E'lonni tahrirlash. Faqat egasi.
+
+    Matn yoki rasmlar o'zgarsa e'lon qaytadan moderatsiyaga tushadi: aks
+    holda zararsiz e'lon joylab, tasdiqlatib, keyin uni butunlay boshqa
+    narsaga aylantirish mumkin bo'lardi. Narx, tuman va holat o'zgarishi
+    esa lentadan olib tashlamaydi — ular tez-tez va bexavotir o'zgaradi.
+    """
+    listing = await session.get(Listing, listing_id)
+    if listing is None or listing.owner_id != user.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Eʼlon topilmadi")
+
+    if not payload.photo_ids:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, "Kamida bitta rasm kerak"
+        )
+
+    # Rasm yo hali hech qayerga biriktirilmagan, yo shu e'longa tegishli
+    photos = list(
+        await session.scalars(
+            select(ListingPhoto).where(
+                ListingPhoto.id.in_(payload.photo_ids),
+                or_(
+                    ListingPhoto.listing_id.is_(None),
+                    ListingPhoto.listing_id == listing.id,
+                ),
+            )
+        )
+    )
+    if len(photos) != len(payload.photo_ids):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Rasmlar topilmadi yoki band"
+        )
+
+    old_photos = set(
+        await session.scalars(
+            select(ListingPhoto.id).where(ListingPhoto.listing_id == listing.id)
+        )
+    )
+    text_changed = (
+        listing.title != payload.title.strip()
+        or listing.description != payload.description.strip()
+        or old_photos != set(payload.photo_ids)
+    )
+
+    listing.title = payload.title.strip()
+    listing.description = payload.description.strip()
+    listing.price = payload.price
+    listing.price_unit = payload.price_unit
+    listing.category_id = payload.category_id
+    listing.condition = payload.condition
+    listing.district = payload.district
+    listing.address = payload.address
+    listing.lat = payload.lat
+    listing.lng = payload.lng
+
+    # Qaytarilgan e'lon tuzatilgach har doim qaytadan tekshiriladi
+    back_to_queue = text_changed or listing.status == ListingStatus.rejected
+    if back_to_queue and not settings.auto_approve:
+        listing.status = ListingStatus.moderation
+        listing.reject_reason = None
+        listing.published_at = None
+        listing.expires_at = None
+
+    # Olib tashlangan rasmlar e'londan uziladi
+    for photo_id in old_photos - set(payload.photo_ids):
+        removed = await session.get(ListingPhoto, photo_id)
+        if removed is not None:
+            await session.delete(removed)
+
+    order = {pid: i for i, pid in enumerate(payload.photo_ids)}
+    for photo in photos:
+        photo.listing_id = listing.id
+        photo.position = order[photo.id]
+
+    await session.execute(
+        delete(ListingSpec).where(ListingSpec.listing_id == listing.id)
+    )
     for i, spec in enumerate(payload.specs):
         session.add(
             ListingSpec(
