@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     supabase_service_key: str = ""
     supabase_bucket: str = "listing-photos"
 
+    # Push bildirishnoma — Firebase xizmat hisobi kalitining JSON'i.
+    # Bo'sh bo'lsa push o'chiq, ilova esa avvalgidek ishlayveradi.
+    fcm_service_account: str = ""
+
     media_dir: Path = Path("./media")
     media_url: str = "/media"
     max_photo_mb: int = 8

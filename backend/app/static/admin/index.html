@@ -242,6 +242,40 @@ kbd{
   border:1px solid var(--danger);padding:3px 10px;border-radius:999px;
 }
 
+/* ---------- xabar yuborish ---------- */
+.compose{
+  background:var(--surface);border:1px solid var(--line-soft);border-radius:18px;
+  padding:20px;max-width:560px;box-shadow:var(--shadow-1);
+}
+.compose label{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin:0 0 6px}
+.compose .field{
+  width:100%;border:1px solid var(--line);background:var(--surface);
+  border-radius:12px;padding:11px 14px;font:inherit;font-size:14.5px;color:var(--ink);
+}
+.compose .field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.compose textarea.field{resize:vertical;min-height:84px}
+.compose .row{margin-bottom:16px}
+.compose .count{float:right;font-weight:500;color:var(--ink-3);background:none;border:0;padding:0}
+.target{display:flex;gap:8px;flex-wrap:wrap}
+.target button{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+  padding:9px 14px;border-radius:11px;font-size:13.5px;font-weight:600;
+}
+.target button[aria-pressed="true"]{
+  background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-dark);
+}
+.compose .send{
+  background:var(--accent);color:#fff;border:0;border-radius:12px;
+  padding:12px 22px;font-size:14.5px;font-weight:600;
+  box-shadow:0 4px 12px rgba(22,164,92,.28);
+}
+.compose .send:hover{background:var(--accent-dark)}
+.compose .send:disabled{opacity:.5;cursor:default;box-shadow:none}
+.sent{
+  margin-top:14px;padding:12px 15px;border-radius:12px;font-size:14px;
+  background:var(--accent-soft);border:1px solid var(--accent-line);color:var(--accent-dark);
+}
+
 /* ---------- holatlar ---------- */
 .empty{
   text-align:center;padding:70px 20px;color:var(--ink-3);
@@ -317,6 +351,9 @@ kbd{
       <span class="nav-label" style="margin-top:18px">Hisoblar</span>
       <button class="tab" data-tab="users" aria-selected="false" id="tab-users" hidden>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.2" cy="6" r="2.5"/><path d="M2.3 13.3c.5-2.1 2-3.3 3.9-3.3s3.4 1.2 3.9 3.3"/><path d="M11 4.2a2.3 2.3 0 0 1 0 4.4"/><path d="M12.3 13.3c-.2-1-.5-1.8-1-2.4"/></svg> Foydalanuvchilar <span class="n" id="n-users">0</span>
+      </button>
+      <button class="tab" data-tab="push" aria-selected="false" id="tab-push" hidden>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.2a3.4 3.4 0 0 0-3.4 3.4c0 3.2-1.3 4.2-1.3 4.2h9.4s-1.3-1-1.3-4.2A3.4 3.4 0 0 0 8 2.2Z"/><path d="M6.9 12.2a1.3 1.3 0 0 0 2.2 0"/></svg> Xabar yuborish
       </button>
     </nav>
 
@@ -523,6 +560,7 @@ const EMPTY = {
   active: ['Tasdiqlangan eʼlon yoʻq', 'Tasdiqlanganlar shu yerda koʻrinadi.'],
   rejected: ['Qaytarilgan eʼlon yoʻq', 'Qaytarilganlar shu yerda koʻrinadi.'],
   users: ['Hech kim topilmadi', 'Qidiruvni oʻzgartirib koʻring.'],
+  push: ['', ''],
 };
 
 const TITLES = {
@@ -530,6 +568,7 @@ const TITLES = {
   active: 'Tasdiqlangan eʼlonlar',
   rejected: 'Qaytarilgan eʼlonlar',
   users: 'Foydalanuvchilar',
+  push: 'Xabar yuborish',
 };
 
 const ROLE_LABEL = {
@@ -564,6 +603,7 @@ function render() {
   $('page-count').hidden = !total;
   $('page-count').textContent = total + ' ta';
 
+  if (tab === 'push') { renderCompose(list); return; }
   if (tab === 'users') { renderUsers(list); return; }
 
   if (!items.length) {
@@ -624,6 +664,99 @@ function render() {
         </div>
       </article>`;
   }).join('') + tailHtml();
+}
+
+let pushTarget = 'all';
+let pushUserId = '';
+
+function renderCompose(list) {
+  $('page-count').hidden = true;
+  list.innerHTML = `
+    <div class="compose">
+      <div class="row">
+        <label for="push-title">Sarlavha <span class="count" id="push-title-left">120</span></label>
+        <input id="push-title" class="field" maxlength="120" placeholder="Masalan: Ilova yangilandi">
+      </div>
+      <div class="row">
+        <label for="push-body">Matn <span class="count" id="push-body-left">240</span></label>
+        <textarea id="push-body" class="field" maxlength="240"
+          placeholder="Qisqa yozing — qurilma ekranida uzun matn kesiladi."></textarea>
+      </div>
+      <div class="row">
+        <label>Kimga</label>
+        <div class="target">
+          <button data-target="all" aria-pressed="${pushTarget === 'all'}">Hammaga</button>
+          <button data-target="one" aria-pressed="${pushTarget === 'one'}">Bitta foydalanuvchiga</button>
+        </div>
+      </div>
+      <div class="row" id="push-user-row" ${pushTarget === 'one' ? '' : 'hidden'}>
+        <label for="push-user">Foydalanuvchi id</label>
+        <input id="push-user" class="field" inputmode="numeric" value="${pushUserId}"
+          placeholder="Foydalanuvchilar boʻlimidagi raqam">
+      </div>
+      <button class="send" id="push-send">Yuborish</button>
+      <div id="push-result"></div>
+      <p class="hint" style="margin:14px 0 0">
+        Xabar ilovadagi bildirishnomalar roʻyxatiga ham yoziladi — pushni
+        oʻchirib qoʻygan yoki ilovani ochmagan odam ham keyin koʻradi.
+      </p>
+    </div>`;
+
+  const title = $('push-title');
+  const body = $('push-body');
+  const left = (el, max, out) => { $(out).textContent = max - el.value.length; };
+  title.oninput = () => left(title, 120, 'push-title-left');
+  body.oninput = () => left(body, 240, 'push-body-left');
+
+  for (const b of list.querySelectorAll('.target button')) {
+    b.onclick = () => {
+      pushTarget = b.dataset.target;
+      // Yozilganini yo'qotmaymiz
+      const keep = { t: title.value, b: body.value };
+      renderCompose(list);
+      $('push-title').value = keep.t;
+      $('push-body').value = keep.b;
+    };
+  }
+
+  const user = $('push-user');
+  if (user) user.oninput = () => { pushUserId = user.value.trim(); };
+
+  $('push-send').onclick = () => sendPush();
+}
+
+async function sendPush() {
+  const title = $('push-title').value.trim();
+  const body = $('push-body').value.trim();
+  if (title.length < 2) { toast('Sarlavha yozing'); return; }
+
+  const payload = { title, body };
+  if (pushTarget === 'one') {
+    const id = Number($('push-user').value.trim());
+    if (!id) { toast('Foydalanuvchi id sini yozing'); return; }
+    payload.user_id = id;
+  } else if (!confirm('Xabar hamma foydalanuvchiga ketadi. Yuborilsinmi?')) {
+    return;
+  }
+
+  const button = $('push-send');
+  button.disabled = true;
+  button.textContent = 'Yuborilmoqda…';
+  try {
+    const out = await api('/moderation/push', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    $('push-result').innerHTML =
+      `<div class="sent">${out.users} ta foydalanuvchiga yozildi · ` +
+      `${out.devices} ta qurilmaga yuborildi</div>`;
+    $('push-title').value = '';
+    $('push-body').value = '';
+  } catch (error) {
+    toast(error.message);
+  }
+  button.disabled = false;
+  button.textContent = 'Yuborish';
 }
 
 function renderUsers(list) {
@@ -724,6 +857,12 @@ function fetchUsers(offset) {
 async function load() {
   try {
     $('error').hidden = true;
+    if (tab === 'push') {
+      items = [];
+      total = 0;
+      render();
+      return;
+    }
     $('list').innerHTML = '<div class="empty">Yuklanmoqda…</div>';
     const page = tab === 'users' ? await fetchUsers(0) : await fetchPage(0);
     items = page.items;
@@ -899,6 +1038,8 @@ async function boot() {
     $('who-role').textContent = ROLE_LABEL[me.user.role];
     // Moderator ro'yxatni ko'radi, o'zgartirishni faqat admin qiladi
     $('tab-users').hidden = !['moderator', 'admin'].includes(me.user.role);
+    // Xabar yuborish — faqat admin
+    $('tab-push').hidden = me.user.role !== 'admin';
     $('gate').hidden = true;
     $('app').hidden = false;
     $('refresh').hidden = false;

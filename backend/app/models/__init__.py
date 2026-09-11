@@ -1,4 +1,5 @@
 from .base import Base
+from .device_token import DeviceToken
 from .enums import (
     ListingCondition,
     ListingStatus,
@@ -17,6 +18,7 @@ __all__ = [
     "Listing",
     "ListingCondition",
     "ListingPhoto",
+    "DeviceToken",
     "ListingSpec",
     "ListingStatus",
     "LoginToken",

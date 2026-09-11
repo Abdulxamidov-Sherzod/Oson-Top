@@ -16,7 +16,8 @@ dependencies = [
   "alembic>=1.14",
   "pydantic>=2.9",
   "pydantic-settings>=2.6",
-  "pyjwt>=2.10",
+  # [crypto] — FCM xizmat hisobi kaliti RS256 bilan imzolanadi
+  "pyjwt[crypto]>=2.10",
   "httpx>=0.28",
   "pillow>=11.0",
   "python-multipart>=0.0.18",

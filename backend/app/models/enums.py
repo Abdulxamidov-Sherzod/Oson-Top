@@ -30,3 +30,5 @@ class NotificationKind(enum.StrEnum):
     rejected = "rejected"
     call = "call"
     expiring = "expiring"
+    # Adminkadan yuborilgan xabar
+    announcement = "announcement"
