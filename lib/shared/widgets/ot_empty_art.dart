@@ -10,7 +10,7 @@ import '../../core/theme/ot_colors.dart';
 /// `OtColors` dan bo'ladi, litsenziya masalasi chiqmaydi va fayl og'irligi
 /// qo'shilmaydi. Har bir turi o'z ekranining ma'nosini takrorlaydi.
 enum OtEmptyArt {
-  /// Saqlanganlar — yurakcha o'zi chiziladi, to'ladi va urib qo'yadi
+  /// Saqlanganlar — toʻla yurakcha "lub-dub" qilib urib turadi
   heart,
 
   /// Mening e'lonlarim — bo'sh karta to'ladi va yuqoriga uchadi
@@ -103,46 +103,238 @@ class _HeartPainter extends CustomPainter {
   _HeartPainter(this.t);
   final double t;
 
+  /// Qalinlik necha qavatdan yigʻiladi. Qavat qancha koʻp boʻlsa, yon
+  /// yuza shuncha silliq — 132px tasvirda yigirmatasi yetadi.
+  static const _layers = 22;
+
+  /// Oʻq sanchiladigan payt
+  static const _hit = 0.46;
+
+  /// Yurak urishi — "lub-dub": kuchli zarba, ortidan kuchsizrogʻi, keyin
+  /// tinchlik. Bitta tekis pulsatsiya soatning chiqillashiga oʻxshab
+  /// qolardi, ikkitasi esa darhol yurak deb oʻqiladi.
+  static double _beat(double t) {
+    double hit(double from, double to, double power) {
+      final p = _phase(t, from, to);
+      if (p <= 0 || p >= 1) return 0;
+      return math.sin(p * math.pi) * power;
+    }
+
+    // Uchinchisi — oʻq tekkandagi silkinish
+    return hit(0.00, 0.13, 0.18) +
+        hit(0.15, 0.30, 0.10) +
+        hit(_hit, _hit + 0.13, 0.14);
+  }
+
+  /// Zarbadan tarqaladigan halqa
+  void _ring(Canvas canvas, Offset center, double radius, double p) {
+    if (p <= 0 || p >= 1) return;
+    canvas.drawCircle(
+      center,
+      radius * (0.55 + 0.75 * _ease(p)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2 * (1 - p)
+        ..color = OtColors.accent.withValues(alpha: (1 - p) * 0.32),
+    );
+  }
+
+  /// Oʻq — pastki chapdan uchib kelib yurakka sanchiladi va shu yerda
+  /// qoladi. Yurakning old yuzasidan OLDIN chiziladi: shunda oʻqning
+  /// oʻrtasi yurak ichida yoʻqoladi, ikki uchi esa tashqarida koʻrinadi.
+  void _arrow(Canvas canvas, Rect box, double w) {
+    final fly = _ease(_phase(t, 0.16, _hit));
+    if (fly <= 0) return;
+
+    // Oxirida yoʻqoladi — halqa yopilganda oʻq birdan gʻoyib boʻlmasin
+    final fade = 1 - _phase(t, 0.90, 1.0);
+    if (fade <= 0) return;
+
+    const angle = -0.52; // pastki chapdan yuqori oʻngga
+    final dir = Offset(math.cos(angle), math.sin(angle));
+    final perp = Offset(-dir.dy, dir.dx);
+
+    // Uchib kelayotganda oʻz oʻqi boʻylab suriladi
+    final approach = (1 - fly) * w * 2.6;
+    // Sanchilgandan keyin qaltiraydi va tez tinchiydi
+    final since = t - _hit;
+    final shake = since > 0
+        ? math.sin(since * 78) * math.exp(-since * 22) * w * 0.05
+        : 0.0;
+
+    final shift = dir * -approach + perp * shake;
+    // Yurak eni ~1 birlik: oʻq undan ikki barobar uzun boʻlsin, shunda
+    // ikkala uchi ham tashqarida aniq koʻrinadi
+    final tail = box.center + dir * (-w * 1.00) + shift;
+    final tip = box.center + dir * (w * 0.92) + shift;
+
+    final ink = Paint()
+      ..color = OtColors.ink.withValues(alpha: fade)
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = w * 0.05;
+
+    canvas.drawLine(tail, tip, ink);
+
+    // Uchi
+    final head = w * 0.17;
+    canvas.drawPath(
+      Path()
+        ..moveTo(tip.dx, tip.dy)
+        ..lineTo(tip.dx - dir.dx * head + perp.dx * head * 0.52,
+            tip.dy - dir.dy * head + perp.dy * head * 0.52)
+        ..lineTo(tip.dx - dir.dx * head - perp.dx * head * 0.52,
+            tip.dy - dir.dy * head - perp.dy * head * 0.52)
+        ..close(),
+      Paint()..color = OtColors.ink.withValues(alpha: fade),
+    );
+
+    // Patlari — orqaga qarab yotadi
+    for (var i = 0; i < 3; i++) {
+      final base = tail + dir * (w * 0.11 * (i + 1));
+      canvas.drawLine(
+        base,
+        base - dir * (w * 0.11) + perp * (w * 0.085),
+        ink,
+      );
+      canvas.drawLine(
+        base,
+        base - dir * (w * 0.11) - perp * (w * 0.085),
+        ink,
+      );
+    }
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
+    // Uchib kelayotgan oʻq tasvir chegarasidan tashqarida boshlanadi —
+    // qirqib qoʻyilmasa, pastdagi sarlavha ustiga chiqib ketadi
+    canvas.clipRect(Offset.zero & size);
     _backdrop(canvas, size, 0);
 
+    final center = size.center(Offset.zero).translate(0, size.height * 0.015);
+    // Shakl markazda chiziladi — burilish, urish va oʻq shu nuqta atrofida
     final box = Rect.fromCenter(
-      center: size.center(Offset.zero).translate(0, size.height * 0.015),
+      center: Offset.zero,
       width: size.width * 0.50,
       height: size.width * 0.45,
     );
-
-    // Urishdan tarqaladigan halqa
-    final pulse = _phase(t, 0.0, 0.55);
-    if (pulse > 0 && pulse < 1) {
-      canvas.drawCircle(
-        box.center,
-        size.width * (0.22 + 0.20 * pulse),
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2
-          ..color = OtColors.accent.withValues(alpha: (1 - pulse) * 0.35),
-      );
-    }
-
-    // Yurakcha har doim to'liq turadi — faqat ozgina uradi
-    final beat = math.sin(_phase(t, 0.0, 0.30) * math.pi) * 0.07;
-    canvas.save();
-    canvas.translate(box.center.dx, box.center.dy);
-    canvas.scale(1 + beat);
-    canvas.translate(-box.center.dx, -box.center.dy);
-
     final heart = _heartPath(box);
-    canvas.drawPath(heart, Paint()..color = OtColors.accentTint);
+    // Bitta qavat qalinligi. Hammasi qoʻshilib yurak enining chorak
+    // qismicha chuqurlik beradi — koʻzga hajm boʻlib koʻrinadi, lekin
+    // shakl choʻzilib ketmaydi.
+    final depth = size.width * 0.0085;
+
+    _ring(canvas, center, size.width * 0.30, _phase(t, 0.00, 0.45));
+    _ring(canvas, center, size.width * 0.26, _phase(t, 0.15, 0.58));
+    _ring(canvas, center, size.width * 0.34, _phase(t, _hit, _hit + 0.34));
+
+    final beat = _beat(t);
+    // Sekin u yoqdan-bu yoqqa buriladi. Toʻliq aylanmaydi: yonboshiga
+    // kelganda yurak ingichka chiziqqa aylanib, tanib boʻlmay qolardi.
+    final turn = math.sin(t * math.pi * 2) * 0.55;
+    final tilt = math.sin(t * math.pi * 2 + 1.2) * 0.13;
+
+    /// Kuzatuvchidan [z] chuqurlikdagi qatlam. Perspektiva tufayli
+    /// orqadagi qavatlar kichrayadi — hajm shundan seziladi.
+    Matrix4 scene(double z) => Matrix4.identity()
+      ..setEntry(3, 2, 0.0016)
+      ..rotateY(turn)
+      ..rotateX(tilt)
+      ..translateByDouble(0.0, 0.0, z, 1.0);
+
+    // Urish yurakni kattalashtiradi, oʻqni emas — shuning uchun alohida
+    Matrix4 layer(double z) =>
+        scene(z)..scaleByDouble(1 + beat, 1 + beat * 0.82, 1.0, 1.0);
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+
+    // Ostidagi soya — yurak fon ustida osilib turibdi
+    canvas.save();
+    canvas.transform((Matrix4.identity()
+          ..setEntry(3, 2, 0.0016)
+          ..translateByDouble(
+              0.0, size.height * 0.055, -depth * _layers, 1.0))
+        .storage);
     canvas.drawPath(
       heart,
       Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3
-        ..strokeJoin = StrokeJoin.round
-        ..color = OtColors.accent,
+        ..color = OtColors.accentInk.withValues(alpha: 0.16 + beat * 0.5)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.05),
     );
+    canvas.restore();
+
+    // Yon yuza: bir xil shakl orqaga qarab qatlanadi. Burilganda aynan
+    // shu qatlamlar koʻrinib, yurak yassi emasligi bilinadi.
+    for (var i = _layers; i >= 1; i--) {
+      final k = i / _layers;
+      canvas.save();
+      canvas.transform(layer(-depth * i).storage);
+      // Chizish ham, toʻldirish ham — qavatlar orasida ingichka oq
+      // tirqish qolmasin
+      final paint = Paint()
+        ..color =
+            Color.lerp(OtColors.accentPressed, OtColors.accentInk, k * 0.85)!
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(heart, paint);
+      canvas.drawPath(
+        heart,
+        Paint()
+          ..color = paint.color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0,
+      );
+      canvas.restore();
+    }
+
+    // Oʻq yurak bilan birga buriladi, lekin urishda kattalashmaydi
+    canvas.save();
+    canvas.transform(scene(-depth * _layers * 0.5).storage);
+    _arrow(canvas, box, box.width);
+    canvas.restore();
+
+    // Old yuza
+    canvas.save();
+    canvas.transform(layer(0).storage);
+    canvas.drawPath(
+      heart,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [OtColors.accent, OtColors.accentPressed],
+        ).createShader(box),
+    );
+
+    // Yaltiroq dogʻ yurak bilan birga burilmaydi — yorugʻlik manbai
+    // qoʻzgʻalmas, shuning uchun dogʻ burilishga teskari suriladi.
+    canvas.save();
+    canvas.clipPath(heart);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(
+          box.width * (-0.20 - turn * 0.22),
+          box.height * (-0.22 - tilt * 0.3),
+        ),
+        width: box.width * 0.34,
+        height: box.height * 0.26,
+      ),
+      Paint()
+        ..color = OtColors.surface.withValues(alpha: 0.42)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.028),
+    );
+    // Pastki chekka toʻqroq — shakl oʻz ustiga qayrilgandek koʻrinadi
+    canvas.drawPath(
+      heart.shift(Offset(0, -box.height * 0.16)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = box.height * 0.18
+        ..color = OtColors.accentInk.withValues(alpha: 0.20)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.035),
+    );
+    canvas.restore();
+    canvas.restore();
+
     canvas.restore();
   }
 
