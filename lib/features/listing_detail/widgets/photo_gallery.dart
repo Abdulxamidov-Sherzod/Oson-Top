@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/ot_colors.dart';
 import '../../../shared/widgets/ot_photo_placeholder.dart';
+import '../../../shared/widgets/ot_photo_viewer.dart';
 
 /// Rasm galereyasi: surish, nuqtalar, hisoblagich.
 /// Haqiqiy rasmlar backend bilan keladi — hozircha placeholder.
@@ -50,17 +51,26 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                     label: widget.label,
                     labelAlignment: Alignment.center,
                   )
-                : Image.network(
-                    widget.urls[i],
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, progress) =>
-                        progress == null
-                            ? child
-                            : const ColoredBox(color: OtColors.galleryStripeA),
-                    errorBuilder: (_, _, _) => OtPhotoPlaceholder(
-                      large: true,
-                      label: widget.label,
-                      labelAlignment: Alignment.center,
+                : GestureDetector(
+                    // Bosilganda to'liq ekranda ochiladi
+                    onTap: () => OtPhotoViewer.open(
+                      context,
+                      urls: widget.urls,
+                      initialIndex: i,
+                    ),
+                    child: Image.network(
+                      widget.urls[i],
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, progress) =>
+                          progress == null
+                              ? child
+                              : const ColoredBox(
+                                  color: OtColors.galleryStripeA),
+                      errorBuilder: (_, _, _) => OtPhotoPlaceholder(
+                        large: true,
+                        label: widget.label,
+                        labelAlignment: Alignment.center,
+                      ),
                     ),
                   ),
           ),

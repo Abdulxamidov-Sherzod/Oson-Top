@@ -18,6 +18,7 @@ import 'widgets/photo_gallery.dart';
 import 'widgets/safety_note.dart';
 import 'widgets/seller_card.dart';
 import '../../core/lang.dart';
+import '../../shared/widgets/ot_shimmer.dart';
 
 class ListingDetailScreen extends StatefulWidget {
   const ListingDetailScreen({
@@ -90,9 +91,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       backgroundColor: OtColors.surface,
       body: switch ((detail, _error)) {
         (_, final String message) => _errorView(message),
-        (null, _) => const Center(
-            child: CircularProgressIndicator(color: OtColors.accent),
-          ),
+        (null, _) => const _DetailSkeleton(),
         (final ListingDetail d, _) => _content(d),
       },
     );
@@ -318,7 +317,9 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                 listing: _similar[i],
                 isFavorite: favorites.isFavorite(_similar[i].id),
                 onFavoriteTap: () => _toggleFavorite(_similar[i].id),
-                onTap: () => Navigator.of(context).pushReplacement(
+                // push, pushReplacement emas: almashtirilsa orqaga
+                // bosganda oldingi eʼlon emas, bosh sahifa ochilardi
+                onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) =>
                         ListingDetailScreen(listingId: _similar[i].id),
@@ -352,6 +353,58 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
           ],
         ),
         child: Icon(icon, size: 17, color: color),
+      ),
+    );
+  }
+}
+
+
+/// E'lon sahifasining yuklanayotgandagi shakli. Tuzilishi haqiqiy sahifa
+/// bilan bir xil: rasm, narx, sarlavha, teglar, ma'lumot qatori, sotuvchi
+/// va ogohlantirish bloki.
+class _DetailSkeleton extends StatelessWidget {
+  const _DetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return OtShimmer(
+      child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        children: [
+          // Gallereya butun enni egallaydi, burchaklari to'g'ri
+          const OtSkeleton(height: 330, radius: 0),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                OtSize.screenPad, OtSize.x20, OtSize.screenPad, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                OtSkeleton(width: 190, height: 26, radius: 9),
+                SizedBox(height: OtSize.x12),
+                OtSkeleton(height: 17),
+                SizedBox(height: 8),
+                OtSkeleton(width: 220, height: 17),
+                SizedBox(height: OtSize.x16),
+                Row(
+                  children: [
+                    OtSkeleton(width: 92, height: 28, radius: 9),
+                    SizedBox(width: 8),
+                    OtSkeleton(width: 104, height: 28, radius: 9),
+                  ],
+                ),
+                SizedBox(height: OtSize.x16),
+                OtSkeleton(width: 250, height: 12),
+                SizedBox(height: OtSize.x20),
+                // Sotuvchi kartasi
+                OtSkeleton(height: 78, radius: OtSize.rCard),
+                SizedBox(height: OtSize.x12),
+                // Xavfsizlik ogohlantirishi
+                OtSkeleton(height: 96, radius: OtSize.rMd),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

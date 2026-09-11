@@ -55,6 +55,9 @@ abstract final class OtColors {
   static const mapPark = Color(0xFFBEDCCB);
   static const mapWater = Color(0xFFBFD5E7);
 
+  // Rasmni to'liq ekranda ko'rish — deyarli qora, ozgina yashil tusda
+  static const viewerBackdrop = Color(0xFF0A0F0C);
+
   // Soyalar
   static const cardShadow = Color(0x12102214);
   static const liftShadow = Color(0x1F102214);
