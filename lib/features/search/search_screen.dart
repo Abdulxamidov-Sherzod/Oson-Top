@@ -270,9 +270,7 @@ class _SearchViewState extends State<_SearchView> {
 
   Widget _results(SearchScreenController c) {
     return c.paged.state.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(color: OtColors.accent),
-      ),
+      loading: () => const ListingGridSkeleton(),
       error: (message) => EmptyState(
         icon: Icons.cloud_off,
         title: tr('Yuklab boʻlmadi'),

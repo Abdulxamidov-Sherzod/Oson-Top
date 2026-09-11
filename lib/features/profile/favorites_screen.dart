@@ -72,9 +72,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             _header(),
             Expanded(
               child: _paged.state.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: OtColors.accent),
-                ),
+                loading: () => const ListingGridSkeleton(),
                 error: (message) => EmptyState(
                   icon: Icons.cloud_off,
                   title: tr('Yuklab boʻlmadi'),

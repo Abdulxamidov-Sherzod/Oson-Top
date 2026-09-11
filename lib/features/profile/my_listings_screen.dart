@@ -13,6 +13,7 @@ import '../../shared/widgets/load_more.dart';
 import '../../shared/widgets/ot_photo_placeholder.dart';
 import '../listing_detail/listing_detail_screen.dart';
 import '../../core/lang.dart';
+import '../../shared/widgets/ot_shimmer.dart';
 
 /// Mening e'lonlarim. Foydalanuvchi mock — hozircha `s1` sotuvchining
 /// e'lonlari ko'rsatiladi. Backend qo'shilganda haqiqiy egasi bo'yicha filtrlanadi.
@@ -96,9 +97,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
             ),
             Expanded(
               child: _paged.state.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: OtColors.accent),
-                ),
+                loading: () => const _RowSkeleton(),
                 error: (message) => EmptyState(
                   icon: Icons.cloud_off,
                   title: tr('Yuklab boʻlmadi'),
@@ -204,6 +203,59 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: fg,
+        ),
+      ),
+    );
+  }
+}
+
+
+/// "Mening eʼlonlarim" ro'yxatining yuklanayotgandagi shakli — qatorlar
+/// haqiqiysi bilan bir o'lchamda, shunda ma'lumot kelganda sakramaydi.
+class _RowSkeleton extends StatelessWidget {
+  const _RowSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return OtShimmer(
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(
+            OtSize.screenPad, OtSize.x12, OtSize.screenPad, OtSize.x24),
+        itemCount: 5,
+        separatorBuilder: (_, _) => const SizedBox(height: OtSize.x12),
+        itemBuilder: (_, _) => Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: OtColors.surface,
+            borderRadius: BorderRadius.circular(OtSize.rCard),
+            border: Border.all(color: OtColors.line),
+          ),
+          child: const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              OtSkeleton(width: 64, height: 64, radius: 11),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    OtSkeleton(height: 13),
+                    SizedBox(height: 8),
+                    OtSkeleton(width: 108, height: 14),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        OtSkeleton(width: 66, height: 18, radius: 7),
+                        SizedBox(width: 8),
+                        OtSkeleton(width: 74, height: 10),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

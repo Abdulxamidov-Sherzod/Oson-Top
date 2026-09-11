@@ -12,6 +12,7 @@ import '../../state/notifications_controller.dart';
 import '../auth/login_screen.dart';
 import 'widgets/notification_tile.dart';
 import '../../core/lang.dart';
+import '../../shared/widgets/ot_shimmer.dart';
 
 /// Bosh sahifadagi qo'ng'iroqchadan ochiladi — tab emas.
 class NotificationsScreen extends StatefulWidget {
@@ -73,9 +74,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                     )
                   : controller.paged.state.isLoading && items.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(color: OtColors.accent),
-                    )
+                  ? const _TileSkeleton()
                   : controller.paged.state is AsyncError && items.isEmpty
                   ? EmptyState(
                       icon: Icons.cloud_off,
@@ -142,6 +141,52 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+
+/// Bildirishnomalar ro'yxatining yuklanayotgandagi shakli.
+class _TileSkeleton extends StatelessWidget {
+  const _TileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return OtShimmer(
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(
+            OtSize.screenPad, OtSize.x8, OtSize.screenPad, OtSize.x24),
+        itemCount: 6,
+        itemBuilder: (_, _) => Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: OtColors.surface,
+            borderRadius: BorderRadius.circular(OtSize.rLg),
+            border: Border.all(color: OtColors.line),
+          ),
+          child: const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              OtSkeleton(width: 40, height: 40, radius: 13),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    OtSkeleton(height: 13),
+                    SizedBox(height: 7),
+                    OtSkeleton(width: 150, height: 11),
+                    SizedBox(height: 7),
+                    OtSkeleton(width: 84, height: 9),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

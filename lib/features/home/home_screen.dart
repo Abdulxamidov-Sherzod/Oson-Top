@@ -101,9 +101,7 @@ class _HomeViewState extends State<_HomeView> {
                   border: Border(top: BorderSide(color: OtColors.line)),
                 ),
                 child: home.paged.state.when(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(color: OtColors.accent),
-                  ),
+                  loading: () => const ListingGridSkeleton(),
                   error: (message) => EmptyState(
                     icon: Icons.cloud_off,
                     title: tr('Yuklab boʻlmadi'),

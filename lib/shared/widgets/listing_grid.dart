@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/ot_sizes.dart';
 import '../../data/models/listing.dart';
 import 'listing_card.dart';
+import 'ot_shimmer.dart';
 import '../../state/favorites_controller.dart';
 import '../favorite_action.dart';
 
@@ -22,20 +23,20 @@ class ListingGrid extends StatelessWidget {
   final void Function(Listing)? onTap;
   final EdgeInsets padding;
 
-  static const double _gap = 14;
+  static const double gap = 14;
 
   @override
   Widget build(BuildContext context) {
     final favorites = context.watch<FavoritesController>();
     final width = MediaQuery.sizeOf(context).width;
-    final colWidth = (width - padding.horizontal - _gap) / 2;
+    final colWidth = (width - padding.horizontal - gap) / 2;
 
     return SliverPadding(
       padding: padding,
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: _gap,
+          crossAxisSpacing: gap,
           mainAxisSpacing: 18,
           childAspectRatio: colWidth / ListingCard.totalHeight,
         ),
@@ -51,6 +52,42 @@ class ListingGrid extends StatelessWidget {
           },
           childCount: listings.length,
         ),
+      ),
+    );
+  }
+}
+
+
+/// Lentaning yuklanayotgandagi ko'rinishi — `ListingGrid` bilan bir xil
+/// panjara, ichida kartalarning shakli. Bo'sh ekrandagi aylanma
+/// ko'rsatkichdan farqi: joylashuv oldindan ko'rinadi va ma'lumot kelganda
+/// ekran sakramaydi.
+class ListingGridSkeleton extends StatelessWidget {
+  const ListingGridSkeleton({
+    super.key,
+    this.padding = const EdgeInsets.fromLTRB(
+        OtSize.screenPad, OtSize.x12, OtSize.screenPad, OtSize.x24),
+  });
+
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final colWidth = (width - padding.horizontal - ListingGrid.gap) / 2;
+
+    return OtShimmer(
+      child: GridView.builder(
+        padding: padding,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: ListingGrid.gap,
+          mainAxisSpacing: 18,
+          childAspectRatio: colWidth / ListingCard.totalHeight,
+        ),
+        itemCount: 6,
+        itemBuilder: (_, _) => const ListingCardSkeleton(),
       ),
     );
   }

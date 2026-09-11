@@ -5,6 +5,7 @@ import '../../core/theme/ot_sizes.dart';
 import '../../core/theme/ot_text.dart';
 import '../../data/models/listing.dart';
 import 'ot_photo_placeholder.dart';
+import 'ot_shimmer.dart';
 import '../../core/lang.dart';
 
 /// Lentadagi e'lon kartasi. Bosh sahifa, qidiruv, saqlanganlar va
@@ -24,7 +25,20 @@ class ListingCard extends StatelessWidget {
   /// Grid tilesi uchun tavsiya etilgan balandlik. Aniq bo'lishi shart emas —
   /// rasm qismi qolgan joyni o'zi to'ldiradi, shuning uchun matn shrifti
   /// platformadan platformaga farq qilsa ham karta buzilmaydi.
-  static const double totalHeight = 232;
+  static const double totalHeight = 248;
+
+  /// Karta ichidagi bo'shliq
+  static const double pad = 8;
+
+  /// Karta va uning shimmer shakli bir xil koʻrinishi uchun
+  static BoxDecoration get decoration => BoxDecoration(
+        color: OtColors.surface,
+        borderRadius: BorderRadius.circular(OtSize.rCard),
+        border: Border.all(color: OtColors.line),
+        boxShadow: const [
+          BoxShadow(color: OtColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
+        ],
+      );
 
   final Listing listing;
   final bool isFavorite;
@@ -36,27 +50,31 @@ class ListingCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Rasm qolgan bo'sh joyni oladi — matn qancha joy so'rasa shuncha oladi
-          Expanded(child: _photo()),
-          const SizedBox(height: 7),
-          // Ikki qatorlik joy doim band — lentada narxlar bir chiziqda turadi
-          SizedBox(
-            height: titleHeight,
-            child: Text(
-              listing.title,
-              style: OtText.cardTitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+      child: Container(
+        padding: const EdgeInsets.all(pad),
+        decoration: decoration,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Rasm qolgan bo'sh joyni oladi — matn qancha joy so'rasa shuncha oladi
+            Expanded(child: _photo()),
+            const SizedBox(height: 7),
+            // Ikki qatorlik joy doim band — lentada narxlar bir chiziqda turadi
+            SizedBox(
+              height: titleHeight,
+              child: Text(
+                listing.title,
+                style: OtText.cardTitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-          const SizedBox(height: 7),
-          Text(tr(OtFormat.listingPrice(listing)), style: OtText.cardPrice),
-          const SizedBox(height: 7),
-          _meta(),
-        ],
+            const SizedBox(height: 6),
+            Text(tr(OtFormat.listingPrice(listing)), style: OtText.cardPrice),
+            const SizedBox(height: 6),
+            _meta(),
+          ],
+        ),
       ),
     );
   }
@@ -66,10 +84,8 @@ class ListingCard extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 90),
       decoration: BoxDecoration(
         color: OtColors.field,
-        borderRadius: BorderRadius.circular(OtSize.rCard),
-        boxShadow: const [
-          BoxShadow(color: OtColors.cardShadow, blurRadius: 3, offset: Offset(0, 1)),
-        ],
+        // Karta radiusidan kichikroq — ichma-ich burchaklar shunda to'g'ri turadi
+        borderRadius: BorderRadius.circular(OtSize.rSm),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -148,6 +164,43 @@ class ListingCard extends StatelessWidget {
         const SizedBox(width: 5),
         Text(tr(OtFormat.timeAgo(listing.postedAt)), style: OtText.meta),
       ],
+    );
+  }
+}
+
+
+/// E'lon kartasining yuklanayotgandagi shakli. Tuzilishi `ListingCard` bilan
+/// bir xil — shunda ma'lumot kelganda joylashuv sakramaydi.
+class ListingCardSkeleton extends StatelessWidget {
+  const ListingCardSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(ListingCard.pad),
+      decoration: ListingCard.decoration,
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: OtSkeleton.fill(radius: OtSize.rSm)),
+          SizedBox(height: 7),
+          SizedBox(
+            height: ListingCard.titleHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                OtSkeleton(height: 11),
+                SizedBox(height: 6),
+                OtSkeleton(width: 92, height: 11),
+              ],
+            ),
+          ),
+          SizedBox(height: 6),
+          OtSkeleton(width: 104, height: 15),
+          SizedBox(height: 8),
+          OtSkeleton(width: 124, height: 9),
+        ],
+      ),
     );
   }
 }
