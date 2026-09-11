@@ -18,6 +18,7 @@ import 'search_controller.dart';
 import 'widgets/filter_sheets.dart';
 import 'widgets/search_suggestions.dart';
 import '../../core/lang.dart';
+import '../../shared/widgets/ot_empty_art.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key, this.initialQuery = ''});
@@ -282,6 +283,7 @@ class _SearchViewState extends State<_SearchView> {
         if (items.isEmpty) {
           return EmptyState(
             icon: Icons.search_off,
+            art: OtEmptyArt.search,
             title: tr('Hech narsa topilmadi'),
             body: tr('Boshqa soʻz bilan qidirib koʻring yoki filtrlarni tozalang.'),
             actionLabel: c.hasFilters ? tr('Filtrlarni tozalash') : null,

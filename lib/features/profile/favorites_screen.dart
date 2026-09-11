@@ -13,6 +13,7 @@ import '../../shared/widgets/load_more.dart';
 import '../../state/favorites_controller.dart';
 import '../listing_detail/listing_detail_screen.dart';
 import '../../core/lang.dart';
+import '../../shared/widgets/ot_empty_art.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -83,6 +84,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 data: (items) => items.isEmpty
                     ? EmptyState(
                         icon: Icons.favorite_border,
+                        art: OtEmptyArt.heart,
                         title: tr('Saqlangan eʼlonlar yoʻq'),
                         body: tr('Eʼlon yoqqan boʻlsa, yurakcha belgisini bosing — shu yerda saqlanadi.'),
                         actionLabel: tr('Eʼlonlarni koʻrish'),

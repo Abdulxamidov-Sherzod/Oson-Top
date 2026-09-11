@@ -13,6 +13,7 @@ import '../auth/login_screen.dart';
 import 'widgets/notification_tile.dart';
 import '../../core/lang.dart';
 import '../../shared/widgets/ot_shimmer.dart';
+import '../../shared/widgets/ot_empty_art.dart';
 
 /// Bosh sahifadagi qo'ng'iroqchadan ochiladi — tab emas.
 class NotificationsScreen extends StatefulWidget {
@@ -64,6 +65,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: !signedIn
                   ? EmptyState(
                       icon: Icons.notifications_none,
+                      art: OtEmptyArt.bell,
                       title: tr('Kirmagansiz'),
                       body: tr('Eʼloningiz tasdiqlanganda yoki xaridor bogʻlanganda shu yerda xabar chiqadi.'),
                       actionLabel: tr('Telegram orqali kirish'),
@@ -86,6 +88,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   : items.isEmpty
                   ? EmptyState(
                       icon: Icons.notifications_none,
+                      art: OtEmptyArt.bell,
                       title: tr('Bildirishnomalar yoʻq'),
                       body: tr('Qidiruvni saqlab qoʻysangiz, mos eʼlon chiqqanda birinchi boʻlib xabar beramiz.'),
                     )

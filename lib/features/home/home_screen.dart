@@ -21,6 +21,7 @@ import 'widgets/category_rail.dart';
 import 'widgets/home_header.dart';
 import 'widgets/search_bar_button.dart';
 import '../../core/lang.dart';
+import '../../shared/widgets/ot_empty_art.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -169,6 +170,7 @@ class _HomeViewState extends State<_HomeView> {
   Widget _empty(HomeController home) {
     return EmptyState(
       icon: Icons.search_off,
+      art: OtEmptyArt.search,
       title: tr('Eʼlon topilmadi'),
       body: home.district == allDistricts
           ? tr('Bu kategoriyada hozircha eʼlon yoʻq. Boshqasini tanlab koʻring.')

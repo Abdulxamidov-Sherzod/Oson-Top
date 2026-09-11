@@ -15,6 +15,7 @@ import '../create_listing/create_listing_screen.dart';
 import '../listing_detail/listing_detail_screen.dart';
 import '../../core/lang.dart';
 import '../../shared/widgets/ot_shimmer.dart';
+import '../../shared/widgets/ot_empty_art.dart';
 
 /// Mening e'lonlarim. Foydalanuvchi mock — hozircha `s1` sotuvchining
 /// e'lonlari ko'rsatiladi. Backend qo'shilganda haqiqiy egasi bo'yicha filtrlanadi.
@@ -112,6 +113,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                 data: (items) => items.isEmpty
                     ? EmptyState(
                         icon: Icons.inventory_2_outlined,
+                        art: OtEmptyArt.card,
                         title: tr('Eʼlonlaringiz yoʻq'),
                         body: tr('Birinchi eʼloningizni joylang — 2 daqiqa vaqt oladi.'),
                       )
