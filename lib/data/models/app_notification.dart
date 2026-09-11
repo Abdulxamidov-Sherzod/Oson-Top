@@ -16,6 +16,9 @@ enum NotificationKind {
 
   /// E'lon muddati tugayapti
   expiring,
+
+  /// Adminkadan yuborilgan xabar
+  announcement,
 }
 
 class AppNotification {
@@ -45,6 +48,7 @@ class AppNotification {
         'approved' => NotificationKind.approved,
         'rejected' => NotificationKind.rejected,
         'call' => NotificationKind.call,
+        'announcement' => NotificationKind.announcement,
         _ => NotificationKind.expiring,
       };
 

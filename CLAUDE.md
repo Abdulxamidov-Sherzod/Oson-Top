@@ -238,7 +238,8 @@ kichrayib ketadi.
 
 1. **Android** — APK quriladi, lekin haqiqiy qurilmada hali ochib koʻrilmagan.
    Reliz kaliti ham yoʻq: hozir debug kalit bilan imzolanadi.
-2. **Push bildirishnoma** — hozir ilova ochilganda soʻrab oladi (Firebase kerak).
+2. **Push bildirishnoma** — Android'da ishlaydi. iOS uchun APNs kaliti kerak,
+   u esa faqat pullik Apple Developer hisobida yaratiladi.
 3. **Toʻlovli «koʻtarish»** — `listings.is_promoted` maydoni bor, lentada
    tepaga chiqadi, lekin toʻlov oqimi yoʻq.
 4. **Xaritada manzil qidiruvi** — tepadagi qatorga yozib qidirish yoʻq,
@@ -255,8 +256,27 @@ Uchalasi ham gitʼga tushmaydi. Yangi kompyuterda qoʻlda yaratiladi:
 | Bot tokeni, baza, Supabase, `ADMIN_PHONES` | `backend/.env` | `.env.example` |
 | MapKit (iOS) | `ios/Flutter/Secrets.xcconfig` | `Secrets.example.xcconfig` |
 | MapKit (Android) | `android/local.properties` | `mapkit.apiKey=...` |
+| Firebase (Android) | `android/app/google-services.json` | Firebase konsolidan |
+| Firebase (iOS) | `ios/Runner/GoogleService-Info.plist` | Firebase konsolidan |
+
+Serverning FCM kaliti faylda emas, faqat Render → Environment da:
+`FCM_SERVICE_ACCOUNT` — xizmat hisobi JSON'ining butun matni. `.env` ga
+qoʻymang, ichidagi qator koʻchirish belgilari uni buzadi.
 
 Serverdagi qiymatlar Render → Environment boʻlimida.
+
+### Push bildirishnoma
+
+Xabar ikki joyga tushadi: bazadagi `notifications` yozuvi (ilovadagi roʻyxat)
+va qurilma ekrani (FCM). Ikkalasi `app/services/notify.py` da birga yuritiladi
+— push'ni oʻchirib qoʻygan odam ham keyin ilovada koʻradi.
+
+Adminkadagi «Xabar yuborish» boʻlimi faqat adminda koʻrinadi. Eʼlon
+tasdiqlanganda va qaytarilganda ham push ketadi.
+
+`google-services.json` boʻlmasa Android build'da Firebase plagini
+qoʻllanmaydi va ilova push'siz quriladi — bu ataylab shunday, sozlamasiz ham
+ishlab turishi uchun.
 
 ### Kim moderator bo'ladi
 

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app.dart';
+import 'data/push/push_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Sozlama fayli yo'q bo'lsa jimgina o'chiq qoladi
+  await PushService.init();
 
   // Release'da widget xatosi bo'm-bo'sh qora ekran bo'lib ko'rinadi va
   // nima bo'lganini bilib bo'lmaydi. Hech bo'lmasa matnini ko'rsatamiz.

@@ -35,3 +35,7 @@ backend/__pycache__/
 
 # Kalitlar
 ios/Flutter/Secrets.xcconfig
+
+# Firebase sozlamalari — loyihaga xos, git'ga tushmaydi
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
